@@ -43,37 +43,31 @@ const CATEGORIES = [
 const HOW_IT_WORKS = [
   {
     step: '01',
-    icon: Search,
-    emoji: '🔍',
+    image: '/images/step-browse.png',
     title: 'Découvrez les offres',
     desc: 'Parcourez des centaines de bons plans près de chez vous. Filtrez par catégorie, localisation ou type d\'offre.',
-    color: 'bg-primary-50 dark:bg-primary-900/20',
-    iconColor: 'text-primary-600',
+    bg: 'bg-primary-50 dark:bg-primary-900/20',
   },
   {
     step: '02',
-    icon: ShoppingBag,
-    emoji: '🛍️',
+    image: '/images/step-reserve.png',
     title: 'Réservez en 1 clic',
     desc: 'Sélectionnez l\'offre qui vous plaît et réservez instantanément depuis votre téléphone, sans frais cachés.',
-    color: 'bg-amber-50 dark:bg-amber-900/20',
-    iconColor: 'text-amber-600',
+    bg: 'bg-amber-50 dark:bg-amber-900/20',
   },
   {
     step: '03',
-    icon: Star,
-    emoji: '✨',
+    image: '/images/step-pickup.png',
     title: 'Récupérez & savourez',
     desc: 'Rendez-vous chez le commerçant, récupérez votre commande et profitez de bons produits à prix mini.',
-    color: 'bg-rose-50 dark:bg-rose-900/20',
-    iconColor: 'text-rose-600',
+    bg: 'bg-rose-50 dark:bg-rose-900/20',
   },
 ];
 
 const TRUST_ITEMS = [
   { icon: '🌱', title: 'Contre le gaspillage', desc: 'Chaque achat sauve un produit de la poubelle' },
   { icon: '💰', title: 'Jusqu\'à -70%', desc: 'Des réductions réelles sur les prix boutique' },
-  { icon: '📍', title: '48 wilayas', desc: 'Des commerçants partout en Algérie' },
+  { icon: '📍', title: '58 wilayas', desc: 'Des commerçants partout en Algérie' },
   { icon: '🔒', title: '100% sécurisé', desc: 'Paiements et données protégés' },
 ];
 
@@ -132,7 +126,7 @@ export default async function HomePage({ params: { locale } }) {
                 {[
                   { value: `${stats.offers}+`, label: 'offres actives' },
                   { value: `${stats.merchants}+`, label: 'commerçants' },
-                  { value: '48', label: 'wilayas' },
+                  { value: '58', label: 'wilayas' },
                 ].map(({ value, label }) => (
                   <div key={label}>
                     <div className="text-2xl font-black text-gray-900 dark:text-white">{value}</div>
@@ -228,26 +222,29 @@ export default async function HomePage({ params: { locale } }) {
             {/* Connector line */}
             <div className="hidden md:block absolute top-12 left-[calc(16.66%+2rem)] right-[calc(16.66%+2rem)] h-0.5 bg-gradient-to-r from-primary-200 via-primary-300 to-primary-200 dark:from-primary-800 dark:via-primary-700 dark:to-primary-800" />
 
-            {HOW_IT_WORKS.map((step, i) => {
-              const Icon = step.icon;
-              return (
-                <div key={step.step}
-                  className={`text-center animate-fade-in-up delay-${(i + 1) * 200}`}
-                  style={{ animationDelay: `${i * 200}ms` }}
-                >
-                  <div className="relative inline-flex mb-6">
-                    <div className={`w-24 h-24 rounded-3xl ${step.color} flex items-center justify-center text-4xl shadow-sm`}>
-                      {step.emoji}
-                    </div>
-                    <div className="absolute -top-2 -right-2 w-7 h-7 bg-dark-green dark:bg-primary-500 text-white rounded-full flex items-center justify-center text-xs font-black shadow-sm">
-                      {i + 1}
-                    </div>
+            {HOW_IT_WORKS.map((step, i) => (
+              <div key={step.step}
+                className="text-center animate-fade-in-up"
+                style={{ animationDelay: `${i * 200}ms` }}
+              >
+                <div className="relative inline-flex mb-6">
+                  <div className={`w-36 h-36 rounded-3xl ${step.bg} overflow-hidden shadow-sm`}>
+                    <Image
+                      src={step.image}
+                      alt={step.title}
+                      width={144}
+                      height={144}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{step.title}</h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-xs mx-auto">{step.desc}</p>
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-dark-green dark:bg-primary-500 text-white rounded-full flex items-center justify-center text-sm font-black shadow-sm">
+                    {i + 1}
+                  </div>
                 </div>
-              );
-            })}
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{step.title}</h3>
+                <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-xs mx-auto">{step.desc}</p>
+              </div>
+            ))}
           </div>
 
           <div className="text-center mt-12">
@@ -349,7 +346,7 @@ export default async function HomePage({ params: { locale } }) {
               { value: `${stats.offers}+`, label: 'Offres actives', emoji: '🏷️' },
               { value: `${stats.merchants}+`, label: 'Commerçants', emoji: '🏪' },
               { value: '18 000+', label: 'Repas sauvés', emoji: '🥗' },
-              { value: '48', label: 'Wilayas couvertes', emoji: '📍' },
+              { value: '58', label: 'Wilayas couvertes', emoji: '📍' },
             ].map(({ value, label, emoji }) => (
               <div key={label} className="group">
                 <div className="text-4xl mb-2">{emoji}</div>
@@ -379,9 +376,17 @@ export default async function HomePage({ params: { locale } }) {
                 <h2 className="text-3xl sm:text-4xl font-black mb-4 leading-tight">
                   Vous avez des produits à écouler ?
                 </h2>
-                <p className="text-white/80 text-lg leading-relaxed">
+                <p className="text-white/80 text-lg leading-relaxed mb-6">
                   Publiez vos offres en moins de 2 minutes, touchez des milliers de clients locaux et réduisez vos pertes.
                 </p>
+                <div className="rounded-2xl overflow-hidden h-48 relative shadow-lg">
+                  <Image
+                    src="/images/merchant-cta.jpg"
+                    alt="Commerçant StockAlerte"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               </div>
               <div className="flex flex-col gap-4">
                 {[

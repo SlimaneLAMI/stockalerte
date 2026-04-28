@@ -90,7 +90,7 @@ export default async function Footer() {
               {[
                 { emoji: '🌿', value: '2.4T', label: 'CO₂ économisé' },
                 { emoji: '🥗', value: '18K',  label: 'repas sauvés' },
-                { emoji: '💚', value: '48',   label: 'wilayas' },
+                { emoji: '💚', value: '58',   label: 'wilayas' },
               ].map((stat) => (
                 <div key={stat.label} className="flex items-center gap-2.5">
                   <span className="text-lg">{stat.emoji}</span>
