@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useSearchParams, useRouter } from 'next/navigation';
 import PublicLayout from '@/components/layout/PublicLayout';
@@ -26,7 +26,7 @@ const SORTS = [
   { value: 'expiresAt',   label: 'Expire bientôt' },
 ];
 
-export default function DiscoverPage() {
+function DiscoverContent() {
   const t      = useTranslations('offers');
   const locale = useLocale();
   const router = useRouter();
@@ -162,5 +162,13 @@ export default function DiscoverPage() {
         )}
       </div>
     </PublicLayout>
+  );
+}
+
+export default function DiscoverPage() {
+  return (
+    <Suspense>
+      <DiscoverContent />
+    </Suspense>
   );
 }
