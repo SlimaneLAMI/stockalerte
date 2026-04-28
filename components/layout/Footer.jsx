@@ -1,56 +1,117 @@
 import Link from 'next/link';
-import { useLocale, useTranslations } from 'next-intl';
+import { getLocale, getTranslations } from 'next-intl/server';
+import { Leaf, Heart, Instagram, Facebook, Twitter } from 'lucide-react';
 
-export default function Footer() {
-  const t      = useTranslations('footer');
-  const locale = useLocale();
+export default async function Footer() {
+  const locale = await getLocale();
+  const t      = await getTranslations('footer');
 
   return (
-    <footer className="bg-gray-900 dark:bg-gray-950 text-gray-300 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="bg-primary-500 text-white px-2 py-1 rounded-lg text-sm font-extrabold">SA</span>
-              <span className="text-white font-bold text-lg">StockAlerte</span>
+    <footer className="bg-dark-green dark:bg-gray-950 text-white mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
+
+          {/* Brand column */}
+          <div className="md:col-span-5">
+            <Link href={`/${locale}`} className="flex items-center gap-2.5 mb-5">
+              <div className="bg-primary-500 text-white w-9 h-9 rounded-xl flex items-center justify-center shadow-green">
+                <Leaf className="w-5 h-5" />
+              </div>
+              <span className="font-extrabold text-xl tracking-tight">
+                Stock<span className="text-primary-400">Alerte</span>
+              </span>
+            </Link>
+            <p className="text-white/60 text-sm leading-relaxed max-w-xs">
+              {t('tagline')}
+            </p>
+            <div className="flex items-center gap-2 mt-5">
+              <span className="text-xl">🇩🇿</span>
+              <span className="text-sm text-white/50 font-medium">Made with</span>
+              <Heart className="w-3.5 h-3.5 text-red-400 fill-red-400" />
+              <span className="text-sm text-white/50 font-medium">in Algeria</span>
             </div>
-            <p className="text-sm text-gray-400 max-w-xs">{t('tagline')}</p>
-            <div className="flex gap-3 mt-4">
-              <span className="text-2xl">🇩🇿</span>
-              <span className="text-sm text-gray-500 self-center">Made in Algeria</span>
+            <div className="flex gap-3 mt-6">
+              {[
+                { icon: Instagram, label: 'Instagram' },
+                { icon: Facebook,  label: 'Facebook' },
+                { icon: Twitter,   label: 'Twitter' },
+              ].map(({ icon: Icon, label }) => (
+                <button key={label} aria-label={label}
+                  className="w-9 h-9 rounded-xl bg-white/10 hover:bg-primary-500 flex items-center justify-center transition-colors duration-200">
+                  <Icon className="w-4 h-4" />
+                </button>
+              ))}
             </div>
           </div>
 
           {/* Links */}
-          <div>
-            <h3 className="text-white font-semibold mb-3 text-sm">Plateforme</h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link href={`/${locale}/discover`} className="hover:text-white transition-colors">Offres</Link></li>
-              <li><Link href={`/${locale}/map`} className="hover:text-white transition-colors">Carte</Link></li>
-              <li><Link href={`/${locale}/auth/register`} className="hover:text-white transition-colors">S'inscrire</Link></li>
+          <div className="md:col-span-3">
+            <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-5 text-white/40">Plateforme</h3>
+            <ul className="space-y-3">
+              {[
+                { href: `/${locale}/discover`, label: 'Offres du moment' },
+                { href: `/${locale}/map`,      label: 'Carte des commerces' },
+                { href: `/${locale}/auth/register`, label: 'Créer un compte' },
+                { href: `/${locale}/auth/login`,    label: 'Se connecter' },
+              ].map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href}
+                    className="text-sm text-white/60 hover:text-white transition-colors duration-200">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div>
-            <h3 className="text-white font-semibold mb-3 text-sm">Info</h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link href={`/${locale}/about`} className="hover:text-white transition-colors">{t('about')}</Link></li>
-              <li><Link href={`/${locale}/contact`} className="hover:text-white transition-colors">{t('contact')}</Link></li>
-              <li><Link href={`/${locale}/privacy`} className="hover:text-white transition-colors">{t('privacy')}</Link></li>
-              <li><Link href={`/${locale}/terms`} className="hover:text-white transition-colors">{t('terms')}</Link></li>
+          <div className="md:col-span-2">
+            <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-5 text-white/40">À propos</h3>
+            <ul className="space-y-3">
+              {[
+                { href: `/${locale}/about`,   label: t('about') },
+                { href: `/${locale}/contact`, label: t('contact') },
+                { href: `/${locale}/privacy`, label: t('privacy') },
+                { href: `/${locale}/terms`,   label: t('terms') },
+              ].map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href}
+                    className="text-sm text-white/60 hover:text-white transition-colors duration-200">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
+          </div>
+
+          {/* Impact */}
+          <div className="md:col-span-2">
+            <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-5 text-white/40">Impact</h3>
+            <div className="space-y-4">
+              {[
+                { emoji: '🌿', value: '2.4T', label: 'CO₂ économisé' },
+                { emoji: '🥗', value: '18K',  label: 'repas sauvés' },
+                { emoji: '💚', value: '48',   label: 'wilayas' },
+              ].map((stat) => (
+                <div key={stat.label} className="flex items-center gap-2.5">
+                  <span className="text-lg">{stat.emoji}</span>
+                  <div>
+                    <div className="text-white font-bold text-sm">{stat.value}</div>
+                    <div className="text-white/40 text-xs">{stat.label}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-gray-500">
+        {/* Bottom bar */}
+        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-3">
+          <p className="text-xs text-white/30">
             © {new Date().getFullYear()} StockAlerte. {t('rights')}.
           </p>
-          <div className="flex gap-4 text-xs text-gray-500">
-            <span>🌿 Anti-gaspillage</span>
-            <span>🛡️ Sécurisé</span>
-            <span>📍 Algérie</span>
+          <div className="flex gap-1">
+            <span className="text-xs bg-primary-500/20 text-primary-400 px-3 py-1 rounded-full font-medium">🌱 Anti-gaspillage</span>
+            <span className="text-xs bg-white/10 text-white/50 px-3 py-1 rounded-full font-medium">🔒 Sécurisé</span>
           </div>
         </div>
       </div>

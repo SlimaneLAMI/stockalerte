@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLocale } from 'next-intl';
-import { Heart, Clock, MapPin, Tag } from 'lucide-react';
+import { Heart, Clock, MapPin } from 'lucide-react';
 import { cn, formatPrice, daysUntilExpiry, getDiscountPercent } from '@/lib/utils';
 import { useState } from 'react';
 import axios from 'axios';
@@ -11,15 +11,15 @@ import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 
 const TYPE_CONFIG = {
-  sale:       { label: 'Solde',           color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
-  promotion:  { label: 'Promotion',       color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
-  pack:       { label: 'Pack',            color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
-  'anti-waste': { label: 'Anti-gaspi',    color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
-  donation:   { label: 'Don',            color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
+  sale:         { label: 'Solde',       color: 'bg-red-100 text-red-700' },
+  promotion:    { label: 'Promo',       color: 'bg-blue-100 text-blue-700' },
+  pack:         { label: 'Pack',        color: 'bg-purple-100 text-purple-700' },
+  'anti-waste': { label: 'Anti-gaspi',  color: 'bg-primary-100 text-primary-700' },
+  donation:     { label: 'Don',         color: 'bg-orange-100 text-orange-700' },
 };
 
 export default function OfferCard({ offer, initialFavorited = false }) {
-  const locale       = useLocale();
+  const locale            = useLocale();
   const { data: session } = useSession();
   const [favorited, setFavorited] = useState(initialFavorited);
   const [loading, setLoading]     = useState(false);
@@ -27,15 +27,18 @@ export default function OfferCard({ offer, initialFavorited = false }) {
   const days       = daysUntilExpiry(offer.expiresAt);
   const discount   = getDiscountPercent(offer.originalPrice, offer.discountPrice);
   const typeConfig = TYPE_CONFIG[offer.type] || TYPE_CONFIG.promotion;
+  const isUrgent   = days <= 1;
+  const isSoon     = days <= 3 && days > 1;
 
   async function toggleFavorite(e) {
     e.preventDefault();
+    e.stopPropagation();
     if (!session) { toast.error('Connectez-vous pour ajouter aux favoris'); return; }
     setLoading(true);
     try {
       const { data } = await axios.post('/api/favorites', { offerId: offer._id });
       setFavorited(data.favorited);
-      toast.success(data.favorited ? 'Ajouté aux favoris' : 'Retiré des favoris');
+      toast.success(data.favorited ? '💚 Ajouté aux favoris' : 'Retiré des favoris');
     } catch {
       toast.error('Erreur');
     } finally {
@@ -45,86 +48,104 @@ export default function OfferCard({ offer, initialFavorited = false }) {
 
   return (
     <Link href={`/${locale}/offers/${offer._id}`} className="block group">
-      <article className="card overflow-hidden h-full flex flex-col">
+      <article className="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
+
         {/* Image */}
-        <div className="relative h-48 bg-gray-100 dark:bg-gray-800 overflow-hidden">
+        <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-800 overflow-hidden">
           {offer.images?.[0] ? (
             <Image
               src={offer.images[0]}
               alt={offer.title}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-4xl">🏷️</div>
+            <div className="w-full h-full flex items-center justify-center">
+              <span className="text-6xl opacity-30">🏷️</span>
+            </div>
           )}
+
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
 
           {/* Discount badge */}
           {discount > 0 && (
-            <div className="absolute top-3 start-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+            <div className="absolute top-3 start-3 bg-red-500 text-white text-xs font-extrabold px-2.5 py-1.5 rounded-xl shadow-sm">
               -{discount}%
             </div>
           )}
 
-          {/* Type badge */}
-          <div className={cn('absolute top-3 end-12 badge text-xs', typeConfig.color)}>
-            {typeConfig.label}
-          </div>
-
-          {/* Favorite */}
+          {/* Favorite button */}
           <button
             onClick={toggleFavorite}
             disabled={loading}
-            className="absolute top-3 end-3 p-1.5 rounded-full bg-white/80 dark:bg-gray-900/80 hover:bg-white dark:hover:bg-gray-900 transition-colors shadow"
+            className="absolute top-3 end-3 w-9 h-9 rounded-xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-900 flex items-center justify-center transition-all duration-200 shadow-sm hover:scale-110 active:scale-95"
           >
-            <Heart className={cn('w-4 h-4', favorited ? 'fill-red-500 text-red-500' : 'text-gray-400')} />
+            <Heart className={cn('w-4 h-4 transition-colors', favorited ? 'fill-red-500 text-red-500' : 'text-gray-400')} />
           </button>
+
+          {/* Urgency ribbon */}
+          {isUrgent && (
+            <div className="absolute bottom-3 start-3 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-sm">
+              <Clock className="w-3 h-3" />
+              Expire aujourd'hui !
+            </div>
+          )}
         </div>
 
         {/* Content */}
-        <div className="p-4 flex flex-col flex-1">
-          {/* Merchant */}
-          {offer.merchant && (
-            <div className="flex items-center gap-2 mb-2">
-              {offer.merchant.logo ? (
-                <img src={offer.merchant.logo} alt="" className="w-5 h-5 rounded-full object-cover" />
-              ) : (
-                <div className="w-5 h-5 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-xs">🏪</div>
-              )}
-              <span className="text-xs text-gray-500 truncate">{offer.merchant.businessName}</span>
-            </div>
-          )}
+        <div className="p-4 flex flex-col flex-1 gap-2">
 
-          <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-2 mb-2 group-hover:text-primary-600 transition-colors">
-            {offer.title}
-          </h3>
-
-          {/* Price */}
-          <div className="flex items-baseline gap-2 mb-3">
-            {offer.discountPrice !== undefined && (
-              <span className="text-lg font-bold text-primary-600">{formatPrice(offer.discountPrice)}</span>
-            )}
-            {offer.originalPrice && offer.discountPrice && offer.originalPrice !== offer.discountPrice && (
-              <span className="text-sm text-gray-400 line-through">{formatPrice(offer.originalPrice)}</span>
-            )}
-            {offer.type === 'donation' && (
-              <span className="text-sm font-medium text-green-600">Gratuit</span>
+          {/* Type + merchant row */}
+          <div className="flex items-center justify-between gap-2">
+            <span className={cn('badge text-xs', typeConfig.color)}>
+              {typeConfig.label}
+            </span>
+            {offer.merchant && (
+              <span className="text-xs text-gray-400 truncate flex items-center gap-1.5">
+                {offer.merchant.logo
+                  ? <img src={offer.merchant.logo} alt="" className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
+                  : <span className="text-xs">🏪</span>}
+                <span className="truncate">{offer.merchant.businessName}</span>
+              </span>
             )}
           </div>
 
-          <div className="mt-auto space-y-1">
-            {/* Expiry */}
-            <div className={cn('flex items-center gap-1 text-xs', days <= 1 ? 'text-red-500' : days <= 3 ? 'text-orange-500' : 'text-gray-400')}>
-              <Clock className="w-3.5 h-3.5" />
-              {days <= 0 ? 'Expiré' : `${days}j restants`}
-            </div>
+          {/* Title */}
+          <h3 className="font-bold text-gray-900 dark:text-white line-clamp-2 text-[15px] leading-snug group-hover:text-primary-600 transition-colors">
+            {offer.title}
+          </h3>
 
-            {/* Location */}
+          {/* Price row */}
+          <div className="flex items-center gap-2 mt-auto pt-1">
+            {offer.type === 'donation' ? (
+              <span className="text-lg font-extrabold text-primary-600">Gratuit 🎁</span>
+            ) : (
+              <>
+                {offer.discountPrice !== undefined && (
+                  <span className="text-lg font-extrabold text-gray-900 dark:text-white">
+                    {formatPrice(offer.discountPrice)}
+                  </span>
+                )}
+                {offer.originalPrice && offer.discountPrice && offer.originalPrice !== offer.discountPrice && (
+                  <span className="text-sm text-gray-400 line-through">{formatPrice(offer.originalPrice)}</span>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Footer info */}
+          <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800">
+            <span className={cn('flex items-center gap-1 text-xs font-medium',
+              isUrgent ? 'text-red-500' : isSoon ? 'text-orange-500' : 'text-gray-400')}>
+              <Clock className="w-3.5 h-3.5" />
+              {days <= 0 ? 'Expiré' : days === 1 ? '1j restant' : `${days}j restants`}
+            </span>
             {offer.merchant?.address?.wilaya && (
-              <div className="flex items-center gap-1 text-xs text-gray-400">
-                <MapPin className="w-3.5 h-3.5" />
+              <span className="flex items-center gap-1 text-xs text-gray-400 truncate max-w-[120px]">
+                <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                 {offer.merchant.address.commune || offer.merchant.address.wilaya}
-              </div>
+              </span>
             )}
           </div>
         </div>

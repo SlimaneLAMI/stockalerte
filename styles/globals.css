@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cairo:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Cairo:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   --font-inter: 'Inter', sans-serif;
@@ -23,62 +23,109 @@ html:not([lang='ar']) {
   * {
     @apply border-gray-200;
   }
-
   body {
     @apply bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-50;
+    -webkit-font-smoothing: antialiased;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
-
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold;
+    @apply font-bold tracking-tight;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-500 hover:bg-primary-600 text-white font-medium px-4 py-2 rounded-lg
+    @apply inline-flex items-center justify-center gap-2
+           bg-primary-500 hover:bg-primary-600 active:bg-primary-700
+           text-white font-semibold px-7 py-3.5 rounded-2xl
            transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
-           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+           shadow-green hover:shadow-green-lg active:scale-[0.97];
   }
-
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-gray-700 font-medium px-4 py-2 rounded-lg border
-           border-gray-200 transition-all duration-200 focus:outline-none focus:ring-2
-           focus:ring-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700
-           dark:hover:bg-gray-700;
+    @apply inline-flex items-center justify-center gap-2
+           bg-white hover:bg-gray-50 active:bg-gray-100
+           text-gray-800 font-semibold px-7 py-3.5 rounded-2xl border-2 border-gray-200
+           transition-all duration-200
+           dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700
+           active:scale-[0.97] shadow-sm;
   }
-
   .btn-ghost {
-    @apply hover:bg-gray-100 text-gray-600 font-medium px-4 py-2 rounded-lg transition-all
-           duration-200 dark:hover:bg-gray-800 dark:text-gray-300;
+    @apply inline-flex items-center justify-center gap-2
+           hover:bg-gray-100 dark:hover:bg-gray-800
+           text-gray-700 dark:text-gray-300 font-medium px-4 py-2.5 rounded-xl
+           transition-all duration-200 active:scale-[0.97];
   }
-
+  .btn-outline-primary {
+    @apply inline-flex items-center justify-center gap-2
+           border-2 border-primary-500 text-primary-600 hover:bg-primary-50
+           font-semibold px-7 py-3.5 rounded-2xl transition-all duration-200 active:scale-[0.97];
+  }
+  .btn-white {
+    @apply inline-flex items-center justify-center gap-2
+           bg-white hover:bg-gray-50 text-gray-900 font-semibold
+           px-7 py-3.5 rounded-2xl transition-all duration-200 active:scale-[0.97] shadow-md;
+  }
   .input {
-    @apply w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm
-           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+    @apply w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl text-sm bg-white
+           focus:outline-none focus:ring-0 focus:border-primary-500
            dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100
            placeholder:text-gray-400 transition-all duration-200;
   }
-
   .card {
-    @apply bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800
-           shadow-sm hover:shadow-md transition-shadow duration-200;
+    @apply bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800
+           shadow-card hover:shadow-card-hover transition-all duration-300;
   }
-
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold;
   }
-
   .skeleton {
-    @apply bg-gray-200 dark:bg-gray-700 animate-pulse rounded;
+    @apply bg-gray-100 dark:bg-gray-800 animate-pulse rounded-2xl;
+  }
+  .section-title {
+    @apply text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight;
+  }
+  .section-subtitle {
+    @apply text-lg text-gray-500 dark:text-gray-400 mt-3 font-normal;
+  }
+  .glass {
+    @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl;
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent;
   }
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { @apply bg-transparent; }
-::-webkit-scrollbar-thumb { @apply bg-gray-300 dark:bg-gray-600 rounded-full; }
-::-webkit-scrollbar-thumb:hover { @apply bg-gray-400 dark:bg-gray-500; }
+/* Animation delay utilities */
+.delay-75   { animation-delay: 75ms; }
+.delay-100  { animation-delay: 100ms; }
+.delay-150  { animation-delay: 150ms; }
+.delay-200  { animation-delay: 200ms; }
+.delay-300  { animation-delay: 300ms; }
+.delay-400  { animation-delay: 400ms; }
+.delay-500  { animation-delay: 500ms; }
+.delay-600  { animation-delay: 600ms; }
+.delay-700  { animation-delay: 700ms; }
+.delay-900  { animation-delay: 900ms; }
+.delay-1000 { animation-delay: 1000ms; }
 
-/* Leaflet map */
-.leaflet-container { @apply z-0 rounded-xl; }
+/* Elements start hidden before animation fires */
+.animate-fade-in-up  { opacity: 0; }
+.animate-slide-right { opacity: 0; }
+.animate-scale-in    { opacity: 0; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { @apply bg-gray-200 dark:bg-gray-700 rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-gray-300 dark:bg-gray-600; }
+
+/* Leaflet */
+.leaflet-container { @apply z-0 rounded-3xl; }
+
+/* Shimmer skeleton */
+.shimmer-bg {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
