@@ -1,10 +1,12 @@
+'use client';
+
 import Link from 'next/link';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { useLocale, useTranslations } from 'next-intl';
 import { Leaf, Instagram, Facebook, Twitter } from 'lucide-react';
 
-export default async function Footer() {
-  const locale = (await getLocale()) || 'fr';
-  const t      = await getTranslations('footer');
+export default function Footer() {
+  const locale = useLocale();
+  const t      = useTranslations('footer');
 
   return (
     <footer className="bg-dark-green dark:bg-gray-950 text-white mt-auto">
@@ -43,8 +45,8 @@ export default async function Footer() {
             <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-5 text-white/40">Plateforme</h3>
             <ul className="space-y-3">
               {[
-                { href: `/${locale}/discover`, label: 'Offres du moment' },
-                { href: `/${locale}/map`,      label: 'Carte des commerces' },
+                { href: `/${locale}/discover`,      label: 'Offres du moment' },
+                { href: `/${locale}/map`,           label: 'Carte des commerces' },
                 { href: `/${locale}/auth/register`, label: 'Créer un compte' },
                 { href: `/${locale}/auth/login`,    label: 'Se connecter' },
               ].map((item) => (

@@ -1,9 +1,11 @@
+'use client';
+
 import Link from 'next/link';
-import { getLocale } from 'next-intl/server';
+import { useLocale } from 'next-intl';
 import { Star, MapPin, Package, Users, BadgeCheck } from 'lucide-react';
 
-export default async function MerchantCard({ merchant }) {
-  const locale = await getLocale();
+export default function MerchantCard({ merchant }) {
+  const locale = useLocale();
 
   return (
     <Link href={`/${locale}/merchants/${merchant.slug || merchant._id}`} className="block group">
