@@ -105,11 +105,11 @@ export default function OffersMap({
         style={{ height: '100%', width: '100%' }}
         className="z-0"
       >
-        {/* ── Esri World Street Map (données propriétaires Esri, gratuit, sans OSM) ── */}
+        {/* ── Jawg Maps Streets – frontières neutres, Sahara Occidental visible ── */}
         <TileLayer
-          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
-          attribution='Tiles &copy; <a href="https://www.esri.com/" target="_blank">Esri</a>'
-          maxZoom={20}
+          url={"https://tile.jawg.io/jawg-streets/{z}/{x}/{y}{r}.png?access-token=" + (process.env.NEXT_PUBLIC_JAWG_TOKEN || '')}
+          attribution='&copy; <a href="https://www.jawg.io" target="_blank">Jawg Maps</a>'
+          maxZoom={22}
         />
         <ZoomControl position="bottomright" />
         <RecenterMap center={center} />
