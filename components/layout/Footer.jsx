@@ -3,7 +3,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { Leaf, Instagram, Facebook, Twitter } from 'lucide-react';
 
 export default async function Footer() {
-  const locale = await getLocale();
+  const locale = (await getLocale()) || 'fr';
   const t      = await getTranslations('footer');
 
   return (

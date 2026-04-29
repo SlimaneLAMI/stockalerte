@@ -32,7 +32,9 @@ const DELIVERY_MODES = [
   { key: 'delivery',    icon: Truck,         label: 'Livraison',  color: 'text-primary-600 bg-primary-50 dark:bg-primary-900/20' },
 ];
 
-export default async function OfferDetailPage({ params: { locale, id } }) {
+export default async function OfferDetailPage({ params }) {
+  const locale = params?.locale || 'fr';
+  const id     = params?.id;
   const offer = await getOffer(id);
   if (!offer) return notFound();
 

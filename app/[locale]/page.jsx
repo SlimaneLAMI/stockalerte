@@ -89,7 +89,8 @@ const WASTE_STATS = [
   { icon: Zap,           value: '+40%',   unit: '',        label: 'de gaspillage supplémentaire observé chaque Ramadan', color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-900/20' },
 ];
 
-export default async function HomePage({ params: { locale } }) {
+export default async function HomePage({ params }) {
+  const locale = params?.locale || 'fr';
   const t = await getTranslations('home');
   const [offers, stats] = await Promise.all([getFeaturedOffers(), getStats()]);
 

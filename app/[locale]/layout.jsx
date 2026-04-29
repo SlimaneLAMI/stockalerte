@@ -3,6 +3,7 @@ import { getMessages } from 'next-intl/server';
 import { Toaster } from 'react-hot-toast';
 import SessionProvider from '@/components/providers/SessionProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import PingKeepAlive from '@/components/providers/PingKeepAlive';
 import '@/styles/globals.css';
 
 export const metadata = {
@@ -19,7 +20,8 @@ export const metadata = {
 
 const RTL_LOCALES = ['ar'];
 
-export default async function RootLayout({ children, params: { locale } }) {
+export default async function RootLayout({ children, params }) {
+  const locale = params?.locale || 'fr';
   const messages = await getMessages();
   const isRTL    = RTL_LOCALES.includes(locale);
 
@@ -43,6 +45,7 @@ export default async function RootLayout({ children, params: { locale } }) {
         <SessionProvider>
           <ThemeProvider>
             <NextIntlClientProvider locale={locale} messages={messages}>
+              <PingKeepAlive />
               {children}
               <Toaster
                 position="top-center"
