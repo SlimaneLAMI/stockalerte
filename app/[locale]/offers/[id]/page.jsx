@@ -5,8 +5,9 @@ import { connectDB } from '@/lib/db';
 import Offer from '@/models/Offer';
 import PublicLayout from '@/components/layout/PublicLayout';
 import Badge from '@/components/ui/Badge';
+import OfferActionPanel from '@/components/ui/OfferActionPanel';
 import { formatPrice, formatDate, daysUntilExpiry, getDiscountPercent } from '@/lib/utils';
-import { Clock, MapPin, Package, Star, Phone, ExternalLink } from 'lucide-react';
+import { Clock, MapPin, Phone, Star, Store, CalendarCheck, Truck } from 'lucide-react';
 
 async function getOffer(id) {
   try {
@@ -25,12 +26,20 @@ const TYPE_LABELS = {
   sale: 'Solde', promotion: 'Promotion', pack: 'Pack', 'anti-waste': 'Anti-gaspillage', donation: 'Don',
 };
 
+const DELIVERY_MODES = [
+  { key: 'pickup',      icon: Store,         label: 'Sur place',  color: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20' },
+  { key: 'reservation', icon: CalendarCheck, label: 'Réservation', color: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20' },
+  { key: 'delivery',    icon: Truck,         label: 'Livraison',  color: 'text-primary-600 bg-primary-50 dark:bg-primary-900/20' },
+];
+
 export default async function OfferDetailPage({ params: { locale, id } }) {
   const offer = await getOffer(id);
   if (!offer) return notFound();
 
   const days     = daysUntilExpiry(offer.expiresAt);
   const discount = getDiscountPercent(offer.originalPrice, offer.discountPrice);
+  const deliveryOptions = offer.deliveryOptions || { pickup: true };
+  const activeDeliveryModes = DELIVERY_MODES.filter((m) => deliveryOptions[m.key]);
 
   return (
     <PublicLayout>
@@ -90,6 +99,18 @@ export default async function OfferDetailPage({ params: { locale, id } }) {
                 )}
               </div>
 
+              {/* Delivery modes badges */}
+              {activeDeliveryModes.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {activeDeliveryModes.map(({ key, icon: Icon, label, color }) => (
+                    <span key={key} className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${color}`}>
+                      <Icon className="w-3.5 h-3.5" />
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              )}
+
               {/* Details */}
               <div className="grid grid-cols-2 gap-4 py-4 border-y border-gray-100 dark:border-gray-800">
                 <div>
@@ -120,8 +141,14 @@ export default async function OfferDetailPage({ params: { locale, id } }) {
             </div>
           </div>
 
-          {/* Sidebar - Merchant */}
+          {/* Sidebar */}
           <div className="space-y-4">
+            {/* Action panel */}
+            {days > 0 && (
+              <OfferActionPanel offerId={offer._id.toString()} deliveryOptions={deliveryOptions} />
+            )}
+
+            {/* Merchant */}
             {offer.merchant && (
               <div className="card p-5">
                 <h3 className="font-semibold mb-4 text-gray-900 dark:text-white">À propos du commerçant</h3>

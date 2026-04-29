@@ -9,7 +9,7 @@ dotenv.config({ path: '.env.local' });
 
 const CATEGORIES = [
   { slug: 'alimentation',  name: { fr: 'Alimentation',   en: 'Food',         ar: 'غذاء' },      icon: '🥖', color: '#f97316', order: 1 },
-  { slug: 'pharmacie',     name: { fr: 'Pharmacie',       en: 'Pharmacy',     ar: 'صيدلية' },     icon: '💊', color: '#16a34a', order: 2 },
+  { slug: 'hygiene-beaute', name: { fr: 'Hygiène & Beauté', en: 'Health & Beauty', ar: 'نظافة وجمال' }, icon: '🧴', color: '#06b6d4', order: 2 },
   { slug: 'mode',          name: { fr: 'Mode',            en: 'Fashion',      ar: 'أزياء' },      icon: '👗', color: '#ec4899', order: 3 },
   { slug: 'maison',        name: { fr: 'Maison',          en: 'Home',         ar: 'منزل' },       icon: '🏠', color: '#2563eb', order: 4 },
   { slug: 'tech',          name: { fr: 'Tech',            en: 'Tech',         ar: 'تقنية' },      icon: '📱', color: '#7c3aed', order: 5 },

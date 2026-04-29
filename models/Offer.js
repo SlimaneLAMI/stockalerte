@@ -34,6 +34,11 @@ const OfferSchema = new mongoose.Schema(
       type: String,
       enum: ['available', 'reserved', 'collected'],
     },
+    deliveryOptions: {
+      pickup:      { type: Boolean, default: true },
+      reservation: { type: Boolean, default: false },
+      delivery:    { type: Boolean, default: false },
+    },
     location: {
       type:        { type: String, enum: ['Point'], default: 'Point' },
       coordinates: [Number],

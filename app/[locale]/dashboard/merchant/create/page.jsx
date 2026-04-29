@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import ImageUpload from '@/components/ui/ImageUpload';
-import { Loader2, Plus, X } from 'lucide-react';
+import { Loader2, Plus, X, Store, CalendarCheck, Truck } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -31,9 +31,13 @@ export default function CreateOfferPage() {
     quantity: '', unit: 'unité',
     expiresAt: '', startsAt: new Date().toISOString().split('T')[0],
     tags: '',
+    deliveryOptions: { pickup: true, reservation: false, delivery: false },
   });
 
   function updateField(field, value) { setForm((f) => ({ ...f, [field]: value })); }
+  function toggleDelivery(key) {
+    setForm((f) => ({ ...f, deliveryOptions: { ...f.deliveryOptions, [key]: !f.deliveryOptions[key] } }));
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -161,6 +165,35 @@ export default function CreateOfferPage() {
                   folder="stockalerte/offers"
                 />
               )}
+            </div>
+          </div>
+
+          {/* Delivery options */}
+          <div className="card p-6 space-y-4">
+            <div>
+              <h2 className="font-semibold text-gray-900 dark:text-white">Modes de retrait</h2>
+              <p className="text-xs text-gray-400 mt-1">Choisissez comment les clients peuvent obtenir ce produit</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                { key: 'pickup', icon: Store, label: 'Sur place', desc: 'Le client se déplace en boutique' },
+                { key: 'reservation', icon: CalendarCheck, label: 'Réservation', desc: 'Le client réserve, retire plus tard' },
+                { key: 'delivery', icon: Truck, label: 'Livraison', desc: 'Vous livrez chez le client' },
+              ].map(({ key, icon: Icon, label, desc }) => {
+                const active = form.deliveryOptions[key];
+                return (
+                  <button key={key} type="button" onClick={() => toggleDelivery(key)}
+                    className={`flex items-start gap-3 p-4 rounded-2xl border-2 text-left transition-all duration-200 ${active ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'}`}>
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${active ? 'bg-primary-500 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className={`text-sm font-semibold ${active ? 'text-primary-700 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300'}`}>{label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5 leading-snug">{desc}</p>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
 

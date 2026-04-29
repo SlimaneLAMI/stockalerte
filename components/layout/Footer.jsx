@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getLocale, getTranslations } from 'next-intl/server';
-import { Leaf, Heart, Instagram, Facebook, Twitter } from 'lucide-react';
+import { Leaf, Instagram, Facebook, Twitter } from 'lucide-react';
 
 export default async function Footer() {
   const locale = await getLocale();
@@ -24,12 +24,6 @@ export default async function Footer() {
             <p className="text-white/60 text-sm leading-relaxed max-w-xs">
               {t('tagline')}
             </p>
-            <div className="flex items-center gap-2 mt-5">
-              <span className="text-xl">🇩🇿</span>
-              <span className="text-sm text-white/50 font-medium">Made with</span>
-              <Heart className="w-3.5 h-3.5 text-red-400 fill-red-400" />
-              <span className="text-sm text-white/50 font-medium">in Algeria</span>
-            </div>
             <div className="flex gap-3 mt-6">
               {[
                 { icon: Instagram, label: 'Instagram' },
