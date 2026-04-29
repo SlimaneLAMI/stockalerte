@@ -2,8 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, ZoomControl } from 'react-leaflet';
-import Link from 'next/link';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { formatPrice, daysUntilExpiry, getDiscountPercent } from '@/lib/utils';
 import L from 'leaflet';
 
@@ -95,6 +94,7 @@ export default function OffersMap({
   onSelect = null,
 }) {
   const locale = useLocale();
+  const t      = useTranslations('map');
 
   return (
     <div style={{ height }} className="w-full rounded-2xl overflow-hidden shadow-md border border-gray-200 dark:border-gray-700">
@@ -136,7 +136,7 @@ export default function OffersMap({
                 maxWidth={240}
                 className="offer-popup"
               >
-                {/* ── Popup card (inline styles — Tailwind not available in Leaflet DOM) ── */}
+                {/* ── Popup card (inline styles — Tailwind not guaranteed in Leaflet DOM) ── */}
                 <div style={{ fontFamily: 'Inter, system-ui, sans-serif', padding: '2px' }}>
 
                   {/* Image */}
@@ -181,7 +181,7 @@ export default function OffersMap({
                   {/* Price + expiry */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                     {offer.type === 'donation' ? (
-                      <span style={{ fontWeight: 700, color: '#22c55e', fontSize: '14px' }}>Gratuit</span>
+                      <span style={{ fontWeight: 700, color: '#22c55e', fontSize: '14px' }}>{t('free')}</span>
                     ) : offer.discountPrice !== undefined ? (
                       <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
                         <span style={{ fontWeight: 800, color: '#22c55e', fontSize: '15px' }}>
@@ -199,7 +199,7 @@ export default function OffersMap({
                       fontWeight: 600,
                       color: days <= 0 ? '#ef4444' : days <= 2 ? '#f97316' : '#9ca3af',
                     }}>
-                      {days <= 0 ? 'Expiré' : `${days}j restants`}
+                      {days <= 0 ? t('expired') : t('days_left', { days })}
                     </span>
                   </div>
 
@@ -219,7 +219,7 @@ export default function OffersMap({
                       letterSpacing: '0.2px',
                     }}
                   >
-                    Voir l'offre →
+                    {t('view_offer')}
                   </a>
                 </div>
               </Popup>

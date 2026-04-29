@@ -2,34 +2,18 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import PublicLayout from '@/components/layout/PublicLayout';
 import OfferCard from '@/components/ui/OfferCard';
 import OfferCardSkeleton from '@/components/ui/OfferCardSkeleton';
 import EmptyState from '@/components/ui/EmptyState';
-import { Search, SlidersHorizontal, X, MapPin } from 'lucide-react';
+import { Search, SlidersHorizontal } from 'lucide-react';
 import axios from 'axios';
 import { cn } from '@/lib/utils';
-
-const TYPES = [
-  { value: 'all',       label: 'Tous' },
-  { value: 'promotion', label: 'Promotion' },
-  { value: 'sale',      label: 'Solde' },
-  { value: 'pack',      label: 'Pack' },
-  { value: 'anti-waste', label: 'Anti-gaspi' },
-  { value: 'donation',  label: 'Don' },
-];
-
-const SORTS = [
-  { value: 'createdAt',    label: 'Plus récents' },
-  { value: 'discountPercent', label: 'Meilleure remise' },
-  { value: 'expiresAt',   label: 'Expire bientôt' },
-];
 
 function DiscoverContent() {
   const t      = useTranslations('offers');
   const locale = useLocale();
-  const router = useRouter();
   const sp     = useSearchParams();
 
   const [offers, setOffers]   = useState([]);
@@ -43,6 +27,21 @@ function DiscoverContent() {
     q:     sp.get('q') || '',
     sort:  'createdAt',
   });
+
+  const TYPES = [
+    { value: 'all',        label: t('type_all_short') },
+    { value: 'promotion',  label: t('type_promotion') },
+    { value: 'sale',       label: t('type_sale') },
+    { value: 'pack',       label: t('type_pack') },
+    { value: 'anti-waste', label: t('type_anti_waste_short') },
+    { value: 'donation',   label: t('type_donation') },
+  ];
+
+  const SORTS = [
+    { value: 'createdAt',       label: t('sort_newest') },
+    { value: 'discountPercent', label: t('sort_discount') },
+    { value: 'expiresAt',       label: t('sort_expiry') },
+  ];
 
   const fetchOffers = useCallback(async (p = 1) => {
     setLoading(true);
@@ -72,7 +71,7 @@ function DiscoverContent() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{t('title')}</h1>
-          <p className="text-gray-500">{total} offres disponibles</p>
+          <p className="text-gray-500">{t('available_count', { total })}</p>
         </div>
 
         {/* Search + Filters */}
@@ -84,7 +83,7 @@ function DiscoverContent() {
                 type="text"
                 value={filters.q}
                 onChange={(e) => setFilters((f) => ({ ...f, q: e.target.value }))}
-                placeholder="Rechercher une offre..."
+                placeholder={t('search_placeholder')}
                 className="input ps-10"
               />
             </div>
@@ -93,7 +92,7 @@ function DiscoverContent() {
               className={cn('btn-secondary flex items-center gap-2', showFilters && 'ring-2 ring-primary-500')}
             >
               <SlidersHorizontal className="w-4 h-4" />
-              <span className="hidden sm:block">Filtres</span>
+              <span className="hidden sm:block">{t('filters_btn')}</span>
             </button>
           </div>
 
@@ -119,7 +118,7 @@ function DiscoverContent() {
           {showFilters && (
             <div className="card p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block">Trier par</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block">{t('sort_by')}</label>
                 <select
                   value={filters.sort}
                   onChange={(e) => setFilters((f) => ({ ...f, sort: e.target.value }))}
@@ -144,8 +143,8 @@ function DiscoverContent() {
         {!loading && offers.length === 0 && (
           <EmptyState
             icon="🔍"
-            title="Aucune offre trouvée"
-            description="Essayez de modifier vos filtres ou votre recherche"
+            title={t('no_offers')}
+            description={t('empty_desc')}
           />
         )}
 
@@ -156,7 +155,7 @@ function DiscoverContent() {
               onClick={() => fetchOffers(page + 1)}
               className="btn-secondary px-8"
             >
-              Charger plus
+              {t('load_more')}
             </button>
           </div>
         )}

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import PublicLayout from '@/components/layout/PublicLayout';
 import { MapPin, Loader2, Navigation, X, Clock, BadgePercent, Store } from 'lucide-react';
 import { formatPrice, daysUntilExpiry, getDiscountPercent } from '@/lib/utils';
@@ -15,13 +15,13 @@ const OffersMap = dynamic(() => import('@/components/map/OffersMap'), {
   loading: () => (
     <div className="w-full h-full flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-2xl gap-3">
       <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
-      <p className="text-sm text-gray-500">Chargement de la carte…</p>
     </div>
   ),
 });
 
-/* ─── Tiny offer card shown in sidebar / bottom sheet ─── */
-function OfferRow({ offer, selected, onClick, locale }) {
+/* ─── Tiny offer card shown in sidebar ─── */
+function OfferRow({ offer, selected, onClick }) {
+  const t        = useTranslations('map');
   const days     = daysUntilExpiry(offer.expiresAt);
   const discount = getDiscountPercent(offer.originalPrice, offer.discountPrice);
   const isUrgent = days <= 2 && days > 0;
@@ -55,7 +55,7 @@ function OfferRow({ offer, selected, onClick, locale }) {
         )}
         <div className="flex items-center gap-2 mt-1">
           {offer.type === 'donation' ? (
-            <span className="text-xs font-bold text-primary-600">Gratuit</span>
+            <span className="text-xs font-bold text-primary-600">{t('free')}</span>
           ) : offer.discountPrice !== undefined && (
             <span className="text-sm font-bold text-gray-900 dark:text-white">
               {formatPrice(offer.discountPrice)}
@@ -73,7 +73,7 @@ function OfferRow({ offer, selected, onClick, locale }) {
       <div className={`text-xs font-semibold flex-shrink-0 ${
         days <= 0 ? 'text-red-500' : isUrgent ? 'text-orange-500' : 'text-gray-400'
       }`}>
-        {days <= 0 ? 'Expiré' : `${days}j`}
+        {days <= 0 ? t('expired') : t('days_left', { days })}
       </div>
     </button>
   );
@@ -82,6 +82,7 @@ function OfferRow({ offer, selected, onClick, locale }) {
 /* ─── Page ─── */
 export default function MapPage() {
   const locale = useLocale();
+  const t      = useTranslations('map');
 
   const [offers, setOffers]       = useState([]);
   const [loading, setLoading]     = useState(true);
@@ -142,9 +143,11 @@ export default function MapPage() {
         {/* ── Header ── */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Carte des offres</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
             <p className="text-gray-500 text-sm mt-0.5">
-              {loading ? 'Chargement…' : `${withCoords.length} offre${withCoords.length !== 1 ? 's' : ''} géolocalisée${withCoords.length !== 1 ? 's' : ''}`}
+              {loading
+                ? t('loading')
+                : `${withCoords.length} ${t('no_geolocated').toLowerCase()}`}
             </p>
           </div>
           <button
@@ -155,7 +158,7 @@ export default function MapPage() {
             {locating
               ? <Loader2 className="w-4 h-4 animate-spin" />
               : <Navigation className="w-4 h-4" />}
-            {locating ? 'Localisation…' : 'Me localiser'}
+            {locating ? t('locating') : t('locate_me')}
           </button>
         </div>
 
@@ -208,7 +211,7 @@ export default function MapPage() {
                     return (
                       <span className={`text-xs font-semibold flex items-center gap-1 ${d <= 0 ? 'text-red-500' : d <= 2 ? 'text-orange-500' : 'text-gray-400'}`}>
                         <Clock className="w-3 h-3" />
-                        {d <= 0 ? 'Expiré' : `${d}j restants`}
+                        {d <= 0 ? t('expired') : t('days_left', { days: d })}
                       </span>
                     );
                   })()}
@@ -217,7 +220,7 @@ export default function MapPage() {
                   href={`/${locale}/offers/${selected._id}`}
                   className="btn-primary w-full text-center text-sm py-2.5"
                 >
-                  Voir l'offre complète
+                  {t('view_full_offer')}
                 </Link>
               </div>
             )}
@@ -231,13 +234,13 @@ export default function MapPage() {
               ) : withCoords.length === 0 ? (
                 <div className="text-center py-10 px-4">
                   <MapPin className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                  <p className="text-sm font-medium text-gray-500">Aucune offre géolocalisée</p>
-                  <p className="text-xs text-gray-400 mt-1">Les commerçants doivent ajouter leur adresse</p>
+                  <p className="text-sm font-medium text-gray-500">{t('no_geolocated')}</p>
+                  <p className="text-xs text-gray-400 mt-1">{t('no_geolocated_desc')}</p>
                 </div>
               ) : (
                 <div className="space-y-0.5">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide px-3 pt-2 pb-1">
-                    {withCoords.length} offre{withCoords.length > 1 ? 's' : ''} sur la carte
+                    {withCoords.length} {t('no_geolocated').toLowerCase()}
                   </p>
                   {withCoords.map((offer) => (
                     <OfferRow
@@ -245,7 +248,6 @@ export default function MapPage() {
                       offer={offer}
                       selected={selected?._id === offer._id}
                       onClick={() => handleSelect(offer)}
-                      locale={locale}
                     />
                   ))}
                 </div>
@@ -259,11 +261,13 @@ export default function MapPage() {
           <div className="mt-10">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Autres offres disponibles</h2>
-                <p className="text-sm text-gray-400 mt-0.5">{noCoords.length} offre{noCoords.length > 1 ? 's' : ''} sans localisation précise</p>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('other_offers_title')}</h2>
+                <p className="text-sm text-gray-400 mt-0.5">
+                  {noCoords.length} {t('no_geolocated_desc').toLowerCase()}
+                </p>
               </div>
               <Link href={`/${locale}/discover`} className="text-sm font-semibold text-primary-600 hover:text-primary-700 flex items-center gap-1">
-                Toutes les offres →
+                {t('see_all')}
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -294,7 +298,7 @@ export default function MapPage() {
                       </div>
                       <p className={`text-xs mt-1 font-medium flex items-center gap-1 ${days <= 0 ? 'text-red-400' : days <= 2 ? 'text-orange-400' : 'text-gray-400'}`}>
                         <Clock className="w-3 h-3" />
-                        {days <= 0 ? 'Expiré' : `${days}j restants`}
+                        {days <= 0 ? t('expired') : t('days_left', { days })}
                       </p>
                     </div>
                   </Link>

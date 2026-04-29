@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { connectDB } from '@/lib/db';
 import MerchantProfile from '@/models/MerchantProfile';
 import Offer from '@/models/Offer';
 import PublicLayout from '@/components/layout/PublicLayout';
 import OfferCard from '@/components/ui/OfferCard';
-import { Star, MapPin, Phone, Clock, Users, Package } from 'lucide-react';
+import { Star, MapPin, Phone, Users, Package } from 'lucide-react';
 
 async function getMerchant(id) {
   try {
@@ -30,18 +31,20 @@ async function getMerchantOffers(merchantId) {
 }
 
 export default async function MerchantPage({ params: { locale, id } }) {
-  const merchant = await getMerchant(id);
+  const [merchant, t] = await Promise.all([
+    getMerchant(id),
+    getTranslations('merchant'),
+  ]);
+
   if (!merchant) return notFound();
 
   const offers = await getMerchantOffers(merchant._id);
-
-  const DAYS_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
   return (
     <PublicLayout>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href={`/${locale}/discover`} className="text-sm text-gray-500 hover:text-gray-700 mb-6 inline-block">
-          ← Découvrir
+          {t('back_to_discover')}
         </Link>
 
         {/* Cover + Header */}
@@ -58,7 +61,11 @@ export default async function MerchantPage({ params: { locale, id } }) {
             <div className="flex items-start gap-4 -mt-12 sm:-mt-8">
               <div className="shrink-0">
                 {merchant.logo ? (
-                  <img src={merchant.logo} alt={merchant.businessName} className="w-20 h-20 rounded-2xl object-cover border-4 border-white dark:border-gray-900 shadow" />
+                  <img
+                    src={merchant.logo}
+                    alt={merchant.businessName}
+                    className="w-20 h-20 rounded-2xl object-cover border-4 border-white dark:border-gray-900 shadow"
+                  />
                 ) : (
                   <div className="w-20 h-20 rounded-2xl bg-white dark:bg-gray-900 border-4 border-white dark:border-gray-900 shadow flex items-center justify-center text-3xl">🏪</div>
                 )}
@@ -66,22 +73,28 @@ export default async function MerchantPage({ params: { locale, id } }) {
               <div className="flex-1 min-w-0 mt-10 sm:mt-8">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{merchant.businessName}</h1>
-                  {merchant.isVerified && <span className="text-blue-500 text-sm" title="Vérifié">✓ Vérifié</span>}
+                  {merchant.isVerified && (
+                    <span className="text-blue-500 text-sm">{t('verified')}</span>
+                  )}
                 </div>
-                {merchant.description && <p className="text-gray-500 text-sm mt-1">{merchant.description}</p>}
+                {merchant.description && (
+                  <p className="text-gray-500 text-sm mt-1">{merchant.description}</p>
+                )}
 
                 <div className="flex flex-wrap gap-4 mt-3 text-sm">
                   {merchant.rating > 0 && (
                     <span className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
                       <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                      {merchant.rating.toFixed(1)} ({merchant.reviewCount} avis)
+                      {merchant.rating.toFixed(1)} ({merchant.reviewCount} {t('reviews')})
                     </span>
                   )}
                   <span className="flex items-center gap-1 text-gray-500">
-                    <Users className="w-4 h-4" /> {merchant.followerCount} abonnés
+                    <Users className="w-4 h-4" />
+                    {merchant.followerCount} {t('followers_label')}
                   </span>
                   <span className="flex items-center gap-1 text-gray-500">
-                    <Package className="w-4 h-4" /> {offers.length} offres actives
+                    <Package className="w-4 h-4" />
+                    {offers.length} {t('active_offers_label')}
                   </span>
                 </div>
               </div>
@@ -104,7 +117,7 @@ export default async function MerchantPage({ params: { locale, id } }) {
         </div>
 
         {/* Offers */}
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Offres actives</h2>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('active_offers_title')}</h2>
         {offers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {offers.map((offer) => (
@@ -112,7 +125,7 @@ export default async function MerchantPage({ params: { locale, id } }) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 text-gray-500">Aucune offre active pour le moment</div>
+          <div className="text-center py-12 text-gray-500">{t('no_active_offers')}</div>
         )}
       </div>
     </PublicLayout>
