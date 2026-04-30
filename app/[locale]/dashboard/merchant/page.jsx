@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import StatCard from '@/components/ui/StatCard';
@@ -17,6 +17,7 @@ export default function MerchantDashboardPage() {
   const { data: session, status } = useSession();
   const router  = useRouter();
   const locale  = useLocale();
+  const t       = useTranslations('dashboard');
   const [merchant, setMerchant] = useState(null);
   const [offers, setOffers]     = useState([]);
   const [loading, setLoading]   = useState(true);
@@ -55,10 +56,10 @@ export default function MerchantDashboardPage() {
     <DashboardLayout>
       <EmptyState
         icon="🏪"
-        title="Créez votre profil commerçant"
-        description="Commencez par créer votre profil pour publier des offres"
+        title={t('no_profile_title')}
+        description={t('no_profile_desc')}
         action={`/${locale}/dashboard/merchant/profile`}
-        actionLabel="Créer mon profil"
+        actionLabel={t('no_profile_action')}
       />
     </DashboardLayout>
   );
@@ -75,14 +76,14 @@ export default function MerchantDashboardPage() {
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Bonjour, {merchant.businessName} 👋
+              {t('hello')}, {merchant.businessName} 👋
             </h1>
             <p className="text-gray-500 text-sm mt-1">
-              {merchant.isComplete ? 'Votre profil est complet' : 'Complétez votre profil pour publier des offres'}
+              {merchant.isComplete ? t('profile_complete') : t('profile_incomplete')}
             </p>
           </div>
           <Link href={`/${locale}/dashboard/merchant/create`} className="btn-primary flex items-center gap-2">
-            <Plus className="w-4 h-4" /> Créer une offre
+            <Plus className="w-4 h-4" /> {t('create_offer')}
           </Link>
         </div>
 
@@ -91,34 +92,34 @@ export default function MerchantDashboardPage() {
           <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 flex items-center gap-3">
             <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
             <p className="text-amber-800 dark:text-amber-400 text-sm">
-              Votre profil est incomplet.{' '}
+              {t('profile_incomplete_warning')}{' '}
               <Link href={`/${locale}/dashboard/merchant/profile`} className="font-semibold underline">
-                Complétez-le ici
+                {t('profile_incomplete_link')}
               </Link>{' '}
-              pour pouvoir publier des offres.
+              {t('profile_incomplete')}
             </p>
           </div>
         )}
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard icon="🏷️" label="Offres actives"   value={merchant.offerCount || 0}    color="primary" />
-          <StatCard icon="👁️" label="Vues totales"      value={merchant.views || 0}          color="blue" />
-          <StatCard icon="👥" label="Abonnés"           value={merchant.followerCount || 0}  color="green" />
-          <StatCard icon="⭐" label="Note moyenne"      value={merchant.rating ? merchant.rating.toFixed(1) : '—'} color="purple" />
+          <StatCard icon="🏷️" label={t('stat_active_offers')} value={merchant.offerCount || 0}    color="primary" />
+          <StatCard icon="👁️" label={t('stat_views')}          value={merchant.views || 0}          color="blue" />
+          <StatCard icon="👥" label={t('stat_followers')}      value={merchant.followerCount || 0}  color="green" />
+          <StatCard icon="⭐" label={t('stat_rating')}         value={merchant.rating ? merchant.rating.toFixed(1) : '—'} color="purple" />
         </div>
 
         {/* Expiring soon */}
         {expiringSoon.length > 0 && (
           <div className="card p-5">
             <h2 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <span className="text-orange-500">⚡</span> Expire bientôt
+              <span className="text-orange-500">⚡</span> {t('expiring_soon')}
             </h2>
             <div className="space-y-2">
               {expiringSoon.map((offer) => (
                 <div key={offer._id} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
                   <span className="text-sm font-medium">{offer.title}</span>
-                  <span className="text-xs text-orange-500 font-medium">{daysUntilExpiry(offer.expiresAt)}j restants</span>
+                  <span className="text-xs text-orange-500 font-medium">{t('days_left', { days: daysUntilExpiry(offer.expiresAt) })}</span>
                 </div>
               ))}
             </div>
@@ -128,22 +129,22 @@ export default function MerchantDashboardPage() {
         {/* Recent offers */}
         <div className="card p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900 dark:text-white">Dernières offres</h2>
+            <h2 className="font-semibold text-gray-900 dark:text-white">{t('recent_offers')}</h2>
             <Link href={`/${locale}/dashboard/merchant/offers`} className="text-sm text-primary-600 hover:text-primary-700">
-              Voir tout →
+              {t('see_all')}
             </Link>
           </div>
           {offers.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 text-sm">Aucune offre pour le moment</div>
+            <div className="text-center py-8 text-gray-500 text-sm">{t('no_offers')}</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-xs text-gray-400 border-b border-gray-100 dark:border-gray-800">
-                    <th className="text-start pb-3 font-medium">Offre</th>
-                    <th className="text-start pb-3 font-medium hidden sm:table-cell">Type</th>
-                    <th className="text-start pb-3 font-medium hidden sm:table-cell">Expire</th>
-                    <th className="text-start pb-3 font-medium">Statut</th>
+                    <th className="text-start pb-3 font-medium">{t('table_offer')}</th>
+                    <th className="text-start pb-3 font-medium hidden sm:table-cell">{t('table_type')}</th>
+                    <th className="text-start pb-3 font-medium hidden sm:table-cell">{t('table_expires')}</th>
+                    <th className="text-start pb-3 font-medium">{t('table_status')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50 dark:divide-gray-800">

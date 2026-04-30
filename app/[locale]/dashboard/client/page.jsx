@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import OfferCard from '@/components/ui/OfferCard';
@@ -15,6 +15,7 @@ export default function ClientDashboardPage() {
   const { data: session, status } = useSession();
   const router  = useRouter();
   const locale  = useLocale();
+  const t       = useTranslations('dashboard');
   const [favorites, setFavorites] = useState([]);
   const [follows, setFollows]     = useState([]);
   const [notifCount, setNotifCount] = useState(0);
@@ -52,25 +53,25 @@ export default function ClientDashboardPage() {
       <div className="space-y-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Bonjour, {session?.user?.name?.split(' ')[0]} 👋
+            {t('hello')}, {session?.user?.name?.split(' ')[0]} 👋
           </h1>
-          <p className="text-gray-500 text-sm mt-1">Votre espace personnel</p>
+          <p className="text-gray-500 text-sm mt-1">{t('my_space')}</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard icon="❤️"  label="Favoris"         value={favorites.length}  color="primary" />
-          <StatCard icon="🏪"  label="Abonnements"     value={follows.length}    color="green" />
-          <StatCard icon="🔔"  label="Notifications"   value={notifCount}        color="blue" />
-          <StatCard icon="📍"  label="Wilaya"          value="—"                 color="purple" />
+          <StatCard icon="❤️"  label={t('stat_favorites')}     value={favorites.length}  color="primary" />
+          <StatCard icon="🏪"  label={t('stat_following')}     value={follows.length}    color="green" />
+          <StatCard icon="🔔"  label={t('stat_notifications')} value={notifCount}        color="blue" />
+          <StatCard icon="📍"  label={t('stat_wilaya')}        value="—"                 color="purple" />
         </div>
 
         {/* Favorites */}
         {favorites.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Mes favoris</h2>
-              <Link href={`/${locale}/dashboard/client/favorites`} className="text-sm text-primary-600 hover:text-primary-700">Voir tout →</Link>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('my_favorites')}</h2>
+              <Link href={`/${locale}/dashboard/client/favorites`} className="text-sm text-primary-600 hover:text-primary-700">{t('see_all')}</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {favorites.map((fav) => fav.offer && (
@@ -84,8 +85,8 @@ export default function ClientDashboardPage() {
         {follows.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Commerçants suivis</h2>
-              <Link href={`/${locale}/dashboard/client/following`} className="text-sm text-primary-600 hover:text-primary-700">Voir tout →</Link>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('followed_merchants')}</h2>
+              <Link href={`/${locale}/dashboard/client/following`} className="text-sm text-primary-600 hover:text-primary-700">{t('see_all')}</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {follows.map((follow) => follow.merchant && (
@@ -112,9 +113,9 @@ export default function ClientDashboardPage() {
         {favorites.length === 0 && follows.length === 0 && (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Commencez à explorer !</h3>
-            <p className="text-gray-500 mb-6">Découvrez des offres près de vous et suivez vos commerçants préférés.</p>
-            <Link href={`/${locale}/discover`} className="btn-primary">Découvrir les offres</Link>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('explore_title')}</h3>
+            <p className="text-gray-500 mb-6">{t('explore_desc')}</p>
+            <Link href={`/${locale}/discover`} className="btn-primary">{t('explore_cta')}</Link>
           </div>
         )}
       </div>

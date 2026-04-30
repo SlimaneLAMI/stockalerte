@@ -7,7 +7,7 @@ import { connectDB } from '@/lib/db';
 import Offer from '@/models/Offer';
 import MerchantProfile from '@/models/MerchantProfile';
 import {
-  ArrowRight, Leaf, Sprout, BadgePercent, MapPin, ShieldCheck,
+  ArrowRight, ArrowLeft, Leaf, Sprout, BadgePercent, MapPin, ShieldCheck,
   UtensilsCrossed, Sparkles, Shirt, Home, Smartphone, Car,
   Store, CalendarCheck, Truck, TrendingDown, Recycle, AlertTriangle,
   Zap, CheckCircle2,
@@ -46,10 +46,10 @@ const CATEGORY_ICONS = [
 ];
 
 const WASTE_VALUES = [
-  { icon: AlertTriangle, value: '3,5M',  unit: 'tonnes', statKey: 'waste_stat1', color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-900/20' },
-  { icon: TrendingDown,  value: '30%',   unit: '',        statKey: 'waste_stat2', color: 'text-red-500',    bg: 'bg-red-50 dark:bg-red-900/20' },
-  { icon: Recycle,       value: '45 kg', unit: '/an',     statKey: 'waste_stat3', color: 'text-primary-600', bg: 'bg-primary-50 dark:bg-primary-900/20' },
-  { icon: Zap,           value: '+40%',  unit: '',        statKey: 'waste_stat4', color: 'text-amber-500',  bg: 'bg-amber-50 dark:bg-amber-900/20' },
+  { icon: AlertTriangle, value: '3,5M',  unitKey: 'waste_unit_tonnes',   statKey: 'waste_stat1', color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-900/20' },
+  { icon: TrendingDown,  value: '30%',   unitKey: null,                   statKey: 'waste_stat2', color: 'text-red-500',    bg: 'bg-red-50 dark:bg-red-900/20' },
+  { icon: Recycle,       value: '45 kg', unitKey: 'waste_unit_per_year', statKey: 'waste_stat3', color: 'text-primary-600', bg: 'bg-primary-50 dark:bg-primary-900/20' },
+  { icon: Zap,           value: '+40%',  unitKey: null,                   statKey: 'waste_stat4', color: 'text-amber-500',  bg: 'bg-amber-50 dark:bg-amber-900/20' },
 ];
 
 export default async function HomePage({ params }) {
@@ -112,7 +112,7 @@ export default async function HomePage({ params }) {
               <div className="flex flex-col sm:flex-row gap-3 animate-fade-in-up delay-300">
                 <Link href={`/${locale}/discover`} className="btn-primary text-base py-4 px-8 shadow-green-lg">
                   {t('hero_cta')}
-                  <ArrowRight className="w-5 h-5" />
+                  {locale === 'ar' ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
                 </Link>
                 <Link href={`/${locale}/auth/register`} className="btn-secondary text-base py-4 px-8">
                   {t('hero_secondary')}
@@ -126,7 +126,7 @@ export default async function HomePage({ params }) {
                   { value: '58', label: t('stats_cities_label') },
                 ].map(({ value, label }) => (
                   <div key={label}>
-                    <div className="text-2xl font-black text-gray-900 dark:text-white">{value}</div>
+                    <div className="text-2xl font-black text-gray-900 dark:text-white" dir="ltr">{value}</div>
                     <div className="text-sm text-gray-400 mt-0.5">{label}</div>
                   </div>
                 ))}
@@ -264,7 +264,7 @@ export default async function HomePage({ params }) {
           <div className="text-center mt-10">
             <Link href={`/${locale}/discover`} className="btn-primary px-8 py-3.5">
               {t('how_cta')}
-              <ArrowRight className="w-4 h-4" />
+              {locale === 'ar' ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
             </Link>
           </div>
         </div>
@@ -281,7 +281,7 @@ export default async function HomePage({ params }) {
               <p className="section-subtitle">{t('cat_subtitle')}</p>
             </div>
             <Link href={`/${locale}/discover`} className="text-sm font-semibold text-primary-600 hover:text-primary-700 flex items-center gap-1 hidden sm:flex">
-              {t('cat_see_all')} <ArrowRight className="w-4 h-4" />
+              {t('cat_see_all')} {locale === 'ar' ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
             </Link>
           </div>
 
@@ -313,7 +313,7 @@ export default async function HomePage({ params }) {
               <p className="section-subtitle">{t('featured_subtitle')}</p>
             </div>
             <Link href={`/${locale}/discover`} className="text-sm font-semibold text-primary-600 hover:text-primary-700 flex items-center gap-1 hidden sm:flex">
-              {t('see_all')} <ArrowRight className="w-4 h-4" />
+              {t('see_all')} {locale === 'ar' ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
             </Link>
           </div>
 
@@ -338,7 +338,7 @@ export default async function HomePage({ params }) {
           <div className="text-center mt-10">
             <Link href={`/${locale}/discover`} className="btn-secondary px-8 py-3.5">
               {t('featured_see_all')}
-              <ArrowRight className="w-4 h-4" />
+              {locale === 'ar' ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
             </Link>
           </div>
         </div>
@@ -359,13 +359,13 @@ export default async function HomePage({ params }) {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-14">
-            {WASTE_VALUES.map(({ icon: Icon, value, unit, statKey, color, bg }) => (
+            {WASTE_VALUES.map(({ icon: Icon, value, unitKey, statKey, color, bg }) => (
               <div key={statKey} className={`${bg} rounded-3xl p-6 border border-transparent hover:shadow-md transition-shadow`}>
                 <div className={`w-11 h-11 rounded-2xl bg-white/60 dark:bg-white/10 flex items-center justify-center mb-4 ${color}`}>
                   <Icon className="w-5 h-5" />
                 </div>
-                <div className={`text-3xl font-black ${color} mb-0.5`}>
-                  {value}<span className="text-lg font-bold ml-1">{unit}</span>
+                <div className={`text-3xl font-black ${color} mb-0.5`} dir="ltr">
+                  {value}{unitKey && <span className="text-lg font-bold ml-1">{t(unitKey)}</span>}
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-snug">{t(statKey)}</p>
               </div>
@@ -383,7 +383,7 @@ export default async function HomePage({ params }) {
             </div>
             <Link href={`/${locale}/discover`} className="btn-primary shrink-0 px-6 py-3">
               {t('waste_cta_btn')}
-              <ArrowRight className="w-4 h-4" />
+              {locale === 'ar' ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
             </Link>
           </div>
         </div>
@@ -412,7 +412,7 @@ export default async function HomePage({ params }) {
                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:bg-primary-500/30 transition-colors">
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <div className="text-4xl sm:text-5xl font-black text-white mb-1 group-hover:text-primary-400 transition-colors">{value}</div>
+                <div className="text-4xl sm:text-5xl font-black text-white mb-1 group-hover:text-primary-400 transition-colors" dir="ltr">{value}</div>
                 <div className="text-white/50 text-sm font-medium">{label}</div>
               </div>
             ))}
@@ -458,7 +458,7 @@ export default async function HomePage({ params }) {
                   className="mt-2 bg-white text-primary-700 hover:bg-primary-50 font-bold px-8 py-4 rounded-2xl text-center transition-all duration-200 hover:shadow-lg active:scale-[0.97] flex items-center justify-center gap-2"
                 >
                   {t('merchant_cta')}
-                  <ArrowRight className="w-5 h-5" />
+                  {locale === 'ar' ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
                 </Link>
               </div>
             </div>

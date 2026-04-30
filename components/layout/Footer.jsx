@@ -42,13 +42,13 @@ export default function Footer() {
 
           {/* Links */}
           <div className="md:col-span-3">
-            <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-5 text-white/40">Plateforme</h3>
+            <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-5 text-white/40">{t('col_platform')}</h3>
             <ul className="space-y-3">
               {[
-                { href: `/${locale}/discover`,      label: 'Offres du moment' },
-                { href: `/${locale}/map`,           label: 'Carte des commerces' },
-                { href: `/${locale}/auth/register`, label: 'Créer un compte' },
-                { href: `/${locale}/auth/login`,    label: 'Se connecter' },
+                { href: `/${locale}/discover`,      label: t('link_discover') },
+                { href: `/${locale}/map`,           label: t('link_map') },
+                { href: `/${locale}/auth/register`, label: t('link_register') },
+                { href: `/${locale}/auth/login`,    label: t('link_login') },
               ].map((item) => (
                 <li key={item.href}>
                   <Link href={item.href}
@@ -61,7 +61,7 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-2">
-            <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-5 text-white/40">À propos</h3>
+            <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-5 text-white/40">{t('col_about')}</h3>
             <ul className="space-y-3">
               {[
                 { href: `/${locale}/about`,   label: t('about') },
@@ -81,18 +81,18 @@ export default function Footer() {
 
           {/* Impact */}
           <div className="md:col-span-2">
-            <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-5 text-white/40">Impact</h3>
+            <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-5 text-white/40">{t('col_impact')}</h3>
             <div className="space-y-4">
               {[
-                { emoji: '🌿', value: '2.4T', label: 'CO₂ économisé' },
-                { emoji: '🥗', value: '18K',  label: 'repas sauvés' },
-                { emoji: '💚', value: '58',   label: 'wilayas' },
+                { emoji: '🌿', value: '2.4T', labelKey: 'impact_co2' },
+                { emoji: '🥗', value: '18K',  labelKey: 'impact_meals' },
+                { emoji: '💚', value: '58',   labelKey: 'impact_wilayas' },
               ].map((stat) => (
-                <div key={stat.label} className="flex items-center gap-2.5">
+                <div key={stat.labelKey} className="flex items-center gap-2.5">
                   <span className="text-lg">{stat.emoji}</span>
                   <div>
-                    <div className="text-white font-bold text-sm">{stat.value}</div>
-                    <div className="text-white/40 text-xs">{stat.label}</div>
+                    <div className="text-white font-bold text-sm" dir="ltr">{stat.value}</div>
+                    <div className="text-white/40 text-xs">{t(stat.labelKey)}</div>
                   </div>
                 </div>
               ))}
@@ -106,8 +106,8 @@ export default function Footer() {
             © {new Date().getFullYear()} StockAlerte. {t('rights')}.
           </p>
           <div className="flex gap-1">
-            <span className="text-xs bg-primary-500/20 text-primary-400 px-3 py-1 rounded-full font-medium">🌱 Anti-gaspillage</span>
-            <span className="text-xs bg-white/10 text-white/50 px-3 py-1 rounded-full font-medium">🔒 Sécurisé</span>
+            <span className="text-xs bg-primary-500/20 text-primary-400 px-3 py-1 rounded-full font-medium">🌱 {t('badge_anti_waste')}</span>
+            <span className="text-xs bg-white/10 text-white/50 px-3 py-1 rounded-full font-medium">🔒 {t('badge_secure')}</span>
           </div>
         </div>
       </div>
