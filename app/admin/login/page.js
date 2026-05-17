@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    const res = await signIn('credentials', { email: form.email, password: form.password, redirect: false });
+    const res = await signIn('credentials', { username: form.username, password: form.password, redirect: false });
     setLoading(false);
     if (res?.error) {
       setError('Identifiants incorrects.');
@@ -43,12 +43,12 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--foreground)' }}>Email</label>
+            <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--foreground)' }}>Nom d'utilisateur</label>
             <input
-              type="email"
+              type="text"
               required
-              value={form.email}
-              onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+              value={form.username}
+              onChange={e => setForm(p => ({ ...p, username: e.target.value }))}
               className="w-full px-4 py-3 text-sm rounded-sm border outline-none focus:border-[var(--orange)] transition-colors bg-[var(--card)]"
               style={{ borderColor: 'var(--border)', color: 'var(--foreground)' }}
             />
