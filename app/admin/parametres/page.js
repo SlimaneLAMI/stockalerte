@@ -22,13 +22,14 @@ export default function ParametresPage() {
   async function handleSave(e) {
     e.preventDefault();
     setSaving(true);
-    await fetch('/api/settings', {
+    const res = await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(settings),
-    });
+    }).then(r => r.json());
     setSaving(false);
-    toast.success('Paramètres enregistrés');
+    if (res?.success) toast.success('Paramètres enregistrés');
+    else toast.error('Erreur : ' + (res?.error || 'impossible de sauvegarder'));
   }
 
   const inp = "w-full px-3 py-2.5 text-sm rounded-sm border outline-none focus:border-[var(--orange)] bg-[var(--card)]";

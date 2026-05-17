@@ -1,9 +1,15 @@
-﻿import Link from 'next/link';
-import { MapPin, Phone, Mail, Clock, Share2, ExternalLink } from 'lucide-react';
-
+﻿'use client';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { MapPin, Phone, Mail, Clock, Share2 } from 'lucide-react';
 
 export default function Footer() {
+  const [s, setS] = useState({});
   const year = new Date().getFullYear();
+
+  useEffect(() => {
+    fetch('/api/settings').then(r => r.json()).then(d => setS(d && !d.error ? d : {}));
+  }, []);
 
   return (
     <footer
@@ -26,7 +32,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm leading-relaxed max-w-xs" style={{ color: 'var(--muted-foreground)' }}>
-              Spécialiste des équipements de cuisine professionnelle depuis 2005. Matériel de qualité, livraison et SAV inclus.
+              {s.company_description || 'Spécialiste des équipements de cuisine professionnelle depuis 2005. Matériel de qualité, livraison et SAV inclus.'}
             </p>
             <div className="flex gap-3 mt-6">
               <a
@@ -76,24 +82,30 @@ export default function Footer() {
               Contact
             </p>
             <div className="flex flex-col gap-3">
-              <div className="flex items-start gap-3">
-                <MapPin size={14} className="mt-0.5 shrink-0" style={{ color: 'var(--orange)' }} />
-                <span className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
-                  15 rue des Cuisiniers<br />69002 Lyon
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone size={14} className="shrink-0" style={{ color: 'var(--orange)' }} />
-                <span className="text-sm" style={{ color: 'var(--muted-foreground)' }}>04 72 00 00 00</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail size={14} className="shrink-0" style={{ color: 'var(--orange)' }} />
-                <span className="text-sm" style={{ color: 'var(--muted-foreground)' }}>contact@StockAlerte.fr</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Clock size={14} className="shrink-0" style={{ color: 'var(--orange)' }} />
-                <span className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Lun–Ven 8h30–18h</span>
-              </div>
+              {(s.company_address || '15 rue des Cuisiniers, 69002 Lyon') && (
+                <div className="flex items-start gap-3">
+                  <MapPin size={14} className="mt-0.5 shrink-0" style={{ color: 'var(--orange)' }} />
+                  <span className="text-sm" style={{ color: 'var(--muted-foreground)' }}>{s.company_address || '15 rue des Cuisiniers, 69002 Lyon'}</span>
+                </div>
+              )}
+              {(s.company_phone || '04 72 00 00 00') && (
+                <div className="flex items-center gap-3">
+                  <Phone size={14} className="shrink-0" style={{ color: 'var(--orange)' }} />
+                  <span className="text-sm" style={{ color: 'var(--muted-foreground)' }}>{s.company_phone || '04 72 00 00 00'}</span>
+                </div>
+              )}
+              {(s.company_email || 'contact@StockAlerte.fr') && (
+                <div className="flex items-center gap-3">
+                  <Mail size={14} className="shrink-0" style={{ color: 'var(--orange)' }} />
+                  <span className="text-sm" style={{ color: 'var(--muted-foreground)' }}>{s.company_email || 'contact@StockAlerte.fr'}</span>
+                </div>
+              )}
+              {(s.company_hours || 'Lun–Ven 8h30–18h') && (
+                <div className="flex items-center gap-3">
+                  <Clock size={14} className="shrink-0" style={{ color: 'var(--orange)' }} />
+                  <span className="text-sm" style={{ color: 'var(--muted-foreground)' }}>{s.company_hours || 'Lun–Ven 8h30–18h'}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -104,7 +116,7 @@ export default function Footer() {
           style={{ borderColor: 'var(--border)' }}
         >
           <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
-            © {year} StockAlerte. Tous droits réservés.
+            {s.footer_text || `© ${year} StockAlerte. Tous droits réservés.`}
           </p>
           <div className="flex items-center gap-6">
             {['Mentions légales', 'CGV', 'Politique de confidentialité'].map(label => (

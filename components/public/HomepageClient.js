@@ -304,10 +304,10 @@ export default function HomepageClient() {
                 Nous contacter
               </h3>
               <div className="space-y-4 text-sm" style={{ color: 'var(--muted-foreground)' }}>
-                <p>📍 15 rue des Cuisiniers, 69002 Lyon</p>
-                <p>📞 04 72 00 00 00</p>
-                <p>✉️ contact@StockAlerte.fr</p>
-                <p>🕐 Lun–Ven 8h30–18h</p>
+                {settings.company_address && <p>📍 {settings.company_address}</p>}
+                {settings.company_phone && <p>📞 {settings.company_phone}</p>}
+                {settings.company_email && <p>✉️ {settings.company_email}</p>}
+                {settings.company_hours && <p>🕐 {settings.company_hours}</p>}
               </div>
               <Link
                 href="/contact"
@@ -321,7 +321,7 @@ export default function HomepageClient() {
           <FadeIn delay={0.1}>
             <div className="rounded-sm overflow-hidden border border-[var(--border)]" style={{ height: '280px' }}>
               <iframe
-                src="https://maps.google.com/maps?q=Lyon,France&output=embed"
+                src={settings.maps_url || 'https://maps.google.com/maps?q=Lyon,France&output=embed'}
                 className="w-full h-full"
                 style={{ border: 0, filter: 'grayscale(20%)' }}
                 allowFullScreen

@@ -19,13 +19,14 @@ export default function HomepageAdminPage() {
   async function handleSave(e) {
     e.preventDefault();
     setSaving(true);
-    await fetch('/api/settings', {
+    const res = await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(settings),
-    });
+    }).then(r => r.json());
     setSaving(false);
-    toast.success('Page d\'accueil mise à jour');
+    if (res?.success) toast.success('Page d\'accueil mise à jour');
+    else toast.error('Erreur : ' + (res?.error || 'impossible de sauvegarder'));
   }
 
   function updateWhyUs(i, field, val) {
