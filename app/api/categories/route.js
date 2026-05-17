@@ -1,13 +1,24 @@
-import { connectDB } from '@/lib/db';
+import { NextResponse } from 'next/server';
+import { connectDB } from '@/lib/mongodb';
 import Category from '@/models/Category';
-import { apiError, apiResponse } from '@/lib/utils';
 
 export async function GET() {
   try {
     await connectDB();
-    const categories = await Category.find({ isActive: true }).sort({ order: 1 }).lean();
-    return apiResponse({ categories });
-  } catch (err) {
-    return apiError('Erreur serveur', 500);
+    const categories = await Category.find().sort({ order: 1, name: 1 }).lean();
+    return NextResponse.json(categories);
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function POST(request) {
+  try {
+    await connectDB();
+    const body = await request.json();
+    const category = await Category.create(body);
+    return NextResponse.json(category, { status: 201 });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

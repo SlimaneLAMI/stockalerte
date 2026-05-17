@@ -1,0 +1,167 @@
+'use client';
+import { useEffect, useState } from 'react';
+import { Mail, MailOpen, Archive, Trash2, X } from 'lucide-react';
+import { toast } from 'sonner';
+
+export default function ContactsPage() {
+  const [contacts, setContacts] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  async function load() {
+    setLoading(true);
+    const data = await fetch('/api/contacts').then(r => r.json());
+    setContacts(data.contacts || []);
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); }, []);
+
+  async function markRead(id, read) {
+    await fetch(`/api/contacts/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ read }) });
+    setContacts(p => p.map(c => c._id === id ? { ...c, read } : c));
+  }
+
+  async function archive(id) {
+    await fetch(`/api/contacts/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ archived: true }) });
+    setContacts(p => p.filter(c => c._id !== id));
+    setSelected(null);
+    toast.success('Archivé');
+  }
+
+  async function handleDelete(id) {
+    await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
+    setContacts(p => p.filter(c => c._id !== id));
+    setSelected(null);
+    toast.success('Supprimé');
+  }
+
+  function openContact(contact) {
+    setSelected(contact);
+    if (!contact.read) markRead(contact._id, true);
+  }
+
+  return (
+    <div className="p-6 lg:p-10">
+      <div className="mb-8">
+        <h1 className="font-display font-bold text-3xl" style={{ color: 'var(--foreground)' }}>Demandes de contact</h1>
+        <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>
+          {contacts.filter(c => !c.read).length} non lue(s)
+        </p>
+      </div>
+
+      <div className="grid lg:grid-cols-5 gap-6">
+        {/* List */}
+        <div className="lg:col-span-2 rounded-sm border border-[var(--border)] overflow-hidden">
+          {loading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="px-4 py-4 border-b border-[var(--border)] animate-pulse">
+                <div className="h-3 rounded bg-[var(--muted)] w-3/4 mb-2" />
+                <div className="h-3 rounded bg-[var(--muted)] w-1/2" />
+              </div>
+            ))
+          ) : contacts.length === 0 ? (
+            <p className="text-sm text-center py-12" style={{ color: 'var(--muted-foreground)' }}>Aucune demande.</p>
+          ) : (
+            contacts.map(contact => (
+              <button
+                key={contact._id}
+                onClick={() => openContact(contact)}
+                className={`w-full text-left px-4 py-4 border-b border-[var(--border)] hover:bg-[var(--muted)] transition-colors ${
+                  selected?._id === contact._id ? 'bg-[var(--muted)]' : ''
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5">
+                    {contact.read
+                      ? <MailOpen size={15} style={{ color: 'var(--muted-foreground)' }} />
+                      : <Mail size={15} style={{ color: 'var(--orange)' }} />
+                    }
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className={`text-sm truncate ${!contact.read ? 'font-semibold' : 'font-medium'}`} style={{ color: 'var(--foreground)' }}>
+                        {contact.name}
+                      </p>
+                      <p className="text-xs shrink-0" style={{ color: 'var(--muted-foreground)' }}>
+                        {new Date(contact.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
+                      </p>
+                    </div>
+                    <p className="text-xs truncate mt-0.5" style={{ color: 'var(--muted-foreground)' }}>{contact.message}</p>
+                  </div>
+                </div>
+              </button>
+            ))
+          )}
+        </div>
+
+        {/* Detail */}
+        <div className="lg:col-span-3">
+          {selected ? (
+            <div className="rounded-sm border border-[var(--border)] p-6 bg-[var(--card)]">
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h2 className="font-display font-bold text-xl" style={{ color: 'var(--foreground)' }}>{selected.name}</h2>
+                  {selected.company && <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>{selected.company}</p>}
+                </div>
+                <button onClick={() => setSelected(null)} className="p-1">
+                  <X size={18} style={{ color: 'var(--muted-foreground)' }} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
+                <div>
+                  <p className="text-xs mb-1" style={{ color: 'var(--muted-foreground)' }}>Email</p>
+                  <a href={`mailto:${selected.email}`} className="font-medium transition-colors hover:text-[var(--orange)]" style={{ color: 'var(--foreground)' }}>{selected.email}</a>
+                </div>
+                {selected.phone && (
+                  <div>
+                    <p className="text-xs mb-1" style={{ color: 'var(--muted-foreground)' }}>Téléphone</p>
+                    <p className="font-medium" style={{ color: 'var(--foreground)' }}>{selected.phone}</p>
+                  </div>
+                )}
+                {selected.productInterest && (
+                  <div className="col-span-2">
+                    <p className="text-xs mb-1" style={{ color: 'var(--muted-foreground)' }}>Produit concerné</p>
+                    <p className="font-medium" style={{ color: 'var(--foreground)' }}>{selected.productInterest}</p>
+                  </div>
+                )}
+                <div className="col-span-2">
+                  <p className="text-xs mb-1" style={{ color: 'var(--muted-foreground)' }}>Date</p>
+                  <p className="font-medium" style={{ color: 'var(--foreground)' }}>
+                    {new Date(selected.createdAt).toLocaleString('fr-FR')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-sm mb-6" style={{ backgroundColor: 'var(--muted)' }}>
+                <p className="text-xs mb-2" style={{ color: 'var(--muted-foreground)' }}>Message</p>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--foreground)' }}>{selected.message}</p>
+              </div>
+
+              <div className="flex gap-3">
+                <a
+                  href={`mailto:${selected.email}?subject=Re: Votre demande&body=Bonjour ${selected.name},%0A%0A`}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-sm text-sm font-medium text-white"
+                  style={{ backgroundColor: 'var(--orange)' }}
+                >
+                  <Mail size={14} /> Répondre par email
+                </a>
+                <button onClick={() => archive(selected._id)} className="flex items-center gap-2 px-4 py-2.5 rounded-sm text-sm border transition-colors hover:bg-[var(--muted)]" style={{ borderColor: 'var(--border)' }}>
+                  <Archive size={14} /> Archiver
+                </button>
+                <button onClick={() => handleDelete(selected._id)} className="flex items-center justify-center w-10 h-10 rounded-sm border border-red-200 text-red-400 hover:bg-red-50 transition-colors">
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-64 rounded-sm border border-dashed border-[var(--border)]">
+              <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Sélectionnez une demande pour l'afficher</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

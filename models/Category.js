@@ -1,15 +1,12 @@
 import mongoose from 'mongoose';
 
-const CategorySchema = new mongoose.Schema(
-  {
-    name:      { fr: String, en: String, ar: String },
-    slug:      { type: String, required: true, unique: true },
-    icon:      { type: String },
-    color:     { type: String, default: '#f97316' },
-    isActive:  { type: Boolean, default: true },
-    order:     { type: Number, default: 0 },
-  },
-  { timestamps: true }
-);
+const categorySchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true },
+  slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  description: { type: String },
+  bannerImage: { type: String },
+  icon: { type: String, default: '🍳' },
+  order: { type: Number, default: 0 },
+}, { timestamps: true });
 
-export default mongoose.models.Category || mongoose.model('Category', CategorySchema);
+export default mongoose.models.Category || mongoose.model('Category', categorySchema);

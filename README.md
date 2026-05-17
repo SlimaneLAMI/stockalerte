@@ -1,91 +1,36 @@
-# StockAlerte 🇩🇿
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-Plateforme anti-gaspillage pour le marché algérien — connecte commerçants et clients.
+## Getting Started
 
-## Stack
-- **Next.js 14** (App Router) · JavaScript
-- **MongoDB** + Mongoose
-- **NextAuth** (Google + Email)
-- **Tailwind CSS** (dark mode, RTL)
-- **next-intl** (fr / en / ar)
-- **Leaflet** (carte)
-- **Cloudinary** (images)
-- **jsPDF + QRCode** (PDF + QR)
-
-## Démarrage rapide
+First, run the development server:
 
 ```bash
-# 1. Copier les variables d'environnement
-cp .env.local.example .env.local
-# Remplir : MONGODB_URI, NEXTAUTH_SECRET, GOOGLE_CLIENT_ID/SECRET, CLOUDINARY_*
-
-# 2. Installer les dépendances
-npm install
-
-# 3. Seed la base de données (catégories + admin)
-node scripts/seed.js
-
-# 4. Lancer en développement
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## Structure
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-```
-app/
-  [locale]/           # Routes Next.js (fr, en, ar)
-    page.jsx          # Accueil
-    discover/         # Découverte offres
-    map/              # Carte
-    offers/[id]/      # Détail offre
-    merchants/[id]/   # Profil commerçant
-    auth/             # Login / Register
-    dashboard/
-      client/         # Espace client
-      merchant/       # Espace commerçant
-      admin/          # Panel admin
-  api/                # Routes API
-components/
-  layout/             # Navbar, Footer, DashboardLayout
-  ui/                 # Cards, Badges, Modal, ImageUpload...
-  map/                # OffersMap (Leaflet)
-  providers/          # Session, Theme
-hooks/                # useOffers, useGeolocation, useFavorite, useFollow
-lib/                  # db, auth, utils, qrcode, pdf, cloudinary
-models/               # User, MerchantProfile, Offer, Category, Follow...
-messages/             # Traductions fr.json, en.json, ar.json
-scripts/              # seed.js
-```
+You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
-## Variables d'environnement
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-| Variable | Description |
-|---|---|
-| `MONGODB_URI` | URI MongoDB Atlas |
-| `NEXTAUTH_SECRET` | Clé secrète NextAuth (`openssl rand -base64 32`) |
-| `NEXTAUTH_URL` | URL de l'app (`http://localhost:3000`) |
-| `GOOGLE_CLIENT_ID` | Client ID Google OAuth |
-| `GOOGLE_CLIENT_SECRET` | Client Secret Google OAuth |
-| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | Nom cloud Cloudinary |
-| `CLOUDINARY_API_KEY` | Clé API Cloudinary |
-| `CLOUDINARY_API_SECRET` | Secret Cloudinary |
-| `NEXT_PUBLIC_APP_URL` | URL publique |
+## Learn More
 
-## Fonctionnalités
+To learn more about Next.js, take a look at the following resources:
 
-- ✅ Authentification Google + email
-- ✅ Multilingue FR / EN / AR (RTL natif)
-- ✅ Mode clair / sombre
-- ✅ Carte des offres (Leaflet + géolocalisation)
-- ✅ Publication d'offres (5 types)
-- ✅ QR Code PDF commerçant
-- ✅ Favoris + Abonnements
-- ✅ Notifications
-- ✅ Dashboard commerçant (stats, offres, profil)
-- ✅ Dashboard client
-- ✅ Panel admin (users, offres, signalements)
-- ✅ Upload images (Cloudinary)
-- ✅ API REST complète
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## Licence
-MIT — Made with ❤️ in Algeria 🇩🇿
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
