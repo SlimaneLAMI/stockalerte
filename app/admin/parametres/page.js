@@ -3,6 +3,20 @@ import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
+const inp = "w-full px-3 py-2.5 text-sm rounded-sm border outline-none focus:border-[var(--orange)] bg-[var(--card)]";
+const inpStyle = { borderColor: 'var(--border)', color: 'var(--foreground)' };
+const label = "block text-xs font-medium mb-1.5";
+const labelStyle = { color: 'var(--foreground)' };
+
+function Section({ title, children }) {
+  return (
+    <section className="p-6 rounded-sm border border-[var(--border)] bg-[var(--card)]">
+      <h2 className="font-display font-bold text-base mb-5" style={{ color: 'var(--foreground)' }}>{title}</h2>
+      <div className="flex flex-col gap-4">{children}</div>
+    </section>
+  );
+}
+
 export default function ParametresPage() {
   const [settings, setSettings] = useState({
     company_name: '', company_address: '', company_phone: '',
@@ -30,20 +44,6 @@ export default function ParametresPage() {
     setSaving(false);
     if (res?.success) toast.success('Paramètres enregistrés');
     else toast.error('Erreur : ' + (res?.error || 'impossible de sauvegarder'));
-  }
-
-  const inp = "w-full px-3 py-2.5 text-sm rounded-sm border outline-none focus:border-[var(--orange)] bg-[var(--card)]";
-  const inpStyle = { borderColor: 'var(--border)', color: 'var(--foreground)' };
-  const label = "block text-xs font-medium mb-1.5";
-  const labelStyle = { color: 'var(--foreground)' };
-
-  function Section({ title, children }) {
-    return (
-      <section className="p-6 rounded-sm border border-[var(--border)] bg-[var(--card)]">
-        <h2 className="font-display font-bold text-base mb-5" style={{ color: 'var(--foreground)' }}>{title}</h2>
-        <div className="flex flex-col gap-4">{children}</div>
-      </section>
-    );
   }
 
   return (
