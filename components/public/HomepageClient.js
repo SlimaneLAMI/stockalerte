@@ -144,7 +144,7 @@ export default function HomepageClient() {
                 <Link href={`/catalogue/categorie/${cat.slug}`} className="group block">
                   <motion.div
                     className="relative overflow-hidden rounded-sm"
-                    style={{ aspectRatio: i === 0 ? '16/10' : '4/3' }}
+                    style={{ aspectRatio: '4/3' }}
                     whileHover={{ scale: 1.01 }}
                     transition={{ duration: 0.3 }}
                   >
