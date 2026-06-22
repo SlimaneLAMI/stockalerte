@@ -7,6 +7,7 @@ import { ArrowRight, ChevronDown } from 'lucide-react';
 import ProductCard from './ProductCard';
 import QuickViewModal from './QuickViewModal';
 import BackToTop from './BackToTop';
+import { useSettings } from '@/components/SettingsContext';
 
 function FadeIn({ children, delay = 0, className = '' }) {
   const ref = useRef(null);
@@ -25,7 +26,7 @@ function FadeIn({ children, delay = 0, className = '' }) {
 }
 
 export default function HomepageClient() {
-  const [settings, setSettings] = useState({});
+  const settings = useSettings();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [quickView, setQuickView] = useState(null);
@@ -36,11 +37,9 @@ export default function HomepageClient() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/settings').then(r => r.json()),
       fetch('/api/products?featured=true&limit=6').then(r => r.json()),
       fetch('/api/categories').then(r => r.json()),
-    ]).then(([s, p, c]) => {
-      setSettings(s && !s.error ? s : {});
+    ]).then(([p, c]) => {
       setFeaturedProducts(Array.isArray(p?.products) ? p.products : []);
       setCategories(Array.isArray(c) ? c : []);
     });
@@ -320,14 +319,20 @@ export default function HomepageClient() {
           </FadeIn>
           <FadeIn delay={0.1}>
             <div className="rounded-sm overflow-hidden border border-[var(--border)]" style={{ height: '280px' }}>
-              <iframe
-                src={settings.maps_url || 'https://maps.google.com/maps?q=Lyon,France&output=embed'}
-                className="w-full h-full"
-                style={{ border: 0, filter: 'grayscale(20%)' }}
-                allowFullScreen
-                loading="lazy"
-                title="Localisation StockAlerte"
-              />
+              {settings.maps_url && settings.maps_url.includes('maps/embed') ? (
+                <iframe
+                  src={settings.maps_url}
+                  className="w-full h-full"
+                  style={{ border: 0, filter: 'grayscale(20%)' }}
+                  allowFullScreen
+                  loading="lazy"
+                  title="Localisation"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-sm" style={{ backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)' }}>
+                  Carte non configurée
+                </div>
+              )}
             </div>
           </FadeIn>
         </div>
