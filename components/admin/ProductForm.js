@@ -40,6 +40,7 @@ export default function ProductForm({ initialData, isEdit }) {
     featured: false, published: true,
     metaTitle: '', metaDesc: '',
     ...initialData,
+    categoryId: initialData?.categoryId?._id ?? initialData?.categoryId ?? '',
     specs: initialData?.specs
       ? (initialData.specs instanceof Map
           ? [...initialData.specs.entries()].map(([k, v]) => ({ key: k, value: v }))
