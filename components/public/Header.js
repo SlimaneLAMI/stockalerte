@@ -21,6 +21,7 @@ export default function Header() {
   const s = useSettings();
   const companyName = s.company_name || 'StockAlerte';
   const logoLetters = companyName.slice(0, 2).toUpperCase();
+  const textColor = scrolled ? 'var(--foreground)' : 'white';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -55,8 +56,8 @@ export default function Header() {
               {logoLetters}
             </motion.div>
             <span
-              className="font-display font-bold text-xl tracking-tight"
-              style={{ color: 'var(--foreground)' }}
+              className="font-display font-bold text-xl tracking-tight transition-colors duration-300"
+              style={{ color: textColor }}
             >
               {companyName}
             </span>
@@ -70,8 +71,8 @@ export default function Header() {
                 href={href}
                 className="relative font-body font-medium text-sm tracking-wide transition-colors duration-200"
                 style={{
-                  color: pathname.startsWith(href) ? 'var(--orange)' : 'var(--foreground)',
-                  opacity: pathname.startsWith(href) ? 1 : 0.75,
+                  color: pathname.startsWith(href) ? 'var(--orange)' : textColor,
+                  opacity: pathname.startsWith(href) ? 1 : 0.85,
                 }}
               >
                 {label}
@@ -94,9 +95,9 @@ export default function Header() {
               aria-label="Changer le thème"
             >
               {theme === 'dark' ? (
-                <Sun size={16} style={{ color: 'var(--foreground)' }} />
+                <Sun size={16} style={{ color: textColor }} />
               ) : (
-                <Moon size={16} style={{ color: 'var(--foreground)' }} />
+                <Moon size={16} style={{ color: textColor }} />
               )}
             </button>
 
@@ -113,7 +114,7 @@ export default function Header() {
               onClick={() => setOpen(!open)}
               className="lg:hidden w-9 h-9 flex items-center justify-center rounded-sm transition-colors hover:bg-[var(--muted)]"
             >
-              {open ? <X size={18} /> : <Menu size={18} />}
+              {open ? <X size={18} style={{ color: textColor }} /> : <Menu size={18} style={{ color: textColor }} />}
             </button>
           </div>
         </div>
