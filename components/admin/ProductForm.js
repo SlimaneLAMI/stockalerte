@@ -51,7 +51,9 @@ export default function ProductForm({ initialData, isEdit }) {
   }, []);
 
   function autoSlug(name) {
-    return name.toLowerCase()
+    return name
+      .toLowerCase()
+      .replace(/['']/g, '')
       .normalize('NFD').replace(/[̀-ͯ]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');

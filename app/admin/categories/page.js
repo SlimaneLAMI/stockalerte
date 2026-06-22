@@ -11,7 +11,7 @@ function CategoryModal({ category, onSave, onClose }) {
   const [saving, setSaving] = useState(false);
 
   function autoSlug(name) {
-    return name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    return name.toLowerCase().replace(/['']/g, '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   }
 
   async function handleSubmit(e) {
