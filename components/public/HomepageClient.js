@@ -296,9 +296,9 @@ export default function HomepageClient() {
 
       {/* ── CONTACT INFO ────────────────────────────────── */}
       <section className="max-w-[1400px] mx-auto px-6 lg:px-12 pb-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <FadeIn>
-            <div className="p-8 rounded-sm border border-[var(--border)] bg-[var(--card)]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+          <FadeIn className="h-full">
+            <div className="h-full p-8 rounded-sm border border-[var(--border)] bg-[var(--card)]">
               <h3 className="font-display font-bold text-xl mb-6" style={{ color: 'var(--foreground)' }}>
                 Nous contacter
               </h3>
@@ -317,8 +317,8 @@ export default function HomepageClient() {
               </Link>
             </div>
           </FadeIn>
-          <FadeIn delay={0.1}>
-            <div className="rounded-sm overflow-hidden border border-[var(--border)]" style={{ height: '280px' }}>
+          <FadeIn delay={0.1} className="h-full">
+            <div className="h-full min-h-[280px] rounded-sm overflow-hidden border border-[var(--border)]">
               {settings.maps_url && settings.maps_url.includes('maps/embed') ? (
                 <iframe
                   src={settings.maps_url}
