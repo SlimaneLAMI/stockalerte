@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sun, Moon, ChevronDown } from 'lucide-react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
+import { useSettings } from '@/components/SettingsContext';
 
 const nav = [
   { label: 'Catalogue', href: '/catalogue' },
@@ -17,6 +18,9 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const { theme, toggle } = useTheme();
   const pathname = usePathname();
+  const s = useSettings();
+  const companyName = s.company_name || 'StockAlerte';
+  const logoLetters = companyName.slice(0, 2).toUpperCase();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -48,13 +52,13 @@ export default function Header() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              PC
+              {logoLetters}
             </motion.div>
             <span
               className="font-display font-bold text-xl tracking-tight"
               style={{ color: 'var(--foreground)' }}
             >
-              StockAlerte
+              {companyName}
             </span>
           </Link>
 

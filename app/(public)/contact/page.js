@@ -1,11 +1,13 @@
-﻿'use client';
+'use client';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, CheckCircle } from 'lucide-react';
 import Breadcrumbs from '@/components/public/Breadcrumbs';
 import BackToTop from '@/components/public/BackToTop';
+import { useSettings } from '@/components/SettingsContext';
 
 export default function ContactPage() {
+  const s = useSettings();
   const [form, setForm] = useState({ name: '', company: '', email: '', phone: '', message: '', productInterest: '' });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -21,6 +23,13 @@ export default function ContactPage() {
     setSending(false);
     setSent(true);
   }
+
+  const contactItems = [
+    s.company_address && { Icon: MapPin, text: s.company_address },
+    s.company_phone && { Icon: Phone, text: s.company_phone },
+    s.company_email && { Icon: Mail, text: s.company_email },
+    s.company_hours && { Icon: Clock, text: s.company_hours },
+  ].filter(Boolean);
 
   return (
     <>
@@ -136,37 +145,36 @@ export default function ContactPage() {
 
             {/* Contact info */}
             <div className="lg:col-span-2 flex flex-col gap-6">
-              <div className="p-8 rounded-sm border border-[var(--border)] bg-[var(--card)]">
-                <h3 className="font-display font-bold text-lg mb-6" style={{ color: 'var(--foreground)' }}>
-                  Informations
-                </h3>
-                <div className="flex flex-col gap-5">
-                  {[
-                    { Icon: MapPin, text: '15 rue des Cuisiniers\n69002 Lyon' },
-                    { Icon: Phone, text: '04 72 00 00 00' },
-                    { Icon: Mail, text: 'contact@StockAlerte.fr' },
-                    { Icon: Clock, text: 'Lun–Ven 8h30–18h' },
-                  ].map(({ Icon, text }) => (
-                    <div key={text} className="flex items-start gap-4">
-                      <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(224, 92, 42, 0.1)' }}>
-                        <Icon size={15} style={{ color: 'var(--orange)' }} />
+              {contactItems.length > 0 && (
+                <div className="p-8 rounded-sm border border-[var(--border)] bg-[var(--card)]">
+                  <h3 className="font-display font-bold text-lg mb-6" style={{ color: 'var(--foreground)' }}>
+                    Informations
+                  </h3>
+                  <div className="flex flex-col gap-5">
+                    {contactItems.map(({ Icon, text }) => (
+                      <div key={text} className="flex items-start gap-4">
+                        <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(224, 92, 42, 0.1)' }}>
+                          <Icon size={15} style={{ color: 'var(--orange)' }} />
+                        </div>
+                        <p className="text-sm whitespace-pre-line" style={{ color: 'var(--muted-foreground)' }}>{text}</p>
                       </div>
-                      <p className="text-sm whitespace-pre-line" style={{ color: 'var(--muted-foreground)' }}>{text}</p>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="rounded-sm overflow-hidden border border-[var(--border)]" style={{ height: '240px' }}>
-                <iframe
-                  src="https://maps.google.com/maps?q=Lyon,France&output=embed"
-                  className="w-full h-full"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  title="Localisation"
-                />
-              </div>
+              {s.maps_url && (
+                <div className="rounded-sm overflow-hidden border border-[var(--border)]" style={{ height: '240px' }}>
+                  <iframe
+                    src={s.maps_url}
+                    className="w-full h-full"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    title="Localisation"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
