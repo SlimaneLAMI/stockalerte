@@ -170,7 +170,7 @@ export default function ProductForm({ initialData, isEdit }) {
           <div className="grid gap-4">
             <div>
               <label className={labelCls} style={labelStyle}>Nom *</label>
-              <input required value={form.name} onChange={e => { set('name', e.target.value); if (!isEdit) set('slug', autoSlug(e.target.value)); }}
+              <input required value={form.name} onChange={e => { set('name', e.target.value); set('slug', autoSlug(e.target.value)); }}
                 className={inputCls} style={inputStyle} />
             </div>
             <div>
