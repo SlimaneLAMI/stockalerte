@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Loader2, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import CloudinaryUpload from '@/components/admin/CloudinaryUpload';
 
 export default function HomepageAdminPage() {
   const [settings, setSettings] = useState({
@@ -70,8 +71,14 @@ export default function HomepageAdminPage() {
               <input value={settings.hero_cta} onChange={e => setSettings(p => ({ ...p, hero_cta: e.target.value }))} className={inp} style={inpStyle} />
             </div>
             <div>
-              <label className={label} style={labelStyle}>URL image de fond</label>
-              <input value={settings.hero_image} onChange={e => setSettings(p => ({ ...p, hero_image: e.target.value }))} className={inp} style={inpStyle} placeholder="https://..." />
+              <label className={label} style={labelStyle}>Image de fond</label>
+              <CloudinaryUpload
+                value={settings.hero_image}
+                onChange={url => setSettings(p => ({ ...p, hero_image: url }))}
+                folder="StockAlerte/homepage"
+                label="Image de fond hero"
+                aspectRatio="16/5"
+              />
             </div>
           </div>
         </section>

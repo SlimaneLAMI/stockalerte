@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2, Loader2, X } from 'lucide-react';
 import { toast } from 'sonner';
+import CloudinaryUpload from '@/components/admin/CloudinaryUpload';
 
 function CategoryModal({ category, onSave, onClose }) {
   const [form, setForm] = useState({
@@ -63,8 +64,14 @@ function CategoryModal({ category, onSave, onClose }) {
             <textarea rows={3} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} className={inp + ' resize-none'} style={inpStyle} />
           </div>
           <div>
-            <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--foreground)' }}>URL image bannière</label>
-            <input value={form.bannerImage || ''} onChange={e => setForm(p => ({ ...p, bannerImage: e.target.value }))} className={inp} style={inpStyle} placeholder="https://..." />
+            <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--foreground)' }}>Image bannière</label>
+            <CloudinaryUpload
+              value={form.bannerImage || ''}
+              onChange={url => setForm(p => ({ ...p, bannerImage: url }))}
+              folder="StockAlerte/categories"
+              label="Image bannière"
+              aspectRatio="16/7"
+            />
           </div>
           <div className="flex gap-3 mt-2">
             <button type="submit" disabled={saving} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-sm text-sm font-medium text-white disabled:opacity-60" style={{ backgroundColor: 'var(--orange)' }}>

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2, Loader2, X, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
+import CloudinaryUpload from '@/components/admin/CloudinaryUpload';
 
 function BrandModal({ brand, onSave, onClose }) {
   const [form, setForm] = useState({ name: '', logo: '', website: '', ...brand });
@@ -35,6 +36,16 @@ function BrandModal({ brand, onSave, onClose }) {
           <div>
             <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--foreground)' }}>Nom *</label>
             <input required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} className={inp} style={inpStyle} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--foreground)' }}>Logo</label>
+            <CloudinaryUpload
+              value={form.logo || ''}
+              onChange={url => setForm(p => ({ ...p, logo: url }))}
+              folder="StockAlerte/brands"
+              label="Logo"
+              aspectRatio="3/1"
+            />
           </div>
           <div>
             <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--foreground)' }}>Site web</label>
@@ -93,8 +104,10 @@ export default function MarquesPage() {
           <div className="divide-y divide-[var(--border)]">
             {brands.map(brand => (
               <div key={brand._id} className="flex items-center gap-4 px-5 py-4 hover:bg-[var(--muted)] transition-colors">
-                <div className="w-10 h-10 rounded-sm flex items-center justify-center font-display font-bold text-sm" style={{ backgroundColor: 'var(--muted)', color: 'var(--foreground)' }}>
-                  {brand.name[0]}
+                <div className="w-10 h-10 rounded-sm overflow-hidden flex items-center justify-center font-display font-bold text-sm" style={{ backgroundColor: 'var(--muted)', color: 'var(--foreground)' }}>
+                  {brand.logo
+                    ? <img src={brand.logo} alt={brand.name} className="w-full h-full object-contain p-1" />
+                    : brand.name[0]}
                 </div>
                 <div className="flex-1">
                   <p className="font-medium" style={{ color: 'var(--foreground)' }}>{brand.name}</p>
