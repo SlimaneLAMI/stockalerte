@@ -252,7 +252,6 @@ export default function ProductForm({ initialData, isEdit }) {
               <select value={form.availability} onChange={e => set('availability', e.target.value)} className={inputCls} style={inputStyle}>
                 <option>En stock</option>
                 <option>Sur commande</option>
-                <option>Discontinué</option>
               </select>
             </div>
             <div className="flex flex-col justify-end pb-1 gap-3">

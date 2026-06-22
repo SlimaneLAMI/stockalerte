@@ -13,7 +13,7 @@ const productSchema = new mongoose.Schema({
   priceVisible: { type: Boolean, default: true },
   availability: {
     type: String,
-    enum: ['En stock', 'Sur commande', 'Discontinué'],
+    enum: ['En stock', 'Sur commande'],
     default: 'En stock',
   },
   specs: {
