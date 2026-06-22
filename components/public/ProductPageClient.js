@@ -148,7 +148,7 @@ export default function ProductPageClient({ product, related }) {
                   style={{ backgroundColor: 'var(--orange)' }}
                 >
                   <MessageSquare size={16} />
-                  Demander un devis
+                  Nous contacter
                 </button>
                 {product.pdfUrl && (
                   <a
@@ -221,7 +221,7 @@ export default function ProductPageClient({ product, related }) {
           style={{ backgroundColor: 'var(--orange)' }}
         >
           <MessageSquare size={16} />
-          Demander un devis pour ce produit
+          Nous contacter pour ce produit
         </button>
       </div>
 

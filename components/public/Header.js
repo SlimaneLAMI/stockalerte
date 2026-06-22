@@ -105,7 +105,7 @@ export default function Header() {
               className="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 rounded-sm text-sm font-medium text-white transition-all duration-200 hover:opacity-90 active:scale-95"
               style={{ backgroundColor: 'var(--orange)' }}
             >
-              Demander un devis
+              Nous contacter
             </Link>
 
             {/* Mobile menu toggle */}
@@ -155,7 +155,7 @@ export default function Header() {
                   className="flex items-center justify-center w-full py-3 rounded-sm text-sm font-medium text-white"
                   style={{ backgroundColor: 'var(--orange)' }}
                 >
-                  Demander un devis
+                  Nous contacter
                 </Link>
               </div>
             </motion.div>

@@ -29,6 +29,7 @@ export default function ProductForm({ initialData, isEdit }) {
   const [categories, setCategories] = useState([]);
   const [uploading, setUploading] = useState(false);
 
+  const [brands, setBrands] = useState([]);
   const [form, setForm] = useState({
     name: '', slug: '', categoryId: '', brand: '',
     shortDesc: '', longDesc: '',
@@ -48,6 +49,7 @@ export default function ProductForm({ initialData, isEdit }) {
 
   useEffect(() => {
     fetch('/api/categories').then(r => r.json()).then(setCategories);
+    fetch('/api/brands').then(r => r.json()).then(d => setBrands(Array.isArray(d) ? d : []));
   }, []);
 
   function autoSlug(name) {
@@ -189,7 +191,10 @@ export default function ProductForm({ initialData, isEdit }) {
               </div>
               <div>
                 <label className={labelCls} style={labelStyle}>Marque</label>
-                <input value={form.brand} onChange={e => set('brand', e.target.value)} className={inputCls} style={inputStyle} />
+                <select value={form.brand} onChange={e => set('brand', e.target.value)} className={inputCls} style={inputStyle}>
+                  <option value="">Sélectionner...</option>
+                  {brands.map(b => <option key={b._id} value={b.name}>{b.name}</option>)}
+                </select>
               </div>
             </div>
             <div>

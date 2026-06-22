@@ -99,7 +99,7 @@ export default function HomepageClient() {
                 href="/contact"
                 className="inline-flex items-center gap-3 px-8 py-4 rounded-sm text-sm font-medium text-white/90 border border-white/30 hover:bg-white/10 transition-colors"
               >
-                Demander un devis
+                Nous contacter
               </Link>
             </div>
           </motion.div>
@@ -286,7 +286,7 @@ export default function HomepageClient() {
                 className="inline-flex items-center gap-3 px-10 py-4 rounded-sm text-sm font-medium text-white transition-all hover:opacity-90"
                 style={{ backgroundColor: 'var(--orange)' }}
               >
-                Demander un devis gratuit
+                Nous contacter
                 <ArrowRight size={16} />
               </Link>
             </div>

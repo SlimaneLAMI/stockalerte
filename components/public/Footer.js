@@ -68,7 +68,7 @@ export default function Footer() {
                 { label: 'Catalogue', href: '/catalogue' },
                 { label: 'À propos', href: '/a-propos' },
                 { label: 'Contact', href: '/contact' },
-                { label: 'Demander un devis', href: '/contact' },
+                { label: 'Nous contacter', href: '/contact' },
               ].map(({ label, href }) => (
                 <Link
                   key={label}

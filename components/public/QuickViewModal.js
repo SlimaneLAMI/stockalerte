@@ -118,7 +118,7 @@ export default function QuickViewModal({ product, onClose }) {
                     className="flex items-center justify-center gap-2 w-full py-3 rounded-sm text-sm font-medium border transition-colors hover:bg-[var(--muted)]"
                     style={{ borderColor: 'var(--border)', color: 'var(--foreground)' }}
                   >
-                    Demander un devis
+                    Nous contacter
                   </Link>
                 </div>
               </div>
