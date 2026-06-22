@@ -82,7 +82,15 @@ export default function ParametresPage() {
           </div>
           <div>
             <label className={label} style={labelStyle}>URL Google Maps embed</label>
-            <input value={settings.maps_url} onChange={e => setSettings(p => ({ ...p, maps_url: e.target.value }))} className={inp} style={inpStyle} />
+            <input value={settings.maps_url} onChange={e => setSettings(p => ({ ...p, maps_url: e.target.value }))} className={inp} style={inpStyle} placeholder="https://www.google.com/maps/embed?pb=..." />
+            <p className="text-xs mt-1.5" style={{ color: 'var(--muted-foreground)' }}>
+              Sur Google Maps : <strong>Partager</strong> → <strong>Intégrer une carte</strong> → copier uniquement la valeur du <code>src</code> (commence par <code>https://www.google.com/maps/embed?pb=</code>)
+            </p>
+            {settings.maps_url && !settings.maps_url.includes('maps/embed') && (
+              <p className="text-xs mt-1 font-medium" style={{ color: '#e05c2a' }}>
+                ⚠️ Cette URL ne semble pas être une URL embed — elle ne s'affichera pas dans l'iframe.
+              </p>
+            )}
           </div>
         </Section>
 
