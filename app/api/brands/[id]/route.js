@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Brand from '@/models/Brand';
+import { requireAuth } from '@/lib/requireAuth';
 
 export async function PUT(request, { params }) {
+  const unauth = await requireAuth();
+  if (unauth) return unauth;
   try {
     await connectDB();
     const { id } = await params;
@@ -16,6 +19,8 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
+  const unauth = await requireAuth();
+  if (unauth) return unauth;
   try {
     await connectDB();
     const { id } = await params;

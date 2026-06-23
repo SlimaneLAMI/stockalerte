@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Category from '@/models/Category';
+import { requireAuth } from '@/lib/requireAuth';
 
 export async function GET() {
   try {
@@ -13,6 +14,8 @@ export async function GET() {
 }
 
 export async function POST(request) {
+  const unauth = await requireAuth();
+  if (unauth) return unauth;
   try {
     await connectDB();
     const body = await request.json();

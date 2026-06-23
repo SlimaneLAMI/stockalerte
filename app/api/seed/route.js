@@ -5,8 +5,14 @@ import Product from '@/models/Product';
 import Category from '@/models/Category';
 import Brand from '@/models/Brand';
 import SiteSettings from '@/models/SiteSettings';
+import { requireAuth } from '@/lib/requireAuth';
 
 export async function POST() {
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Route désactivée en production' }, { status: 403 });
+  }
+  const unauth = await requireAuth();
+  if (unauth) return unauth;
   try {
     await connectDB();
 

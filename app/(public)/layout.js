@@ -6,6 +6,8 @@ import SiteSettings from '@/models/SiteSettings';
 
 export const dynamic = 'force-dynamic';
 
+const BASE = process.env.NEXTAUTH_URL || 'https://stockalerte.onrender.com';
+
 async function getSettings() {
   try {
     await connectDB();
@@ -20,8 +22,37 @@ async function getSettings() {
 
 export default async function PublicLayout({ children }) {
   const settings = await getSettings();
+
+  const orgJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: settings.company_name || 'StockAlerte',
+    url: BASE,
+    logo: `${BASE}/logo.png`,
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: settings.company_phone || '',
+      email: settings.company_email || '',
+      contactType: 'customer service',
+      availableLanguage: 'French',
+    },
+    address: settings.company_address
+      ? { '@type': 'PostalAddress', streetAddress: settings.company_address }
+      : undefined,
+    sameAs: [
+      settings.social_facebook,
+      settings.social_instagram,
+      settings.social_linkedin,
+      settings.social_youtube,
+    ].filter(Boolean),
+  };
+
   return (
     <PublicProviders settings={settings}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
       <div className="min-h-screen flex flex-col bg-[var(--background)]">
         <Header />
         <main className="flex-1">{children}</main>
