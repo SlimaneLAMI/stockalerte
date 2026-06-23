@@ -292,6 +292,7 @@ export default function CatalogueClient({ initialCategory } = {}) {
                   {products.map(product => (
                     <motion.div
                       key={product._id}
+                      className="h-full"
                       variants={{
                         hidden: { opacity: 0, y: 20 },
                         visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },

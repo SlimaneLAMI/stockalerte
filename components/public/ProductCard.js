@@ -44,7 +44,7 @@ export default function ProductCard({ product, onQuickView }) {
 
   return (
     <motion.article
-      className="group relative rounded-sm overflow-hidden bg-[var(--card)] border border-[var(--border)] flex flex-col"
+      className="group relative rounded-sm overflow-hidden bg-[var(--card)] border border-[var(--border)] flex flex-col h-full"
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       whileHover={{ y: -3 }}

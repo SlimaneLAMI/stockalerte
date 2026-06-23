@@ -125,15 +125,19 @@ export default function Footer() {
             {s.footer_text || `© ${year} ${s.company_name || 'StockAlerte'}. Tous droits réservés.`}
           </p>
           <div className="flex items-center gap-6">
-            {['Mentions légales', 'CGV', 'Politique de confidentialité'].map(label => (
-              <a
+            {[
+              { label: 'Mentions légales', href: '/mentions-legales' },
+              { label: 'CGV', href: '/cgv' },
+              { label: 'Politique de confidentialité', href: '/politique-de-confidentialite' },
+            ].map(({ label, href }) => (
+              <Link
                 key={label}
-                href="#"
+                href={href}
                 className="text-xs transition-colors hover:text-[var(--orange)]"
                 style={{ color: 'var(--muted-foreground)' }}
               >
                 {label}
-              </a>
+              </Link>
             ))}
           </div>
         </div>
