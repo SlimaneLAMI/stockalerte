@@ -159,6 +159,7 @@ export default function HomepageClient() {
   const [imgTotal, setImgTotal] = useState(0);
   const [imgLoaded, setImgLoaded] = useState(0);
 
+  const [quickView, setQuickView] = useState(null);
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '25%']);
