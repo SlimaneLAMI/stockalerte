@@ -14,9 +14,19 @@ export async function GET(request) {
     const skip = (page - 1) * limit;
 
     if (searchParams.get('published') !== 'all') query.published = true;
-    if (searchParams.get('category')) query.categoryId = searchParams.get('category');
-    if (searchParams.get('brand')) query.brand = searchParams.get('brand');
-    if (searchParams.get('availability')) query.availability = searchParams.get('availability');
+
+    const categories = searchParams.getAll('category');
+    if (categories.length === 1) query.categoryId = categories[0];
+    else if (categories.length > 1) query.categoryId = { $in: categories };
+
+    const brands = searchParams.getAll('brand');
+    if (brands.length === 1) query.brand = brands[0];
+    else if (brands.length > 1) query.brand = { $in: brands };
+
+    const availability = searchParams.getAll('availability');
+    if (availability.length === 1) query.availability = availability[0];
+    else if (availability.length > 1) query.availability = { $in: availability };
+
     if (searchParams.get('featured') === 'true') query.featured = true;
 
     const search = searchParams.get('search');
