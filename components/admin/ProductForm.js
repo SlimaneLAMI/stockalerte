@@ -36,6 +36,7 @@ export default function ProductForm({ initialData, isEdit }) {
     images: [], pdfUrl: '',
     price: '', priceVisible: true,
     availability: 'En stock',
+    condition: '',
     specs: [],
     featured: false, published: true,
     metaTitle: '', metaDesc: '',
@@ -253,6 +254,16 @@ export default function ProductForm({ initialData, isEdit }) {
               <select value={form.availability} onChange={e => set('availability', e.target.value)} className={inputCls} style={inputStyle}>
                 <option>En stock</option>
                 <option>Sur commande</option>
+              </select>
+            </div>
+            <div>
+              <label className={labelCls} style={labelStyle}>État</label>
+              <select value={form.condition} onChange={e => set('condition', e.target.value)} className={inputCls} style={inputStyle}>
+                <option value="">Non spécifié</option>
+                <option>Neuf</option>
+                <option>Comme neuf</option>
+                <option>Bonne occasion</option>
+                <option>Occasion</option>
               </select>
             </div>
             <div className="flex flex-col justify-end pb-1 gap-3">

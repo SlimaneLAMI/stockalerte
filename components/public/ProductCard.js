@@ -129,6 +129,11 @@ export default function ProductCard({ product, onQuickView, onImageLoad }) {
         <div className="mt-auto flex items-center justify-between pt-4 border-t border-[var(--border)]">
           <div>
             <AvailabilityBadge status={product.availability} />
+            {product.condition && (
+              <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)' }}>
+                {product.condition}
+              </span>
+            )}
             {product.priceVisible && product.price && (
               <p className="font-display font-bold text-lg mt-2" style={{ color: 'var(--foreground)' }}>
                 {product.price.toLocaleString('fr-FR')} €

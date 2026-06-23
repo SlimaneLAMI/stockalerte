@@ -22,7 +22,9 @@ export default function ParametresPage() {
     company_name: '', company_address: '', company_phone: '',
     company_email: '', company_hours: '', maps_url: '',
     footer_text: '', contact_notification_email: '',
-    social_linkedin: '', social_instagram: '',
+    social_facebook: '', social_instagram: '', social_linkedin: '',
+    social_twitter: '', social_youtube: '', social_tiktok: '',
+    social_whatsapp: '', social_snapchat: '', social_pinterest: '',
     show_prices: true,
   });
   const [saving, setSaving] = useState(false);
@@ -95,13 +97,43 @@ export default function ParametresPage() {
         </Section>
 
         <Section title="Réseaux sociaux">
-          <div>
-            <label className={label} style={labelStyle}>LinkedIn (URL)</label>
-            <input value={settings.social_linkedin} onChange={e => setSettings(p => ({ ...p, social_linkedin: e.target.value }))} className={inp} style={inpStyle} placeholder="https://linkedin.com/company/..." />
-          </div>
-          <div>
-            <label className={label} style={labelStyle}>Instagram (URL)</label>
-            <input value={settings.social_instagram} onChange={e => setSettings(p => ({ ...p, social_instagram: e.target.value }))} className={inp} style={inpStyle} placeholder="https://instagram.com/..." />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className={label} style={labelStyle}>Facebook</label>
+              <input value={settings.social_facebook} onChange={e => setSettings(p => ({ ...p, social_facebook: e.target.value }))} className={inp} style={inpStyle} placeholder="https://facebook.com/..." />
+            </div>
+            <div>
+              <label className={label} style={labelStyle}>Instagram</label>
+              <input value={settings.social_instagram} onChange={e => setSettings(p => ({ ...p, social_instagram: e.target.value }))} className={inp} style={inpStyle} placeholder="https://instagram.com/..." />
+            </div>
+            <div>
+              <label className={label} style={labelStyle}>LinkedIn</label>
+              <input value={settings.social_linkedin} onChange={e => setSettings(p => ({ ...p, social_linkedin: e.target.value }))} className={inp} style={inpStyle} placeholder="https://linkedin.com/company/..." />
+            </div>
+            <div>
+              <label className={label} style={labelStyle}>X (Twitter)</label>
+              <input value={settings.social_twitter} onChange={e => setSettings(p => ({ ...p, social_twitter: e.target.value }))} className={inp} style={inpStyle} placeholder="https://x.com/..." />
+            </div>
+            <div>
+              <label className={label} style={labelStyle}>YouTube</label>
+              <input value={settings.social_youtube} onChange={e => setSettings(p => ({ ...p, social_youtube: e.target.value }))} className={inp} style={inpStyle} placeholder="https://youtube.com/@..." />
+            </div>
+            <div>
+              <label className={label} style={labelStyle}>TikTok</label>
+              <input value={settings.social_tiktok} onChange={e => setSettings(p => ({ ...p, social_tiktok: e.target.value }))} className={inp} style={inpStyle} placeholder="https://tiktok.com/@..." />
+            </div>
+            <div>
+              <label className={label} style={labelStyle}>WhatsApp</label>
+              <input value={settings.social_whatsapp} onChange={e => setSettings(p => ({ ...p, social_whatsapp: e.target.value }))} className={inp} style={inpStyle} placeholder="https://wa.me/213..." />
+            </div>
+            <div>
+              <label className={label} style={labelStyle}>Snapchat</label>
+              <input value={settings.social_snapchat} onChange={e => setSettings(p => ({ ...p, social_snapchat: e.target.value }))} className={inp} style={inpStyle} placeholder="https://snapchat.com/add/..." />
+            </div>
+            <div>
+              <label className={label} style={labelStyle}>Pinterest</label>
+              <input value={settings.social_pinterest} onChange={e => setSettings(p => ({ ...p, social_pinterest: e.target.value }))} className={inp} style={inpStyle} placeholder="https://pinterest.com/..." />
+            </div>
           </div>
         </Section>
 

@@ -264,7 +264,7 @@ export default function HomepageClient() {
             <div className="flex flex-col sm:flex-row items-start gap-4">
               <Link
                 href="/catalogue"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-sm text-sm font-medium text-white transition-all hover:opacity-90 active:scale-95"
+                className="inline-flex items-center justify-center gap-3 w-52 py-4 rounded-sm text-sm font-medium text-white transition-all hover:opacity-90 active:scale-95"
                 style={{ backgroundColor: 'var(--orange)' }}
               >
                 {settings.hero_cta || 'Voir le catalogue'}
@@ -272,7 +272,7 @@ export default function HomepageClient() {
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-sm text-sm font-medium text-white/90 border border-white/30 hover:bg-white/10 transition-colors"
+                className="inline-flex items-center justify-center gap-3 w-52 py-4 rounded-sm text-sm font-medium text-white/90 border border-white/30 hover:bg-white/10 transition-colors"
               >
                 Nous contacter
               </Link>

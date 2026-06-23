@@ -16,6 +16,10 @@ const productSchema = new mongoose.Schema({
     enum: ['En stock', 'Sur commande'],
     default: 'En stock',
   },
+  condition: {
+    type: String,
+    enum: ['Neuf', 'Comme neuf', 'Bonne occasion', 'Occasion'],
+  },
   specs: {
     type: mongoose.Schema.Types.Mixed,
     default: {},

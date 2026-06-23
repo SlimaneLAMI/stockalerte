@@ -3,6 +3,56 @@ import Link from 'next/link';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { useSettings } from '@/components/SettingsContext';
 
+const SOCIAL_ICONS = {
+  social_facebook: {
+    label: 'Facebook',
+    svg: <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />,
+  },
+  social_instagram: {
+    label: 'Instagram',
+    svg: <>
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </>,
+  },
+  social_linkedin: {
+    label: 'LinkedIn',
+    svg: <>
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+      <rect width="4" height="12" x="2" y="9" />
+      <circle cx="4" cy="4" r="2" />
+    </>,
+  },
+  social_twitter: {
+    label: 'X',
+    svg: <path d="M4 4l16 16M20 4 4 20" strokeLinecap="round" />,
+  },
+  social_youtube: {
+    label: 'YouTube',
+    svg: <>
+      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
+      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
+    </>,
+  },
+  social_tiktok: {
+    label: 'TikTok',
+    svg: <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />,
+  },
+  social_whatsapp: {
+    label: 'WhatsApp',
+    svg: <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />,
+  },
+  social_snapchat: {
+    label: 'Snapchat',
+    svg: <path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.4 5.2L2 22l4.8-1.4A9.9 9.9 0 0 0 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2z" />,
+  },
+  social_pinterest: {
+    label: 'Pinterest',
+    svg: <path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.77 1.23-5.22 1.23-5.22s-.31-.63-.31-1.56c0-1.46.85-2.55 1.9-2.55.9 0 1.33.67 1.33 1.48 0 .9-.58 2.26-.87 3.51-.25 1.05.52 1.9 1.54 1.9 1.85 0 3.09-2.37 3.09-5.17 0-2.13-1.43-3.62-3.48-3.62-2.37 0-3.76 1.78-3.76 3.61 0 .72.27 1.48.62 1.9.07.08.08.15.06.23-.06.26-.21.84-.24.96-.04.15-.13.19-.3.11-1.12-.52-1.82-2.17-1.82-3.49 0-2.84 2.06-5.45 5.94-5.45 3.12 0 5.55 2.22 5.55 5.19 0 3.1-1.95 5.59-4.66 5.59-.91 0-1.77-.47-2.06-1.03l-.56 2.1c-.2.78-.75 1.76-1.12 2.36.85.26 1.74.4 2.67.4 5.52 0 10-4.48 10-10S17.52 2 12 2z" />,
+  },
+};
+
 export default function Footer() {
   const s = useSettings();
   const year = new Date().getFullYear();
@@ -30,32 +80,38 @@ export default function Footer() {
             <p className="text-sm leading-relaxed max-w-xs" style={{ color: 'var(--muted-foreground)' }}>
               {s.company_description || 'Spécialiste des équipements de cuisine professionnelle depuis 2005. Matériel de qualité, livraison et SAV inclus.'}
             </p>
-            <div className="flex gap-3 mt-6">
-              {s.social_linkedin && (
-                <a
-                  href={s.social_linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full flex items-center justify-center border transition-colors hover:border-[var(--orange)]"
-                  style={{ borderColor: 'var(--border)' }}
-                  aria-label="LinkedIn"
-                >
-                  <span className="text-xs font-bold" style={{ color: 'var(--muted-foreground)' }}>in</span>
-                </a>
-              )}
-              {s.social_instagram && (
-                <a
-                  href={s.social_instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full flex items-center justify-center border transition-colors hover:border-[var(--orange)]"
-                  style={{ borderColor: 'var(--border)' }}
-                  aria-label="Instagram"
-                >
-                  <span className="text-xs font-bold" style={{ color: 'var(--muted-foreground)' }}>ig</span>
-                </a>
-              )}
-            </div>
+            {Object.keys(SOCIAL_ICONS).some(k => s[k]) && (
+              <div className="flex flex-wrap gap-2.5 mt-6">
+                {Object.entries(SOCIAL_ICONS).map(([key, { label, svg }]) =>
+                  s[key] ? (
+                    <a
+                      key={key}
+                      href={s[key]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className="w-9 h-9 rounded-full flex items-center justify-center border transition-colors hover:border-[var(--orange)]"
+                      style={{ borderColor: 'var(--border)' }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        style={{ color: 'var(--muted-foreground)' }}
+                      >
+                        {svg}
+                      </svg>
+                    </a>
+                  ) : null
+                )}
+              </div>
+            )}
           </div>
 
           {/* Navigation */}
