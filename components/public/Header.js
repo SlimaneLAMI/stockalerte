@@ -21,7 +21,8 @@ export default function Header() {
   const s = useSettings();
   const companyName = s.company_name || 'StockAlerte';
   const logoLetters = companyName.slice(0, 2).toUpperCase();
-  const textColor = scrolled ? 'var(--foreground)' : 'white';
+  const isHome = pathname === '/';
+  const textColor = (isHome && !scrolled) ? 'white' : 'var(--foreground)';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -36,9 +37,9 @@ export default function Header() {
       <motion.header
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
         style={{
-          backgroundColor: scrolled ? 'var(--background)' : 'transparent',
-          borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
-          backdropFilter: scrolled ? 'blur(12px)' : 'none',
+          backgroundColor: (scrolled || !isHome) ? 'var(--background)' : 'transparent',
+          borderBottom: (scrolled || !isHome) ? '1px solid var(--border)' : '1px solid transparent',
+          backdropFilter: (scrolled || !isHome) ? 'blur(12px)' : 'none',
         }}
         initial={{ y: -80 }}
         animate={{ y: 0 }}

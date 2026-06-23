@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Package, Tag, Building2, Globe,
-  Mail, Settings, LogOut, Menu, X, ChevronRight,
+  Mail, Settings, LogOut, Menu, X, ChevronRight, Info,
 } from 'lucide-react';
 import { SessionProvider, signOut } from 'next-auth/react';
 import { Toaster } from '@/components/ui/sonner';
@@ -17,6 +17,7 @@ const nav = [
   { label: 'Catégories', href: '/admin/categories', icon: Tag },
   { label: 'Marques', href: '/admin/marques', icon: Building2 },
   { label: 'Page d\'accueil', href: '/admin/homepage', icon: Globe },
+  { label: 'À propos', href: '/admin/a-propos', icon: Info },
   { label: 'Contacts', href: '/admin/contacts', icon: Mail },
   { label: 'Paramètres', href: '/admin/parametres', icon: Settings },
 ];

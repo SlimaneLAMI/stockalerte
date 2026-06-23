@@ -1,0 +1,184 @@
+'use client';
+import { useEffect, useState } from 'react';
+import { Loader2, Plus, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+
+const inp = "w-full px-3 py-2.5 text-sm rounded-sm border outline-none focus:border-[var(--orange)] bg-[var(--card)]";
+const inpStyle = { borderColor: 'var(--border)', color: 'var(--foreground)' };
+const label = "block text-xs font-medium mb-1.5";
+const labelStyle = { color: 'var(--foreground)' };
+
+function Section({ title, children }) {
+  return (
+    <section className="p-6 rounded-sm border border-[var(--border)] bg-[var(--card)]">
+      <h2 className="font-display font-bold text-base mb-5" style={{ color: 'var(--foreground)' }}>{title}</h2>
+      <div className="flex flex-col gap-4">{children}</div>
+    </section>
+  );
+}
+
+const DEFAULT = {
+  about_subtitle: 'Notre histoire',
+  about_title: 'À propos',
+  about_paragraphs: ['', '', ''],
+  about_stats: [
+    { value: '', label: '' },
+    { value: '', label: '' },
+    { value: '', label: '' },
+  ],
+};
+
+export default function AProposAdminPage() {
+  const [data, setData] = useState(DEFAULT);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/settings').then(r => r.json()).then(s => {
+      setData({
+        about_subtitle: s.about_subtitle || DEFAULT.about_subtitle,
+        about_title: s.about_title || DEFAULT.about_title,
+        about_paragraphs: s.about_paragraphs?.length ? s.about_paragraphs : DEFAULT.about_paragraphs,
+        about_stats: s.about_stats?.length ? s.about_stats : DEFAULT.about_stats,
+      });
+    });
+  }, []);
+
+  async function handleSave(e) {
+    e.preventDefault();
+    setSaving(true);
+    const res = await fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    }).then(r => r.json());
+    setSaving(false);
+    if (res?.success) toast.success('Page À propos enregistrée');
+    else toast.error('Erreur : ' + (res?.error || 'impossible de sauvegarder'));
+  }
+
+  function setParagraph(i, val) {
+    setData(p => {
+      const paragraphs = [...p.about_paragraphs];
+      paragraphs[i] = val;
+      return { ...p, about_paragraphs: paragraphs };
+    });
+  }
+
+  function addParagraph() {
+    setData(p => ({ ...p, about_paragraphs: [...p.about_paragraphs, ''] }));
+  }
+
+  function removeParagraph(i) {
+    setData(p => ({ ...p, about_paragraphs: p.about_paragraphs.filter((_, j) => j !== i) }));
+  }
+
+  function setStat(i, field, val) {
+    setData(p => {
+      const stats = [...p.about_stats];
+      stats[i] = { ...stats[i], [field]: val };
+      return { ...p, about_stats: stats };
+    });
+  }
+
+  function addStat() {
+    setData(p => ({ ...p, about_stats: [...p.about_stats, { value: '', label: '' }] }));
+  }
+
+  function removeStat(i) {
+    setData(p => ({ ...p, about_stats: p.about_stats.filter((_, j) => j !== i) }));
+  }
+
+  return (
+    <form onSubmit={handleSave} className="p-6 lg:p-10 max-w-3xl">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="font-display font-bold text-3xl" style={{ color: 'var(--foreground)' }}>Page À propos</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>Contenu affiché sur la page publique /a-propos</p>
+        </div>
+        <button type="submit" disabled={saving} className="flex items-center gap-2 px-5 py-2.5 rounded-sm text-sm font-medium text-white disabled:opacity-60" style={{ backgroundColor: 'var(--orange)' }}>
+          {saving && <Loader2 size={14} className="animate-spin" />}
+          Enregistrer
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-8">
+        {/* En-tête */}
+        <Section title="En-tête de la page">
+          <div>
+            <label className={label} style={labelStyle}>Sous-titre (ex : Notre histoire)</label>
+            <input value={data.about_subtitle} onChange={e => setData(p => ({ ...p, about_subtitle: e.target.value }))} className={inp} style={inpStyle} />
+          </div>
+          <div>
+            <label className={label} style={labelStyle}>Titre principal</label>
+            <input value={data.about_title} onChange={e => setData(p => ({ ...p, about_title: e.target.value }))} className={inp} style={inpStyle} />
+          </div>
+        </Section>
+
+        {/* Paragraphes */}
+        <Section title="Contenu">
+          {data.about_paragraphs.map((p, i) => (
+            <div key={i} className="flex gap-2 items-start">
+              <div className="flex-1">
+                <label className={label} style={labelStyle}>Paragraphe {i + 1}</label>
+                <textarea
+                  rows={4}
+                  value={p}
+                  onChange={e => setParagraph(i, e.target.value)}
+                  className={inp + ' resize-none'}
+                  style={inpStyle}
+                />
+              </div>
+              {data.about_paragraphs.length > 1 && (
+                <button type="button" onClick={() => removeParagraph(i)} className="mt-6 p-2 rounded-sm transition-colors hover:bg-red-50" style={{ color: '#ef4444' }}>
+                  <Trash2 size={14} />
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addParagraph}
+            className="flex items-center gap-2 text-sm transition-colors hover:text-[var(--orange)] self-start"
+            style={{ color: 'var(--muted-foreground)' }}
+          >
+            <Plus size={14} /> Ajouter un paragraphe
+          </button>
+        </Section>
+
+        {/* Statistiques */}
+        <Section title="Chiffres clés">
+          <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
+            Ces statistiques s'affichent en bas de la page sous forme de grands chiffres.
+          </p>
+          <div className="flex flex-col gap-3">
+            {data.about_stats.map((stat, i) => (
+              <div key={i} className="flex gap-3 items-end">
+                <div className="w-28">
+                  <label className={label} style={labelStyle}>Valeur</label>
+                  <input value={stat.value} onChange={e => setStat(i, 'value', e.target.value)} className={inp} style={inpStyle} placeholder="2005" />
+                </div>
+                <div className="flex-1">
+                  <label className={label} style={labelStyle}>Étiquette</label>
+                  <input value={stat.label} onChange={e => setStat(i, 'label', e.target.value)} className={inp} style={inpStyle} placeholder="Fondation" />
+                </div>
+                {data.about_stats.length > 1 && (
+                  <button type="button" onClick={() => removeStat(i)} className="p-2 rounded-sm transition-colors hover:bg-red-50 mb-0.5" style={{ color: '#ef4444' }}>
+                    <Trash2 size={14} />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={addStat}
+            className="flex items-center gap-2 text-sm transition-colors hover:text-[var(--orange)] self-start"
+            style={{ color: 'var(--muted-foreground)' }}
+          >
+            <Plus size={14} /> Ajouter un chiffre
+          </button>
+        </Section>
+      </div>
+    </form>
+  );
+}
