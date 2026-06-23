@@ -198,46 +198,28 @@ export default function Footer() {
         </div>
 
         {/* Developer signature */}
-        <div className="mt-6 flex justify-center">
-          <a
-            href="mailto:slimanelami@proton.me?subject=À propos de votre projet StockAlerte"
-            className="group relative inline-flex items-center gap-3 px-5 py-2.5 rounded-full text-xs font-medium transition-all duration-300 hover:scale-105"
-            style={{
-              background: 'linear-gradient(135deg, rgba(224,92,42,0.08) 0%, rgba(139,92,246,0.08) 100%)',
-              border: '1px solid rgba(224,92,42,0.2)',
-              color: 'var(--muted-foreground)',
-            }}
-          >
-            <span
-              className="relative flex items-center justify-center w-7 h-7 rounded-full font-display font-black text-sm text-white overflow-hidden transition-transform duration-300 group-hover:scale-110"
-              style={{ background: 'linear-gradient(135deg, #e05c2a 0%, #8b5cf6 100%)' }}
+        <div className="mt-5 flex justify-center">
+          <p className="text-xs" style={{ color: 'var(--muted-foreground)', opacity: 0.5 }}>
+            developed by{' '}
+            <a
+              href="mailto:slimanelami@proton.me"
+              className="group inline-flex items-center gap-[1px] font-bold tracking-widest align-middle hover:opacity-100 transition-opacity duration-200"
+              style={{ opacity: 1 }}
             >
-              SL
-              {/* Shine effect */}
               <span
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%)' }}
-              />
-            </span>
-            <span className="transition-colors duration-200 group-hover:text-[var(--foreground)]">
-              Designé & développé par{' '}
-              <span
-                className="font-semibold bg-clip-text text-transparent"
-                style={{ backgroundImage: 'linear-gradient(135deg, #e05c2a, #8b5cf6)' }}
+                className="inline-block transition-transform duration-200 group-hover:-translate-y-px"
+                style={{ background: 'linear-gradient(135deg, #e05c2a, #c2410c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
               >
-                Slimane Lami
+                S
               </span>
-            </span>
-            {/* Arrow */}
-            <svg
-              width="12" height="12" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-              className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200"
-              style={{ color: 'var(--orange)' }}
-            >
-              <path d="M7 17L17 7M7 7h10v10" />
-            </svg>
-          </a>
+              <span
+                className="inline-block transition-transform duration-200 group-hover:translate-y-px"
+                style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+              >
+                L
+              </span>
+            </a>
+          </p>
         </div>
       </div>
     </footer>
