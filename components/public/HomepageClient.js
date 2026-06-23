@@ -41,50 +41,47 @@ function BrandItem({ brand }) {
   const [logoLoaded, setLogoLoaded] = useState(false);
   const hasLogo = !!brand.logo;
 
-  if (hasLogo) {
-    return (
-      <div
-        className="relative flex items-center justify-center"
-        style={{ width: 120, height: 56 }}
-        title={brand.name}
-      >
-        {!logoLoaded && (
-          <div
-            className="absolute inset-0 rounded-sm overflow-hidden"
-            style={{ backgroundColor: 'var(--muted)' }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)',
-                animation: 'shimmer 1.4s infinite',
-                backgroundSize: '200% 100%',
-              }}
-            />
-          </div>
-        )}
-        <Image
-          src={brand.logo}
-          alt={brand.name}
-          fill
-          className="object-contain transition-opacity duration-300"
-          style={{ opacity: logoLoaded ? 0.45 : 0 }}
-          onLoad={() => setLogoLoaded(true)}
-          sizes="120px"
-        />
-      </div>
-    );
-  }
-
   return (
-    <span
-      className="font-display font-bold text-lg transition-opacity cursor-default hover:opacity-70"
-      style={{ color: 'var(--foreground)', opacity: 0.35 }}
-      title={brand.website || brand.name}
+    <div
+      className="flex items-center gap-3 opacity-40 hover:opacity-75 transition-opacity cursor-default"
+      title={brand.name}
     >
-      {brand.name}
-    </span>
+      {hasLogo && (
+        <div className="relative shrink-0" style={{ width: 40, height: 40 }}>
+          {!logoLoaded && (
+            <div
+              className="absolute inset-0 rounded-sm overflow-hidden"
+              style={{ backgroundColor: 'var(--muted)' }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)',
+                  animation: 'shimmer 1.4s infinite',
+                  backgroundSize: '200% 100%',
+                }}
+              />
+            </div>
+          )}
+          <Image
+            src={brand.logo}
+            alt={brand.name}
+            fill
+            className="object-contain transition-opacity duration-300"
+            style={{ opacity: logoLoaded ? 1 : 0 }}
+            onLoad={() => setLogoLoaded(true)}
+            sizes="40px"
+          />
+        </div>
+      )}
+      <span
+        className="font-display font-bold text-lg"
+        style={{ color: 'var(--foreground)' }}
+      >
+        {brand.name}
+      </span>
+    </div>
   );
 }
 
