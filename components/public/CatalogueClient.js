@@ -98,7 +98,6 @@ export default function CatalogueClient({ initialCategory } = {}) {
   });
 
   /* Refs pour l'infinite scroll */
-  const sentinelRef   = useRef(null);
   const pageRef       = useRef(1);          // page actuelle chargée
   const loadingRef    = useRef(false);      // guard anti-doublon
   const hasMoreRef    = useRef(false);      // miroir de hasMore pour le callback
@@ -192,21 +191,21 @@ export default function CatalogueClient({ initialCategory } = {}) {
     }
   }
 
-  /* Ref vers la fonction — mise à jour à chaque render sans recréer l'observer */
+  /* Ref vers la fonction — mise à jour à chaque render */
   const doLoadMoreRef = useRef(doLoadMore);
   useEffect(() => { doLoadMoreRef.current = doLoadMore; });
 
-  /* Observer créé une seule fois au montage */
+  /* Scroll listener — déclenche le chargement à 500px du bas */
   useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-    const observer = new IntersectionObserver(
-      entries => { if (entries[0].isIntersecting) doLoadMoreRef.current(); },
-      { rootMargin: '300px' }
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, []); // [] = une seule fois
+    function onScroll() {
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      if (scrollHeight - scrollTop - clientHeight < 500) {
+        doLoadMoreRef.current();
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []); // monté une seule fois
 
   return (
     <>
@@ -289,9 +288,6 @@ export default function CatalogueClient({ initialCategory } = {}) {
                       </motion.div>
                     ))}
                   </motion.div>
-
-                  {/* Sentinel invisible — l'observer l'écoute en permanence */}
-                  <div ref={sentinelRef} className="h-1 w-full" aria-hidden />
 
                   {/* Feedback visuel */}
                   <div className="py-10 flex justify-center">
