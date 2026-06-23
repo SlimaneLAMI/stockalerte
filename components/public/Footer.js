@@ -203,21 +203,9 @@ export default function Footer() {
             developed by{' '}
             <a
               href="mailto:slimanelami@proton.me"
-              className="group inline-flex items-center gap-[1px] font-bold tracking-widest align-middle hover:opacity-100 transition-opacity duration-200"
-              style={{ opacity: 1 }}
+              className="font-bold text-white hover:opacity-80 transition-opacity duration-200"
             >
-              <span
-                className="inline-block transition-transform duration-200 group-hover:-translate-y-px"
-                style={{ background: 'linear-gradient(135deg, #e05c2a, #c2410c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-              >
-                S
-              </span>
-              <span
-                className="inline-block transition-transform duration-200 group-hover:translate-y-px"
-                style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-              >
-                L
-              </span>
+              SL
             </a>
           </p>
         </div>
