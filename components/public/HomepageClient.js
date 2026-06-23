@@ -9,6 +9,48 @@ import QuickViewModal from './QuickViewModal';
 import BackToTop from './BackToTop';
 import { useSettings } from '@/components/SettingsContext';
 
+function Shimmer() {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.07) 50%, transparent 100%)',
+        backgroundSize: '200% 100%',
+        animation: 'shimmer 1.4s infinite',
+      }}
+    />
+  );
+}
+
+function CategorySkeleton() {
+  return (
+    <div className="rounded-sm overflow-hidden relative" style={{ aspectRatio: '4/3', backgroundColor: 'var(--muted)' }}>
+      <Shimmer />
+    </div>
+  );
+}
+
+function ProductSkeleton() {
+  return (
+    <div className="rounded-sm overflow-hidden border border-[var(--border)] bg-[var(--card)]">
+      <div className="relative overflow-hidden" style={{ aspectRatio: '4/3', backgroundColor: 'var(--muted)' }}>
+        <Shimmer />
+      </div>
+      <div className="p-5 space-y-3">
+        <div className="rounded-sm h-3 w-20 relative overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}><Shimmer /></div>
+        <div className="rounded-sm h-5 w-3/4 relative overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}><Shimmer /></div>
+        <div className="rounded-sm h-3 w-full relative overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}><Shimmer /></div>
+        <div className="rounded-sm h-3 w-2/3 relative overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}><Shimmer /></div>
+        <div className="flex justify-between items-center pt-2">
+          <div className="rounded-full h-6 w-20 relative overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}><Shimmer /></div>
+          <div className="rounded-full h-9 w-9 relative overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}><Shimmer /></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CategoryImage({ src, alt }) {
   const [loaded, setLoaded] = useState(false);
   return (
@@ -106,7 +148,8 @@ export default function HomepageClient() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
-  const [brandsLoading, setBrandsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [heroLoaded, setHeroLoaded] = useState(false);
   const [quickView, setQuickView] = useState(null);
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
@@ -122,8 +165,8 @@ export default function HomepageClient() {
       setFeaturedProducts(Array.isArray(p?.products) ? p.products : []);
       setCategories(Array.isArray(c) ? c : []);
       setBrands(Array.isArray(b) ? b : []);
-      setBrandsLoading(false);
-    }).catch(() => setBrandsLoading(false));
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }, []);
 
   const heroImg = settings.hero_image || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80';
@@ -133,6 +176,13 @@ export default function HomepageClient() {
     <>
       {/* ── HERO ─────────────────────────────────────────── */}
       <section ref={heroRef} className="relative h-[92vh] min-h-[600px] flex items-end overflow-hidden">
+        {/* Shimmer hero pendant chargement */}
+        {!heroLoaded && (
+          <div className="absolute inset-0 z-0" style={{ backgroundColor: '#1a1a1a' }}>
+            <Shimmer />
+          </div>
+        )}
+
         {/* Parallax background */}
         <motion.div className="absolute inset-0" style={{ y: heroY }}>
           <Image
@@ -141,6 +191,7 @@ export default function HomepageClient() {
             fill
             priority
             className="object-cover"
+            onLoad={() => setHeroLoaded(true)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-[#1a1a1a]/60 to-transparent" />
         </motion.div>
@@ -197,7 +248,7 @@ export default function HomepageClient() {
       </section>
 
       {/* ── CATEGORIES GRID ─────────────────────────────── */}
-      {categories.length > 0 && (
+      {(loading || categories.length > 0) && (
         <section className="max-w-[1400px] mx-auto px-6 lg:px-12 py-24">
           <FadeIn>
             <div className="flex items-end justify-between mb-12">
@@ -209,55 +260,60 @@ export default function HomepageClient() {
                   Équipez votre cuisine
                 </h2>
               </div>
-              <Link
-                href="/catalogue"
-                className="hidden sm:flex items-center gap-2 text-sm font-medium transition-colors hover:text-[var(--orange)]"
-                style={{ color: 'var(--muted-foreground)' }}
-              >
-                Tout voir <ArrowRight size={14} />
-              </Link>
+              {!loading && (
+                <Link
+                  href="/catalogue"
+                  className="hidden sm:flex items-center gap-2 text-sm font-medium transition-colors hover:text-[var(--orange)]"
+                  style={{ color: 'var(--muted-foreground)' }}
+                >
+                  Tout voir <ArrowRight size={14} />
+                </Link>
+              )}
             </div>
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {categories.map((cat, i) => (
-              <FadeIn key={cat._id} delay={i * 0.1}>
-                <Link href={`/catalogue/categorie/${cat.slug}`} className="group block">
-                  <motion.div
-                    className="relative overflow-hidden rounded-sm"
-                    style={{ aspectRatio: '4/3' }}
-                    whileHover={{ scale: 1.01 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {cat.bannerImage ? (
-                      <CategoryImage src={cat.bannerImage} alt={cat.name} />
-                    ) : (
-                      <div className="w-full h-full" style={{ backgroundColor: 'var(--muted)' }} />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a]/80 via-[#1a1a1a]/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 p-6">
-                      <span className="text-3xl mb-3 block">{cat.icon}</span>
-                      <h3 className="font-display font-bold text-2xl text-white mb-1">{cat.name}</h3>
-                      {cat.description && (
-                        <p className="text-white/70 text-sm line-clamp-1">{cat.description}</p>
-                      )}
-                      <span
-                        className="inline-flex items-center gap-1.5 mt-4 text-xs font-medium uppercase tracking-wider"
-                        style={{ color: 'var(--orange)' }}
+            {loading
+              ? [0, 1, 2].map(i => <CategorySkeleton key={i} />)
+              : categories.map((cat, i) => (
+                  <FadeIn key={cat._id} delay={i * 0.1}>
+                    <Link href={`/catalogue/categorie/${cat.slug}`} className="group block">
+                      <motion.div
+                        className="relative overflow-hidden rounded-sm"
+                        style={{ aspectRatio: '4/3' }}
+                        whileHover={{ scale: 1.01 }}
+                        transition={{ duration: 0.3 }}
                       >
-                        Explorer <ArrowRight size={12} />
-                      </span>
-                    </div>
-                  </motion.div>
-                </Link>
-              </FadeIn>
-            ))}
+                        {cat.bannerImage ? (
+                          <CategoryImage src={cat.bannerImage} alt={cat.name} />
+                        ) : (
+                          <div className="w-full h-full" style={{ backgroundColor: 'var(--muted)' }} />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a]/80 via-[#1a1a1a]/20 to-transparent" />
+                        <div className="absolute bottom-0 left-0 p-6">
+                          <span className="text-3xl mb-3 block">{cat.icon}</span>
+                          <h3 className="font-display font-bold text-2xl text-white mb-1">{cat.name}</h3>
+                          {cat.description && (
+                            <p className="text-white/70 text-sm line-clamp-1">{cat.description}</p>
+                          )}
+                          <span
+                            className="inline-flex items-center gap-1.5 mt-4 text-xs font-medium uppercase tracking-wider"
+                            style={{ color: 'var(--orange)' }}
+                          >
+                            Explorer <ArrowRight size={12} />
+                          </span>
+                        </div>
+                      </motion.div>
+                    </Link>
+                  </FadeIn>
+                ))
+            }
           </div>
         </section>
       )}
 
       {/* ── FEATURED PRODUCTS ───────────────────────────── */}
-      {featuredProducts.length > 0 && (
+      {(loading || featuredProducts.length > 0) && (
         <section className="py-24" style={{ backgroundColor: 'var(--secondary)' }}>
           <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
             <FadeIn>
@@ -270,22 +326,27 @@ export default function HomepageClient() {
                     Nos produits phares
                   </h2>
                 </div>
-                <Link
-                  href="/catalogue"
-                  className="hidden sm:flex items-center gap-2 text-sm font-medium transition-colors hover:text-[var(--orange)]"
-                  style={{ color: 'var(--muted-foreground)' }}
-                >
-                  Tout le catalogue <ArrowRight size={14} />
-                </Link>
+                {!loading && (
+                  <Link
+                    href="/catalogue"
+                    className="hidden sm:flex items-center gap-2 text-sm font-medium transition-colors hover:text-[var(--orange)]"
+                    style={{ color: 'var(--muted-foreground)' }}
+                  >
+                    Tout le catalogue <ArrowRight size={14} />
+                  </Link>
+                )}
               </div>
             </FadeIn>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredProducts.map((product, i) => (
-                <FadeIn key={product._id} delay={i * 0.08}>
-                  <ProductCard product={product} onQuickView={setQuickView} />
-                </FadeIn>
-              ))}
+              {loading
+                ? [0, 1, 2, 3, 4, 5].map(i => <ProductSkeleton key={i} />)
+                : featuredProducts.map((product, i) => (
+                    <FadeIn key={product._id} delay={i * 0.08}>
+                      <ProductCard product={product} onQuickView={setQuickView} />
+                    </FadeIn>
+                  ))
+              }
             </div>
           </div>
         </section>
@@ -329,7 +390,7 @@ export default function HomepageClient() {
           </p>
 
           {/* Squelette pendant le chargement */}
-          {brandsLoading && (
+          {loading && (
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
               {[...Array(5)].map((_, i) => (
                 <div
@@ -352,7 +413,7 @@ export default function HomepageClient() {
           )}
 
           {/* Marques chargées */}
-          {!brandsLoading && brands.length > 0 && (
+          {!loading && brands.length > 0 && (
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
               {brands.map(brand => (
                 <BrandItem key={brand._id} brand={brand} />
@@ -361,7 +422,7 @@ export default function HomepageClient() {
           )}
 
           {/* Aucune marque configurée */}
-          {!brandsLoading && brands.length === 0 && (
+          {!loading && brands.length === 0 && (
             <p className="text-center text-sm" style={{ color: 'var(--muted-foreground)' }}>
               Aucune marque configurée pour le moment.
             </p>
