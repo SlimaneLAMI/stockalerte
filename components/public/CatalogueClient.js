@@ -1,13 +1,14 @@
 'use client';
-import { useEffect, useState, useCallback } from 'react';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
+import { Search, SlidersHorizontal, X, Loader2 } from 'lucide-react';
 import ProductCard from './ProductCard';
 import QuickViewModal from './QuickViewModal';
 import BackToTop from './BackToTop';
 import Breadcrumbs from './Breadcrumbs';
 import { Skeleton } from '@/components/ui/skeleton';
+
+const PAGE_SIZE = 6;
 
 function FiltersPanel({ categories, brands, filters, onChange, onReset, hasActive }) {
   const availabilityOptions = ['En stock', 'Sur commande'];
@@ -127,23 +128,28 @@ function ProductSkeleton() {
 }
 
 export default function CatalogueClient({ initialCategory } = {}) {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [total, setTotal] = useState(0);
-  const [quickView, setQuickView] = useState(null);
+  const [products, setProducts]         = useState([]);
+  const [categories, setCategories]     = useState([]);
+  const [brands, setBrands]             = useState([]);
+  const [loading, setLoading]           = useState(true);   // premier chargement
+  const [loadingMore, setLoadingMore]   = useState(false);  // pages suivantes
+  const [total, setTotal]               = useState(0);
+  const [page, setPage]                 = useState(1);
+  const [hasMore, setHasMore]           = useState(true);
+  const [quickView, setQuickView]       = useState(null);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const [sort, setSort] = useState('createdAt');
-  const [filters, setFilters] = useState({
+  const [search, setSearch]             = useState('');
+  const [sort, setSort]                 = useState('createdAt');
+  const [filters, setFilters]           = useState({
     categories: initialCategory ? [initialCategory] : [],
     brands: [],
     availability: [],
   });
 
+  const sentinelRef = useRef(null);
   const hasActiveFilters = filters.categories.length > 0 || filters.brands.length > 0 || filters.availability.length > 0;
 
+  /* Chargement des filtres */
   useEffect(() => {
     Promise.all([
       fetch('/api/categories').then(r => r.json()),
@@ -154,24 +160,72 @@ export default function CatalogueClient({ initialCategory } = {}) {
     });
   }, []);
 
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    const params = new URLSearchParams({ sort, limit: '24' });
+  /* Construit les params de recherche */
+  function buildParams(pageNum) {
+    const params = new URLSearchParams({ sort, limit: String(PAGE_SIZE), page: String(pageNum) });
     if (search) params.set('search', search);
     filters.categories.forEach(c => params.append('category', c));
     filters.brands.forEach(b => params.append('brand', b));
     filters.availability.forEach(a => params.append('availability', a));
+    return params;
+  }
 
-    const data = await fetch(`/api/products?${params}`).then(r => r.json());
-    setProducts(data.products || []);
-    setTotal(data.total || 0);
-    setLoading(false);
+  /* Quand les filtres/sort/search changent → reset complet */
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setPage(1);
+    setProducts([]);
+    setHasMore(true);
+
+    const t = setTimeout(async () => {
+      try {
+        const data = await fetch(`/api/products?${buildParams(1)}`).then(r => r.json());
+        if (cancelled) return;
+        const prods = data.products || [];
+        setProducts(prods);
+        setTotal(data.total || 0);
+        setHasMore(prods.length === PAGE_SIZE && prods.length < (data.total || 0));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }, 250);
+
+    return () => { cancelled = true; clearTimeout(t); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, sort, filters]);
 
+  /* Chargement d'une page supplémentaire */
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    const nextPage = page + 1;
+    try {
+      const data = await fetch(`/api/products?${buildParams(nextPage)}`).then(r => r.json());
+      const prods = data.products || [];
+      setProducts(prev => {
+        const ids = new Set(prev.map(p => p._id));
+        return [...prev, ...prods.filter(p => !ids.has(p._id))];
+      });
+      setPage(nextPage);
+      setHasMore(prods.length === PAGE_SIZE && (products.length + prods.length) < (data.total || 0));
+    } finally {
+      setLoadingMore(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadingMore, hasMore, page, search, sort, filters]);
+
+  /* IntersectionObserver sur le sentinel */
   useEffect(() => {
-    const t = setTimeout(fetchProducts, 250);
-    return () => clearTimeout(t);
-  }, [fetchProducts]);
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      entries => { if (entries[0].isIntersecting) loadMore(); },
+      { rootMargin: '200px' }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   return (
     <>
@@ -246,7 +300,7 @@ export default function CatalogueClient({ initialCategory } = {}) {
                   categories={categories}
                   brands={brands}
                   filters={filters}
-                  onChange={setFilters}
+                  onChange={f => setFilters(f)}
                   onReset={() => setFilters({ categories: [], brands: [], availability: [] })}
                   hasActive={hasActiveFilters}
                 />
@@ -257,14 +311,10 @@ export default function CatalogueClient({ initialCategory } = {}) {
             <div className="flex-1 min-w-0">
               {loading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)}
+                  {Array.from({ length: PAGE_SIZE }).map((_, i) => <ProductSkeleton key={i} />)}
                 </div>
               ) : products.length === 0 ? (
-                <motion.div
-                  className="text-center py-24"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
+                <motion.div className="text-center py-24" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                   <p className="text-5xl mb-4">🔍</p>
                   <p className="font-display font-bold text-xl mb-2" style={{ color: 'var(--foreground)' }}>
                     Aucun produit trouvé
@@ -281,27 +331,39 @@ export default function CatalogueClient({ initialCategory } = {}) {
                   </button>
                 </motion.div>
               ) : (
-                <motion.div
-                  className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
-                  initial="hidden"
-                  animate="visible"
-                  variants={{
-                    visible: { transition: { staggerChildren: 0.06 } },
-                  }}
-                >
-                  {products.map(product => (
-                    <motion.div
-                      key={product._id}
-                      className="h-full"
-                      variants={{
-                        hidden: { opacity: 0, y: 20 },
-                        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
-                      }}
-                    >
-                      <ProductCard product={product} onQuickView={setQuickView} />
-                    </motion.div>
-                  ))}
-                </motion.div>
+                <>
+                  <motion.div
+                    className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+                    initial="hidden"
+                    animate="visible"
+                    variants={{ visible: { transition: { staggerChildren: 0.06 } } }}
+                  >
+                    {products.map(product => (
+                      <motion.div
+                        key={product._id}
+                        className="h-full"
+                        variants={{
+                          hidden: { opacity: 0, y: 20 },
+                          visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+                        }}
+                      >
+                        <ProductCard product={product} onQuickView={setQuickView} />
+                      </motion.div>
+                    ))}
+                  </motion.div>
+
+                  {/* Sentinel + spinner */}
+                  <div ref={sentinelRef} className="py-10 flex justify-center">
+                    {loadingMore && (
+                      <Loader2 size={24} className="animate-spin" style={{ color: 'var(--orange)' }} />
+                    )}
+                    {!hasMore && products.length > PAGE_SIZE && (
+                      <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+                        Tous les produits sont affichés
+                      </p>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </div>
@@ -335,7 +397,7 @@ export default function CatalogueClient({ initialCategory } = {}) {
                 categories={categories}
                 brands={brands}
                 filters={filters}
-                onChange={setFilters}
+                onChange={f => setFilters(f)}
                 onReset={() => setFilters({ categories: [], brands: [], availability: [] })}
                 hasActive={hasActiveFilters}
               />
