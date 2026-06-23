@@ -9,6 +9,85 @@ import QuickViewModal from './QuickViewModal';
 import BackToTop from './BackToTop';
 import { useSettings } from '@/components/SettingsContext';
 
+function CategoryImage({ src, alt }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <>
+      {!loaded && (
+        <div className="absolute inset-0 z-10" style={{ backgroundColor: 'var(--muted)' }}>
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)',
+              animation: 'shimmer 1.4s infinite',
+              backgroundSize: '200% 100%',
+            }}
+          />
+        </div>
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className="object-cover transition-transform duration-700 group-hover:scale-105"
+        onLoad={() => setLoaded(true)}
+      />
+    </>
+  );
+}
+
+function BrandItem({ brand }) {
+  const [logoLoaded, setLogoLoaded] = useState(false);
+  const hasLogo = !!brand.logo;
+
+  if (hasLogo) {
+    return (
+      <div
+        className="relative flex items-center justify-center"
+        style={{ width: 120, height: 56 }}
+        title={brand.name}
+      >
+        {!logoLoaded && (
+          <div
+            className="absolute inset-0 rounded-sm overflow-hidden"
+            style={{ backgroundColor: 'var(--muted)' }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)',
+                animation: 'shimmer 1.4s infinite',
+                backgroundSize: '200% 100%',
+              }}
+            />
+          </div>
+        )}
+        <Image
+          src={brand.logo}
+          alt={brand.name}
+          fill
+          className="object-contain transition-opacity duration-300"
+          style={{ opacity: logoLoaded ? 0.45 : 0 }}
+          onLoad={() => setLogoLoaded(true)}
+          sizes="120px"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <span
+      className="font-display font-bold text-lg transition-opacity cursor-default hover:opacity-70"
+      style={{ color: 'var(--foreground)', opacity: 0.35 }}
+      title={brand.website || brand.name}
+    >
+      {brand.name}
+    </span>
+  );
+}
+
 function FadeIn({ children, delay = 0, className = '' }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
@@ -29,6 +108,8 @@ export default function HomepageClient() {
   const settings = useSettings();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [brandsLoading, setBrandsLoading] = useState(true);
   const [quickView, setQuickView] = useState(null);
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
@@ -39,10 +120,13 @@ export default function HomepageClient() {
     Promise.all([
       fetch('/api/products?featured=true&limit=6').then(r => r.json()),
       fetch('/api/categories').then(r => r.json()),
-    ]).then(([p, c]) => {
+      fetch('/api/brands').then(r => r.json()),
+    ]).then(([p, c, b]) => {
       setFeaturedProducts(Array.isArray(p?.products) ? p.products : []);
       setCategories(Array.isArray(c) ? c : []);
-    });
+      setBrands(Array.isArray(b) ? b : []);
+      setBrandsLoading(false);
+    }).catch(() => setBrandsLoading(false));
   }, []);
 
   const heroImg = settings.hero_image || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80';
@@ -149,7 +233,7 @@ export default function HomepageClient() {
                     transition={{ duration: 0.3 }}
                   >
                     {cat.bannerImage ? (
-                      <Image src={cat.bannerImage} alt={cat.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                      <CategoryImage src={cat.bannerImage} alt={cat.name} />
                     ) : (
                       <div className="w-full h-full" style={{ backgroundColor: 'var(--muted)' }} />
                     )}
@@ -246,17 +330,45 @@ export default function HomepageClient() {
           <p className="text-xs font-medium uppercase tracking-widest text-center mb-8" style={{ color: 'var(--muted-foreground)' }}>
             Marques distribuées
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
-            {['Rational', 'Hobart', 'Electrolux Professional', 'Fagor', 'Zanussi Professional'].map(brand => (
-              <span
-                key={brand}
-                className="font-display font-bold text-lg opacity-30 hover:opacity-70 transition-opacity cursor-default"
-                style={{ color: 'var(--foreground)' }}
-              >
-                {brand}
-              </span>
-            ))}
-          </div>
+
+          {/* Squelette pendant le chargement */}
+          {brandsLoading && (
+            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-sm overflow-hidden"
+                  style={{ width: 100, height: 40, backgroundColor: 'var(--muted)', position: 'relative' }}
+                >
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)',
+                      animation: 'shimmer 1.4s infinite',
+                      backgroundSize: '200% 100%',
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Marques chargées */}
+          {!brandsLoading && brands.length > 0 && (
+            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
+              {brands.map(brand => (
+                <BrandItem key={brand._id} brand={brand} />
+              ))}
+            </div>
+          )}
+
+          {/* Aucune marque configurée */}
+          {!brandsLoading && brands.length === 0 && (
+            <p className="text-center text-sm" style={{ color: 'var(--muted-foreground)' }}>
+              Aucune marque configurée pour le moment.
+            </p>
+          )}
         </div>
       </section>
 

@@ -156,6 +156,12 @@
   background: #404040;
 }
 
+/* Shimmer skeleton animation */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 /* Selection */
 ::selection {
   background: rgba(224, 92, 42, 0.2);

@@ -5,6 +5,22 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Eye, ArrowRight } from 'lucide-react';
 
+function ImageSkeleton({ loaded }) {
+  if (loaded) return null;
+  return (
+    <div className="absolute inset-0 z-10 overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}>
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)',
+          animation: 'shimmer 1.4s infinite',
+          backgroundSize: '200% 100%',
+        }}
+      />
+    </div>
+  );
+}
+
 function AvailabilityBadge({ status }) {
   const config = {
     'En stock': { bg: 'bg-emerald-50 dark:bg-emerald-950', text: 'text-emerald-700 dark:text-emerald-400', dot: 'bg-emerald-500' },
@@ -23,6 +39,7 @@ function AvailabilityBadge({ status }) {
 
 export default function ProductCard({ product, onQuickView }) {
   const [hovered, setHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const mainImage = product.images?.[0]?.url || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80';
 
   return (
@@ -35,6 +52,7 @@ export default function ProductCard({ product, onQuickView }) {
     >
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden bg-[var(--muted)]">
+        <ImageSkeleton loaded={imageLoaded} />
         <motion.div
           className="absolute inset-0"
           animate={{ scale: hovered ? 1.06 : 1 }}
@@ -46,6 +64,7 @@ export default function ProductCard({ product, onQuickView }) {
             fill
             className="object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            onLoad={() => setImageLoaded(true)}
           />
         </motion.div>
 
