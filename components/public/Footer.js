@@ -203,7 +203,8 @@ export default function Footer() {
             developed by{' '}
             <a
               href="mailto:slimanelami@proton.me"
-              className="font-bold text-white hover:opacity-80 transition-opacity duration-200"
+              className="font-bold hover:opacity-80 transition-opacity duration-200"
+              style={{ color: 'var(--foreground)' }}
             >
               SL
             </a>
