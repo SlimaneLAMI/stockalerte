@@ -21,11 +21,26 @@ function ImageSkeleton({ loaded }) {
   );
 }
 
+function ConditionBadge({ condition }) {
+  const config = {
+    'Neuf':           { bg: 'bg-blue-50 dark:bg-blue-950',   text: 'text-blue-700 dark:text-blue-300',   dot: 'bg-blue-500' },
+    'Comme neuf':     { bg: 'bg-sky-50 dark:bg-sky-950',     text: 'text-sky-700 dark:text-sky-300',     dot: 'bg-sky-400' },
+    'Bonne occasion': { bg: 'bg-violet-50 dark:bg-violet-950', text: 'text-violet-700 dark:text-violet-300', dot: 'bg-violet-400' },
+    'Occasion':       { bg: 'bg-orange-50 dark:bg-orange-950', text: 'text-orange-700 dark:text-orange-300', dot: 'bg-orange-400' },
+  };
+  const c = config[condition] || { bg: 'bg-slate-50 dark:bg-slate-900', text: 'text-slate-600 dark:text-slate-300', dot: 'bg-slate-400' };
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium mt-1.5 ${c.bg} ${c.text}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
+      {condition}
+    </span>
+  );
+}
+
 function AvailabilityBadge({ status }) {
   const config = {
     'En stock': { bg: 'bg-emerald-50 dark:bg-emerald-950', text: 'text-emerald-700 dark:text-emerald-400', dot: 'bg-emerald-500' },
     'Sur commande': { bg: 'bg-amber-50 dark:bg-amber-950', text: 'text-amber-700 dark:text-amber-400', dot: 'bg-amber-500' },
-    'Discontinué': { bg: 'bg-red-50 dark:bg-red-950', text: 'text-red-700 dark:text-red-400', dot: 'bg-red-400' },
   };
   const c = config[status] || config['En stock'];
 
@@ -129,12 +144,7 @@ export default function ProductCard({ product, onQuickView, onImageLoad }) {
         <div className="mt-auto flex items-center justify-between pt-4 border-t border-[var(--border)]">
           <div>
             <AvailabilityBadge status={product.availability} />
-            {product.condition && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium mt-1.5 bg-slate-50 text-slate-700 dark:bg-slate-900 dark:text-slate-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                {product.condition}
-              </span>
-            )}
+            {product.condition && <ConditionBadge condition={product.condition} />}
             {product.priceVisible && product.price && (
               <p className="font-display font-bold text-lg mt-2" style={{ color: 'var(--foreground)' }}>
                 {product.price.toLocaleString('fr-FR')} €

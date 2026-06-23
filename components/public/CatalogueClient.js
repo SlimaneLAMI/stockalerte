@@ -10,7 +10,7 @@ import Breadcrumbs from './Breadcrumbs';
 import { Skeleton } from '@/components/ui/skeleton';
 
 function FiltersPanel({ categories, brands, filters, onChange, onReset, hasActive }) {
-  const availabilityOptions = ['En stock', 'Sur commande', 'Discontinué'];
+  const availabilityOptions = ['En stock', 'Sur commande'];
 
   return (
     <aside className="flex flex-col gap-6">

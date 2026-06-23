@@ -12,7 +12,6 @@ function AvailabilityBadge({ status }) {
   const config = {
     'En stock': { bg: '#ecfdf5', text: '#065f46' },
     'Sur commande': { bg: '#fffbeb', text: '#92400e' },
-    'Discontinué': { bg: '#fef2f2', text: '#991b1b' },
   };
   const c = config[status] || config['En stock'];
   return (

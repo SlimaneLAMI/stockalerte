@@ -41,7 +41,6 @@ export default function ProduitsPage() {
   const availabilityColors = {
     'En stock': 'text-emerald-600',
     'Sur commande': 'text-amber-600',
-    'Discontinué': 'text-red-500',
   };
 
   return (
