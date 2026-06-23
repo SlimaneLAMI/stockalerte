@@ -130,7 +130,8 @@ export default function ProductCard({ product, onQuickView, onImageLoad }) {
           <div>
             <AvailabilityBadge status={product.availability} />
             {product.condition && (
-              <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)' }}>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium mt-1.5 bg-slate-50 text-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
                 {product.condition}
               </span>
             )}

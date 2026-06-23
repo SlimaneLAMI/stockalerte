@@ -159,7 +159,7 @@ export default function PolitiqueConfidentialitePage() {
           </section>
 
           <p className="text-xs pt-4 border-t" style={{ borderColor: 'var(--border)' }}>
-            Dernière mise à jour : juin 2025
+            Dernière mise à jour : juin 2026
           </p>
         </div>
       </div>
