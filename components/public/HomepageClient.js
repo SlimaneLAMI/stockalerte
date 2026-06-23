@@ -8,6 +8,8 @@ import ProductCard from './ProductCard';
 import QuickViewModal from './QuickViewModal';
 import BackToTop from './BackToTop';
 import { useSettings } from '@/components/SettingsContext';
+import { getIcon } from '@/lib/whyUsIcons';
+import { cloudinaryUrl } from '@/lib/cloudinaryUrl';
 
 /* ── Shimmer skeleton ───────────────────────────────────────── */
 function Shimmer() {
@@ -62,7 +64,7 @@ function CategoryImage({ src, alt }) {
         </div>
       )}
       <Image
-        src={src}
+        src={cloudinaryUrl(src, { width: 800, height: 600 })}
         alt={alt}
         fill
         className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -346,19 +348,31 @@ export default function HomepageClient() {
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {whyUs.map((item, i) => (
-              <FadeIn key={i} delay={i * 0.12}>
-                <div className="p-8 rounded-sm border border-[var(--border)] bg-[var(--card)]">
-                  <span className="text-4xl block mb-6">{item.icon}</span>
-                  <h3 className="font-display font-bold text-xl mb-3" style={{ color: 'var(--foreground)' }}>
-                    {item.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-                    {item.text}
-                  </p>
-                </div>
-              </FadeIn>
-            ))}
+            {whyUs.map((item, i) => {
+              const SvgIcon = getIcon(item.icon);
+              return (
+                <FadeIn key={i} delay={i * 0.12}>
+                  <div className="p-8 rounded-sm border border-[var(--border)] bg-[var(--card)]">
+                    {SvgIcon ? (
+                      <div
+                        className="w-14 h-14 rounded-sm flex items-center justify-center mb-6"
+                        style={{ backgroundColor: 'rgba(224,92,42,0.1)' }}
+                      >
+                        <SvgIcon size={28} style={{ color: 'var(--orange)' }} />
+                      </div>
+                    ) : (
+                      <span className="text-4xl block mb-6">{item.icon}</span>
+                    )}
+                    <h3 className="font-display font-bold text-xl mb-3" style={{ color: 'var(--foreground)' }}>
+                      {item.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
+                      {item.text}
+                    </p>
+                  </div>
+                </FadeIn>
+              );
+            })}
           </div>
         </section>
       )}

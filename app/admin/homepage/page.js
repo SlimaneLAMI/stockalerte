@@ -1,8 +1,65 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Loader2, Plus, Trash2 } from 'lucide-react';
+import { Loader2, Plus, Trash2, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 import CloudinaryUpload from '@/components/admin/CloudinaryUpload';
+import { WHY_US_ICONS, getIcon } from '@/lib/whyUsIcons';
+
+function IconPicker({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const SelectedIcon = getIcon(value);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-sm border w-full outline-none transition-colors hover:border-[var(--orange)]"
+        style={{ borderColor: 'var(--border)', color: 'var(--foreground)', backgroundColor: 'var(--card)' }}
+      >
+        {SelectedIcon
+          ? <SelectedIcon size={16} style={{ color: 'var(--orange)' }} />
+          : <span className="w-4 h-4 rounded-sm" style={{ backgroundColor: 'var(--muted)' }} />
+        }
+        <span className="flex-1 text-left text-xs" style={{ color: SelectedIcon ? 'var(--foreground)' : 'var(--muted-foreground)' }}>
+          {value ? (WHY_US_ICONS.find(i => i.key === value)?.label ?? value) : 'Choisir une icône'}
+        </span>
+        <ChevronDown size={13} style={{ color: 'var(--muted-foreground)' }} />
+      </button>
+
+      {open && (
+        <div
+          className="absolute z-50 mt-1 left-0 right-0 rounded-sm border shadow-lg overflow-y-auto"
+          style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', maxHeight: 260 }}
+        >
+          <div className="grid grid-cols-6 gap-1 p-2">
+            {WHY_US_ICONS.map(({ key, label, Icon }) => {
+              const active = value === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  title={label}
+                  onClick={() => { onChange(key); setOpen(false); }}
+                  className="flex flex-col items-center gap-1 p-2 rounded-sm transition-colors"
+                  style={{
+                    backgroundColor: active ? 'rgba(224,92,42,0.1)' : 'transparent',
+                    border: active ? '1px solid var(--orange)' : '1px solid transparent',
+                  }}
+                >
+                  <Icon size={17} style={{ color: active ? 'var(--orange)' : 'var(--muted-foreground)' }} />
+                  <span className="text-[9px] truncate w-full text-center" style={{ color: 'var(--muted-foreground)' }}>
+                    {label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function HomepageAdminPage() {
   const [settings, setSettings] = useState({
@@ -86,37 +143,69 @@ export default function HomepageAdminPage() {
         {/* Why us */}
         <section className="p-6 rounded-sm border border-[var(--border)] bg-[var(--card)]">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-display font-bold text-base" style={{ color: 'var(--foreground)' }}>
-              Pourquoi nous choisir (3 blocs)
-            </h2>
-            <button type="button" onClick={() => setSettings(p => ({ ...p, why_us: [...(p.why_us || []), { icon: '', title: '', text: '' }] }))}
-              className="flex items-center gap-1.5 text-sm text-[var(--orange)] font-medium">
+            <div>
+              <h2 className="font-display font-bold text-base" style={{ color: 'var(--foreground)' }}>
+                Pourquoi nous choisir
+              </h2>
+              <p className="text-xs mt-0.5" style={{ color: 'var(--muted-foreground)' }}>
+                Chaque bloc affiche une icône SVG, un titre et un texte descriptif.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSettings(p => ({ ...p, why_us: [...(p.why_us || []), { icon: '', title: '', text: '' }] }))}
+              className="flex items-center gap-1.5 text-sm font-medium"
+              style={{ color: 'var(--orange)' }}
+            >
               <Plus size={14} /> Ajouter
             </button>
           </div>
+
           <div className="flex flex-col gap-6">
-            {(settings.why_us || []).map((item, i) => (
-              <div key={i} className="p-4 rounded-sm border border-[var(--border)] relative">
-                <button type="button" onClick={() => setSettings(p => ({ ...p, why_us: p.why_us.filter((_, j) => j !== i) }))}
-                  className="absolute top-3 right-3 text-red-400 hover:text-red-500">
-                  <Trash2 size={13} />
-                </button>
-                <div className="grid sm:grid-cols-5 gap-3">
-                  <div>
-                    <label className={label} style={labelStyle}>Icône</label>
-                    <input value={item.icon} onChange={e => updateWhyUs(i, 'icon', e.target.value)} className={inp + ' text-center text-xl'} style={inpStyle} />
+            {(settings.why_us || []).map((item, i) => {
+              const PreviewIcon = getIcon(item.icon);
+              return (
+                <div key={i} className="p-4 rounded-sm border border-[var(--border)] relative">
+                  <button
+                    type="button"
+                    onClick={() => setSettings(p => ({ ...p, why_us: p.why_us.filter((_, j) => j !== i) }))}
+                    className="absolute top-3 right-3 text-red-400 hover:text-red-500"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+
+                  <div className="grid sm:grid-cols-5 gap-3 mb-3">
+                    <div>
+                      <label className={label} style={labelStyle}>Icône</label>
+                      <IconPicker value={item.icon} onChange={val => updateWhyUs(i, 'icon', val)} />
+                    </div>
+                    <div className="sm:col-span-4">
+                      <label className={label} style={labelStyle}>Titre</label>
+                      <input value={item.title} onChange={e => updateWhyUs(i, 'title', e.target.value)} className={inp} style={inpStyle} />
+                    </div>
+                    <div className="sm:col-span-5">
+                      <label className={label} style={labelStyle}>Texte</label>
+                      <textarea rows={2} value={item.text} onChange={e => updateWhyUs(i, 'text', e.target.value)} className={inp + ' resize-none'} style={inpStyle} />
+                    </div>
                   </div>
-                  <div className="sm:col-span-4">
-                    <label className={label} style={labelStyle}>Titre</label>
-                    <input value={item.title} onChange={e => updateWhyUs(i, 'title', e.target.value)} className={inp} style={inpStyle} />
-                  </div>
-                  <div className="sm:col-span-5">
-                    <label className={label} style={labelStyle}>Texte</label>
-                    <textarea rows={2} value={item.text} onChange={e => updateWhyUs(i, 'text', e.target.value)} className={inp + ' resize-none'} style={inpStyle} />
-                  </div>
+
+                  {/* Aperçu */}
+                  {(PreviewIcon || item.title) && (
+                    <div className="flex items-start gap-3 pt-3 border-t" style={{ borderColor: 'var(--border)' }}>
+                      {PreviewIcon && (
+                        <div className="w-10 h-10 rounded-sm flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(224,92,42,0.1)' }}>
+                          <PreviewIcon size={20} style={{ color: 'var(--orange)' }} />
+                        </div>
+                      )}
+                      <div>
+                        {item.title && <p className="text-sm font-semibold" style={{ color: 'var(--foreground)' }}>{item.title}</p>}
+                        {item.text  && <p className="text-xs mt-0.5 line-clamp-2" style={{ color: 'var(--muted-foreground)' }}>{item.text}</p>}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
       </div>

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Eye, ArrowRight } from 'lucide-react';
 import { useSettings } from '@/components/SettingsContext';
+import { cloudinaryUrl } from '@/lib/cloudinaryUrl';
 
 function ImageSkeleton({ loaded }) {
   if (loaded) return null;
@@ -66,7 +67,8 @@ export default function ProductCard({ product, onQuickView, onImageLoad }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const s = useSettings();
   const priceLabel = s.price_mode === 'TTC' ? 'TTC' : 'HT';
-  const mainImage = product.images?.[0]?.url || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80';
+  const rawImage = product.images?.[0]?.url || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80';
+  const mainImage = cloudinaryUrl(rawImage, { width: 600, height: 450 });
 
   const showPrice = s.show_prices !== false && product.priceVisible && product.price;
   const hasPromo = showPrice && product.salePrice && product.salePrice < product.price;

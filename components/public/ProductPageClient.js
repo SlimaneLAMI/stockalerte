@@ -8,6 +8,7 @@ import Breadcrumbs from './Breadcrumbs';
 import ProductCard from './ProductCard';
 import BackToTop from './BackToTop';
 import { useSettings } from '@/components/SettingsContext';
+import { cloudinaryUrl } from '@/lib/cloudinaryUrl';
 
 function AvailabilityBadge({ status }) {
   const config = {
@@ -76,7 +77,7 @@ export default function ProductPageClient({ product, related }) {
                 onClick={() => setLightbox(true)}
               >
                 <Image
-                  src={images[activeImg]?.url}
+                  src={cloudinaryUrl(images[activeImg]?.url, { width: 900 })}
                   alt={product.name}
                   fill
                   className="object-cover"
@@ -98,7 +99,7 @@ export default function ProductPageClient({ product, related }) {
                         i === activeImg ? 'border-[var(--orange)]' : 'border-[var(--border)]'
                       }`}
                     >
-                      <Image src={img.url} alt="" width={64} height={64} className="object-cover w-full h-full" />
+                      <Image src={cloudinaryUrl(img.url, { width: 128, height: 128 })} alt="" width={64} height={64} className="object-cover w-full h-full" />
                     </button>
                   ))}
                 </div>
