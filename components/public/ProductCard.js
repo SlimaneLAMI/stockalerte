@@ -68,7 +68,8 @@ export default function ProductCard({ product, onQuickView, onImageLoad }) {
   const priceLabel = s.price_mode === 'TTC' ? 'TTC' : 'HT';
   const mainImage = product.images?.[0]?.url || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80';
 
-  const hasPromo = product.priceVisible && product.price && product.salePrice && product.salePrice < product.price;
+  const showPrice = s.show_prices !== false && product.priceVisible && product.price;
+  const hasPromo = showPrice && product.salePrice && product.salePrice < product.price;
   const discount = hasPromo ? Math.round((1 - product.salePrice / product.price) * 100) : 0;
 
   return (
@@ -163,7 +164,7 @@ export default function ProductCard({ product, onQuickView, onImageLoad }) {
             <AvailabilityBadge status={product.availability} />
             {product.condition && <ConditionBadge condition={product.condition} />}
 
-            {product.priceVisible && product.price && (
+            {showPrice && (
               hasPromo ? (
                 <div className="mt-2 flex items-baseline gap-2">
                   <p className="font-display font-bold text-lg" style={{ color: '#dc2626' }}>

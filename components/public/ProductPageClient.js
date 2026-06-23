@@ -129,7 +129,7 @@ export default function ProductPageClient({ product, related }) {
                 )}
               </div>
 
-              {product.priceVisible && product.price && (() => {
+              {s.show_prices !== false && product.priceVisible && product.price && (() => {
                 const hasPromo = product.salePrice && product.salePrice < product.price;
                 const discount = hasPromo ? Math.round((1 - product.salePrice / product.price) * 100) : 0;
                 return hasPromo ? (
