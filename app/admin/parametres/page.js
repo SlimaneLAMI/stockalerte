@@ -127,26 +127,6 @@ export default function ParametresPage() {
             <input type="email" value={settings.contact_notification_email} onChange={e => setSettings(p => ({ ...p, contact_notification_email: e.target.value }))} className={inp} style={inpStyle} />
           </div>
         </Section>
-
-        {/* Seed button */}
-        <section className="p-6 rounded-sm border border-dashed border-[var(--border)]">
-          <h2 className="font-display font-bold text-base mb-2" style={{ color: 'var(--foreground)' }}>Données de démonstration</h2>
-          <p className="text-sm mb-4" style={{ color: 'var(--muted-foreground)' }}>
-            Peupler la base de données avec 3 catégories, 5 marques et 8 produits de démonstration. ⚠️ Efface les données existantes.
-          </p>
-          <button
-            type="button"
-            onClick={async () => {
-              if (!confirm('Effacer toutes les données et réinitialiser la démo ?')) return;
-              const res = await fetch('/api/seed', { method: 'POST' }).then(r => r.json());
-              toast.success(res.message || 'Base de données initialisée');
-            }}
-            className="px-5 py-2.5 rounded-sm text-sm font-medium border transition-colors hover:bg-[var(--muted)]"
-            style={{ borderColor: 'var(--border)', color: 'var(--foreground)' }}
-          >
-            Initialiser la démo
-          </button>
-        </section>
       </div>
     </form>
   );

@@ -1,14 +1,16 @@
-﻿'use client';
-import { useEffect, useRef, useState } from 'react';
+'use client';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-import { ArrowRight, ChevronDown } from 'lucide-react';
+import { ArrowRight, ChevronDown, ExternalLink } from 'lucide-react';
 import ProductCard from './ProductCard';
 import QuickViewModal from './QuickViewModal';
 import BackToTop from './BackToTop';
+import HomepageLoader from './HomepageLoader';
 import { useSettings } from '@/components/SettingsContext';
 
+/* ── Shimmer skeleton ───────────────────────────────────────── */
 function Shimmer() {
   return (
     <div
@@ -41,7 +43,6 @@ function ProductSkeleton() {
         <div className="rounded-sm h-3 w-20 relative overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}><Shimmer /></div>
         <div className="rounded-sm h-5 w-3/4 relative overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}><Shimmer /></div>
         <div className="rounded-sm h-3 w-full relative overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}><Shimmer /></div>
-        <div className="rounded-sm h-3 w-2/3 relative overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}><Shimmer /></div>
         <div className="flex justify-between items-center pt-2">
           <div className="rounded-full h-6 w-20 relative overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}><Shimmer /></div>
           <div className="rounded-full h-9 w-9 relative overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}><Shimmer /></div>
@@ -51,21 +52,14 @@ function ProductSkeleton() {
   );
 }
 
-function CategoryImage({ src, alt }) {
+/* ── CategoryImage avec shimmer et callback ─────────────────── */
+function CategoryImage({ src, alt, onLoad }) {
   const [loaded, setLoaded] = useState(false);
   return (
     <>
       {!loaded && (
         <div className="absolute inset-0 z-10" style={{ backgroundColor: 'var(--muted)' }}>
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)',
-              animation: 'shimmer 1.4s infinite',
-              backgroundSize: '200% 100%',
-            }}
-          />
+          <Shimmer />
         </div>
       )}
       <Image
@@ -73,37 +67,28 @@ function CategoryImage({ src, alt }) {
         alt={alt}
         fill
         className="object-cover transition-transform duration-700 group-hover:scale-105"
-        onLoad={() => setLoaded(true)}
+        onLoad={() => { setLoaded(true); onLoad?.(); }}
       />
     </>
   );
 }
 
+/* ── BrandItem cliquable ────────────────────────────────────── */
 function BrandItem({ brand }) {
   const [logoLoaded, setLogoLoaded] = useState(false);
   const hasLogo = !!brand.logo;
+  const hasLink = !!brand.website;
 
-  return (
+  const inner = (
     <div
-      className="flex items-center gap-3 opacity-40 hover:opacity-75 transition-opacity cursor-default"
-      title={brand.name}
+      className="flex items-center gap-3 transition-opacity cursor-pointer"
+      style={{ opacity: 0.4 }}
     >
       {hasLogo && (
         <div className="relative shrink-0" style={{ width: 40, height: 40 }}>
           {!logoLoaded && (
-            <div
-              className="absolute inset-0 rounded-sm overflow-hidden"
-              style={{ backgroundColor: 'var(--muted)' }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)',
-                  animation: 'shimmer 1.4s infinite',
-                  backgroundSize: '200% 100%',
-                }}
-              />
+            <div className="absolute inset-0 rounded-sm overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}>
+              <Shimmer />
             </div>
           )}
           <Image
@@ -117,16 +102,31 @@ function BrandItem({ brand }) {
           />
         </div>
       )}
-      <span
-        className="font-display font-bold text-lg"
-        style={{ color: 'var(--foreground)' }}
-      >
+      <span className="font-display font-bold text-lg" style={{ color: 'var(--foreground)' }}>
         {brand.name}
       </span>
+      {hasLink && <ExternalLink size={13} style={{ color: 'var(--muted-foreground)' }} />}
     </div>
   );
+
+  if (hasLink) {
+    return (
+      <a
+        href={brand.website}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:opacity-75 transition-opacity"
+        title={brand.name}
+      >
+        {inner}
+      </a>
+    );
+  }
+
+  return <div title={brand.name} className="hover:opacity-75 transition-opacity">{inner}</div>;
 }
 
+/* ── FadeIn ─────────────────────────────────────────────────── */
 function FadeIn({ children, delay = 0, className = '' }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
@@ -143,47 +143,83 @@ function FadeIn({ children, delay = 0, className = '' }) {
   );
 }
 
+/* ── Page principale ────────────────────────────────────────── */
 export default function HomepageClient() {
   const settings = useSettings();
+
+  /* Données */
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [heroLoaded, setHeroLoaded] = useState(false);
-  const [quickView, setQuickView] = useState(null);
+
+  /* Loader plein écran */
+  const [loaderVisible, setLoaderVisible] = useState(true);
+  const [apiDone, setApiDone] = useState(false);
+  const [imgTotal, setImgTotal] = useState(0);
+  const [imgLoaded, setImgLoaded] = useState(0);
+
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '25%']);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
+  /* Callback partagé par toutes les images */
+  const handleImageLoad = useCallback(() => {
+    setImgLoaded(prev => prev + 1);
+  }, []);
+
+  /* Chargement des données */
   useEffect(() => {
     Promise.all([
       fetch('/api/products?featured=true&limit=6').then(r => r.json()),
       fetch('/api/categories').then(r => r.json()),
       fetch('/api/brands').then(r => r.json()),
     ]).then(([p, c, b]) => {
-      setFeaturedProducts(Array.isArray(p?.products) ? p.products : []);
-      setCategories(Array.isArray(c) ? c : []);
-      setBrands(Array.isArray(b) ? b : []);
+      const prods = Array.isArray(p?.products) ? p.products : [];
+      const cats = Array.isArray(c) ? c : [];
+      const brnds = Array.isArray(b) ? b : [];
+
+      setFeaturedProducts(prods);
+      setCategories(cats);
+      setBrands(brnds);
       setLoading(false);
-    }).catch(() => setLoading(false));
+
+      /* Calculer le nombre total d'images à suivre */
+      const heroImg = settings.hero_image || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80';
+      let total = heroImg ? 1 : 0;
+      total += cats.filter(cat => cat.bannerImage).length;
+      total += prods.filter(prod => prod.images?.[0]?.url).length;
+      setImgTotal(total);
+      setApiDone(true);
+    }).catch(() => {
+      setLoading(false);
+      setApiDone(true);
+      setImgTotal(0);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /* Masquer le loader quand toutes les images sont chargées */
+  useEffect(() => {
+    if (!apiDone) return;
+    if (imgTotal === 0 || imgLoaded >= imgTotal) {
+      const t = setTimeout(() => setLoaderVisible(false), 350);
+      return () => clearTimeout(t);
+    }
+  }, [apiDone, imgTotal, imgLoaded]);
+
+  const progress = imgTotal === 0 ? 100 : Math.round((imgLoaded / imgTotal) * 100);
   const heroImg = settings.hero_image || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80';
   const whyUs = settings.why_us || [];
 
   return (
     <>
-      {/* ── HERO ─────────────────────────────────────────── */}
-      <section ref={heroRef} className="relative h-[92vh] min-h-[600px] flex items-end overflow-hidden">
-        {/* Shimmer hero pendant chargement */}
-        {!heroLoaded && (
-          <div className="absolute inset-0 z-0" style={{ backgroundColor: '#1a1a1a' }}>
-            <Shimmer />
-          </div>
-        )}
+      {/* ── LOADER PLEIN ÉCRAN ─────────────────────────────── */}
+      <HomepageLoader visible={loaderVisible} progress={progress} apiDone={apiDone} />
 
-        {/* Parallax background */}
+      {/* ── HERO ──────────────────────────────────────────── */}
+      <section ref={heroRef} className="relative h-[92vh] min-h-[600px] flex items-end overflow-hidden">
         <motion.div className="absolute inset-0" style={{ y: heroY }}>
           <Image
             src={heroImg}
@@ -191,12 +227,11 @@ export default function HomepageClient() {
             fill
             priority
             className="object-cover"
-            onLoad={() => setHeroLoaded(true)}
+            onLoad={handleImageLoad}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-[#1a1a1a]/60 to-transparent" />
         </motion.div>
 
-        {/* Content */}
         <motion.div
           className="relative z-10 w-full max-w-[1400px] mx-auto px-6 lg:px-12 pb-20"
           style={{ opacity: heroOpacity }}
@@ -237,7 +272,6 @@ export default function HomepageClient() {
           </motion.div>
         </motion.div>
 
-        {/* Scroll indicator */}
         <motion.div
           className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
           animate={{ y: [0, 8, 0] }}
@@ -247,7 +281,7 @@ export default function HomepageClient() {
         </motion.div>
       </section>
 
-      {/* ── CATEGORIES GRID ─────────────────────────────── */}
+      {/* ── CATEGORIES GRID ───────────────────────────────── */}
       {(loading || categories.length > 0) && (
         <section className="max-w-[1400px] mx-auto px-6 lg:px-12 py-24">
           <FadeIn>
@@ -285,7 +319,7 @@ export default function HomepageClient() {
                         transition={{ duration: 0.3 }}
                       >
                         {cat.bannerImage ? (
-                          <CategoryImage src={cat.bannerImage} alt={cat.name} />
+                          <CategoryImage src={cat.bannerImage} alt={cat.name} onLoad={handleImageLoad} />
                         ) : (
                           <div className="w-full h-full" style={{ backgroundColor: 'var(--muted)' }} />
                         )}
@@ -312,7 +346,7 @@ export default function HomepageClient() {
         </section>
       )}
 
-      {/* ── FEATURED PRODUCTS ───────────────────────────── */}
+      {/* ── FEATURED PRODUCTS ─────────────────────────────── */}
       {(loading || featuredProducts.length > 0) && (
         <section className="py-24" style={{ backgroundColor: 'var(--secondary)' }}>
           <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
@@ -343,7 +377,7 @@ export default function HomepageClient() {
                 ? [0, 1, 2, 3, 4, 5].map(i => <ProductSkeleton key={i} />)
                 : featuredProducts.map((product, i) => (
                     <FadeIn key={product._id} delay={i * 0.08}>
-                      <ProductCard product={product} onQuickView={setQuickView} />
+                      <ProductCard product={product} onQuickView={setQuickView} onImageLoad={handleImageLoad} />
                     </FadeIn>
                   ))
               }
@@ -352,7 +386,7 @@ export default function HomepageClient() {
         </section>
       )}
 
-      {/* ── WHY US ──────────────────────────────────────── */}
+      {/* ── WHY US ────────────────────────────────────────── */}
       {whyUs.length > 0 && (
         <section className="max-w-[1400px] mx-auto px-6 lg:px-12 py-24">
           <FadeIn className="text-center mb-16">
@@ -382,37 +416,23 @@ export default function HomepageClient() {
         </section>
       )}
 
-      {/* ── BRANDS STRIP ────────────────────────────────── */}
+      {/* ── BRANDS STRIP ──────────────────────────────────── */}
       <section className="border-y border-[var(--border)] py-12">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <p className="text-xs font-medium uppercase tracking-widest text-center mb-8" style={{ color: 'var(--muted-foreground)' }}>
             Marques distribuées
           </p>
 
-          {/* Squelette pendant le chargement */}
           {loading && (
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
               {[...Array(5)].map((_, i) => (
-                <div
-                  key={i}
-                  className="rounded-sm overflow-hidden"
-                  style={{ width: 100, height: 40, backgroundColor: 'var(--muted)', position: 'relative' }}
-                >
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)',
-                      animation: 'shimmer 1.4s infinite',
-                      backgroundSize: '200% 100%',
-                    }}
-                  />
+                <div key={i} className="rounded-sm overflow-hidden relative" style={{ width: 100, height: 40, backgroundColor: 'var(--muted)' }}>
+                  <Shimmer />
                 </div>
               ))}
             </div>
           )}
 
-          {/* Marques chargées */}
           {!loading && brands.length > 0 && (
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
               {brands.map(brand => (
@@ -421,7 +441,6 @@ export default function HomepageClient() {
             </div>
           )}
 
-          {/* Aucune marque configurée */}
           {!loading && brands.length === 0 && (
             <p className="text-center text-sm" style={{ color: 'var(--muted-foreground)' }}>
               Aucune marque configurée pour le moment.
@@ -430,7 +449,7 @@ export default function HomepageClient() {
         </div>
       </section>
 
-      {/* ── CONTACT CTA ─────────────────────────────────── */}
+      {/* ── CONTACT CTA ───────────────────────────────────── */}
       <section className="py-24">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <FadeIn>
@@ -464,7 +483,7 @@ export default function HomepageClient() {
         </div>
       </section>
 
-      {/* ── CONTACT INFO ────────────────────────────────── */}
+      {/* ── CONTACT INFO ──────────────────────────────────── */}
       <section className="max-w-[1400px] mx-auto px-6 lg:px-12 pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
           <FadeIn className="h-full">

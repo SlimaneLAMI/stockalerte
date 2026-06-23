@@ -37,7 +37,7 @@ function AvailabilityBadge({ status }) {
   );
 }
 
-export default function ProductCard({ product, onQuickView }) {
+export default function ProductCard({ product, onQuickView, onImageLoad }) {
   const [hovered, setHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const mainImage = product.images?.[0]?.url || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80';
@@ -64,7 +64,8 @@ export default function ProductCard({ product, onQuickView }) {
             fill
             className="object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            onLoad={() => setImageLoaded(true)}
+            loading={onImageLoad ? 'eager' : 'lazy'}
+            onLoad={() => { setImageLoaded(true); onImageLoad?.(); }}
           />
         </motion.div>
 
