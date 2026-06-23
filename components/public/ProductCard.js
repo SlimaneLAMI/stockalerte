@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Eye, ArrowRight } from 'lucide-react';
+import { useSettings } from '@/components/SettingsContext';
 
 function ImageSkeleton({ loaded }) {
   if (loaded) return null;
@@ -52,10 +53,23 @@ function AvailabilityBadge({ status }) {
   );
 }
 
+function PriceBadge({ discount }) {
+  return (
+    <span className="absolute top-3 right-3 z-10 px-2 py-1 rounded-sm text-xs font-bold text-white bg-red-500 shadow-sm">
+      -{discount}%
+    </span>
+  );
+}
+
 export default function ProductCard({ product, onQuickView, onImageLoad }) {
   const [hovered, setHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const s = useSettings();
+  const priceLabel = s.price_mode === 'TTC' ? 'TTC' : 'HT';
   const mainImage = product.images?.[0]?.url || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80';
+
+  const hasPromo = product.priceVisible && product.price && product.salePrice && product.salePrice < product.price;
+  const discount = hasPromo ? Math.round((1 - product.salePrice / product.price) * 100) : 0;
 
   return (
     <motion.article
@@ -115,6 +129,9 @@ export default function ProductCard({ product, onQuickView, onImageLoad }) {
             </span>
           </div>
         )}
+
+        {/* Promo badge */}
+        {hasPromo && <PriceBadge discount={discount} />}
       </div>
 
       {/* Content */}
@@ -145,11 +162,24 @@ export default function ProductCard({ product, onQuickView, onImageLoad }) {
           <div>
             <AvailabilityBadge status={product.availability} />
             {product.condition && <ConditionBadge condition={product.condition} />}
+
             {product.priceVisible && product.price && (
-              <p className="font-display font-bold text-lg mt-2" style={{ color: 'var(--foreground)' }}>
-                {product.price.toLocaleString('fr-FR')} €
-                <span className="text-xs font-normal ml-1" style={{ color: 'var(--muted-foreground)' }}>HT</span>
-              </p>
+              hasPromo ? (
+                <div className="mt-2 flex items-baseline gap-2">
+                  <p className="font-display font-bold text-lg" style={{ color: '#dc2626' }}>
+                    {product.salePrice.toLocaleString('fr-FR')} €
+                    <span className="text-xs font-normal ml-1" style={{ color: 'var(--muted-foreground)' }}>{priceLabel}</span>
+                  </p>
+                  <p className="text-sm line-through" style={{ color: 'var(--muted-foreground)' }}>
+                    {product.price.toLocaleString('fr-FR')} €
+                  </p>
+                </div>
+              ) : (
+                <p className="font-display font-bold text-lg mt-2" style={{ color: 'var(--foreground)' }}>
+                  {product.price.toLocaleString('fr-FR')} €
+                  <span className="text-xs font-normal ml-1" style={{ color: 'var(--muted-foreground)' }}>{priceLabel}</span>
+                </p>
+              )
             )}
           </div>
           <Link

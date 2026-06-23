@@ -34,7 +34,7 @@ export default function ProductForm({ initialData, isEdit }) {
     name: '', slug: '', categoryId: '', brand: '',
     shortDesc: '', longDesc: '',
     images: [], pdfUrl: '',
-    price: '', priceVisible: true,
+    price: '', salePrice: '', priceVisible: true,
     availability: 'En stock',
     condition: '',
     specs: [],
@@ -116,6 +116,7 @@ export default function ProductForm({ initialData, isEdit }) {
     const body = {
       ...form,
       price: form.price ? parseFloat(form.price) : undefined,
+      salePrice: form.salePrice ? parseFloat(form.salePrice) : undefined,
       specs: specsObj,
     };
 
@@ -245,9 +246,14 @@ export default function ProductForm({ initialData, isEdit }) {
           <h2 className="font-display font-bold text-base mb-5" style={{ color: 'var(--foreground)' }}>Prix & disponibilité</h2>
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
-              <label className={labelCls} style={labelStyle}>Prix HT (€)</label>
+              <label className={labelCls} style={labelStyle}>Prix (€)</label>
               <input type="number" step="0.01" min="0" value={form.price} onChange={e => set('price', e.target.value)}
                 className={inputCls} style={inputStyle} placeholder="Laisser vide si NC" />
+            </div>
+            <div>
+              <label className={labelCls} style={labelStyle}>Prix réduit (€) <span style={{ color: 'var(--muted-foreground)', fontWeight: 400 }}>optionnel</span></label>
+              <input type="number" step="0.01" min="0" value={form.salePrice} onChange={e => set('salePrice', e.target.value)}
+                className={inputCls} style={inputStyle} placeholder="Prix après réduction" />
             </div>
             <div>
               <label className={labelCls} style={labelStyle}>Disponibilité</label>

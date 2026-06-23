@@ -7,6 +7,7 @@ import { Download, MessageSquare, X, ChevronRight, ZoomIn, ArrowLeft } from 'luc
 import Breadcrumbs from './Breadcrumbs';
 import ProductCard from './ProductCard';
 import BackToTop from './BackToTop';
+import { useSettings } from '@/components/SettingsContext';
 
 function AvailabilityBadge({ status }) {
   const config = {
@@ -23,6 +24,8 @@ function AvailabilityBadge({ status }) {
 }
 
 export default function ProductPageClient({ product, related }) {
+  const s = useSettings();
+  const priceLabel = s.price_mode === 'TTC' ? 'TTC' : 'HT';
   const [activeImg, setActiveImg] = useState(0);
   const [lightbox, setLightbox] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
@@ -126,12 +129,31 @@ export default function ProductPageClient({ product, related }) {
                 )}
               </div>
 
-              {product.priceVisible && product.price && (
-                <p className="font-display font-bold text-4xl mb-6" style={{ color: 'var(--foreground)' }}>
-                  {product.price.toLocaleString('fr-FR')} €
-                  <span className="text-base font-normal ml-2" style={{ color: 'var(--muted-foreground)' }}>HT</span>
-                </p>
-              )}
+              {product.priceVisible && product.price && (() => {
+                const hasPromo = product.salePrice && product.salePrice < product.price;
+                const discount = hasPromo ? Math.round((1 - product.salePrice / product.price) * 100) : 0;
+                return hasPromo ? (
+                  <div className="mb-6">
+                    <div className="flex items-baseline gap-3 flex-wrap">
+                      <p className="font-display font-bold text-4xl" style={{ color: '#dc2626' }}>
+                        {product.salePrice.toLocaleString('fr-FR')} €
+                        <span className="text-base font-normal ml-2" style={{ color: 'var(--muted-foreground)' }}>{priceLabel}</span>
+                      </p>
+                      <p className="text-xl line-through" style={{ color: 'var(--muted-foreground)' }}>
+                        {product.price.toLocaleString('fr-FR')} €
+                      </p>
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-sm text-sm font-bold text-white bg-red-500">
+                        -{discount}%
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="font-display font-bold text-4xl mb-6" style={{ color: 'var(--foreground)' }}>
+                    {product.price.toLocaleString('fr-FR')} €
+                    <span className="text-base font-normal ml-2" style={{ color: 'var(--muted-foreground)' }}>{priceLabel}</span>
+                  </p>
+                );
+              })()}
 
               {product.shortDesc && (
                 <p className="text-base leading-relaxed mb-8" style={{ color: 'var(--muted-foreground)' }}>

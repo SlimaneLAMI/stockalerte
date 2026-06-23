@@ -10,6 +10,7 @@ const productSchema = new mongoose.Schema({
   images: [{ url: String, publicId: String }],
   pdfUrl: { type: String },
   price: { type: Number },
+  salePrice: { type: Number },
   priceVisible: { type: Boolean, default: true },
   availability: {
     type: String,

@@ -26,6 +26,7 @@ export default function ParametresPage() {
     social_twitter: '', social_youtube: '', social_tiktok: '',
     social_whatsapp: '', social_snapchat: '', social_pinterest: '',
     show_prices: true,
+    price_mode: 'HT',
   });
   const [saving, setSaving] = useState(false);
 
@@ -147,6 +148,27 @@ export default function ParametresPage() {
             />
             <span className="text-sm" style={{ color: 'var(--foreground)' }}>Afficher les prix sur le catalogue public</span>
           </label>
+
+          <div>
+            <p className={label} style={labelStyle}>Affichage des prix</p>
+            <div className="flex gap-4 mt-1">
+              {['HT', 'TTC'].map(mode => (
+                <label key={mode} className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="price_mode"
+                    value={mode}
+                    checked={settings.price_mode === mode}
+                    onChange={() => setSettings(p => ({ ...p, price_mode: mode }))}
+                    className="accent-[var(--orange)]"
+                  />
+                  <span className="text-sm" style={{ color: 'var(--foreground)' }}>
+                    Prix {mode} <span className="text-xs" style={{ color: 'var(--muted-foreground)' }}>({mode === 'HT' ? 'hors taxe' : 'toutes taxes comprises'})</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
         </Section>
 
         <Section title="Pied de page">
