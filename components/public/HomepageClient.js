@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
@@ -7,7 +7,6 @@ import { ArrowRight, ChevronDown } from 'lucide-react';
 import ProductCard from './ProductCard';
 import QuickViewModal from './QuickViewModal';
 import BackToTop from './BackToTop';
-import HomepageLoader from './HomepageLoader';
 import { useSettings } from '@/components/SettingsContext';
 
 /* ── Shimmer skeleton ───────────────────────────────────────── */
@@ -52,8 +51,8 @@ function ProductSkeleton() {
   );
 }
 
-/* ── CategoryImage avec shimmer et callback ─────────────────── */
-function CategoryImage({ src, alt, onLoad }) {
+/* ── CategoryImage avec shimmer ─────────────────────────────── */
+function CategoryImage({ src, alt }) {
   const [loaded, setLoaded] = useState(false);
   return (
     <>
@@ -67,8 +66,8 @@ function CategoryImage({ src, alt, onLoad }) {
         alt={alt}
         fill
         className="object-cover transition-transform duration-700 group-hover:scale-105"
-        onLoad={() => { setLoaded(true); onLoad?.(); }}
-        onError={() => { setLoaded(true); onLoad?.(); }}
+        onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
       />
     </>
   );
@@ -81,10 +80,7 @@ function BrandItem({ brand }) {
   const hasLink = !!brand.website;
 
   const inner = (
-    <div
-      className="flex items-center gap-3 transition-opacity cursor-pointer"
-      style={{ opacity: 0.4 }}
-    >
+    <div className="flex items-center gap-3 transition-opacity cursor-pointer hover:opacity-75">
       {hasLogo && (
         <div className="relative shrink-0" style={{ width: 40, height: 40 }}>
           {!logoLoaded && (
@@ -111,19 +107,13 @@ function BrandItem({ brand }) {
 
   if (hasLink) {
     return (
-      <a
-        href={brand.website}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:opacity-75 transition-opacity"
-        title={brand.name}
-      >
+      <a href={brand.website} target="_blank" rel="noopener noreferrer" title={brand.name}>
         {inner}
       </a>
     );
   }
 
-  return <div title={brand.name} className="hover:opacity-75 transition-opacity">{inner}</div>;
+  return <div title={brand.name}>{inner}</div>;
 }
 
 /* ── FadeIn ─────────────────────────────────────────────────── */
@@ -147,85 +137,35 @@ function FadeIn({ children, delay = 0, className = '' }) {
 export default function HomepageClient() {
   const settings = useSettings();
 
-  /* Données */
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  /* Loader plein écran */
-  const [loaderVisible, setLoaderVisible] = useState(true);
-  const [apiDone, setApiDone] = useState(false);
-  const [imgTotal, setImgTotal] = useState(0);
-  const [imgLoaded, setImgLoaded] = useState(0);
-
   const [quickView, setQuickView] = useState(null);
+
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '25%']);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
-  /* Callback partagé par toutes les images */
-  const handleImageLoad = useCallback(() => {
-    setImgLoaded(prev => prev + 1);
-  }, []);
-
-  /* Chargement des données */
   useEffect(() => {
     Promise.all([
       fetch('/api/products?featured=true&limit=6').then(r => r.json()),
       fetch('/api/categories').then(r => r.json()),
       fetch('/api/brands').then(r => r.json()),
     ]).then(([p, c, b]) => {
-      const prods = Array.isArray(p?.products) ? p.products : [];
-      const cats = Array.isArray(c) ? c : [];
-      const brnds = Array.isArray(b) ? b : [];
-
-      setFeaturedProducts(prods);
-      setCategories(cats);
-      setBrands(brnds);
+      setFeaturedProducts(Array.isArray(p?.products) ? p.products : []);
+      setCategories(Array.isArray(c) ? c : []);
+      setBrands(Array.isArray(b) ? b : []);
       setLoading(false);
-
-      /* Calculer le nombre total d'images à suivre */
-      const heroImg = settings.hero_image || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80';
-      let total = heroImg ? 1 : 0;
-      total += cats.filter(cat => cat.bannerImage).length;
-      total += prods.filter(prod => prod.images?.[0]?.url).length;
-      setImgTotal(total);
-      setApiDone(true);
-    }).catch(() => {
-      setLoading(false);
-      setApiDone(true);
-      setImgTotal(0);
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    }).catch(() => setLoading(false));
   }, []);
 
-  /* Masquer le loader quand toutes les images sont chargées */
-  useEffect(() => {
-    if (!apiDone) return;
-    if (imgTotal === 0 || imgLoaded >= imgTotal) {
-      const t = setTimeout(() => setLoaderVisible(false), 350);
-      return () => clearTimeout(t);
-    }
-  }, [apiDone, imgTotal, imgLoaded]);
-
-  /* Fallback : forcer la fin du loader après 4 s max (images en erreur ou hors viewport) */
-  useEffect(() => {
-    if (!apiDone) return;
-    const t = setTimeout(() => setLoaderVisible(false), 4000);
-    return () => clearTimeout(t);
-  }, [apiDone]);
-
-  const progress = imgTotal === 0 ? 100 : Math.round((imgLoaded / imgTotal) * 100);
   const heroImg = settings.hero_image || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80';
   const whyUs = settings.why_us || [];
 
   return (
     <>
-      {/* ── LOADER PLEIN ÉCRAN ─────────────────────────────── */}
-      <HomepageLoader visible={loaderVisible} progress={progress} apiDone={apiDone} />
-
       {/* ── HERO ──────────────────────────────────────────── */}
       <section ref={heroRef} className="relative h-[92vh] min-h-[600px] flex items-end overflow-hidden">
         <motion.div className="absolute inset-0" style={{ y: heroY }}>
@@ -235,7 +175,6 @@ export default function HomepageClient() {
             fill
             priority
             className="object-cover"
-            onLoad={handleImageLoad}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-[#1a1a1a]/60 to-transparent" />
         </motion.div>
@@ -327,7 +266,7 @@ export default function HomepageClient() {
                         transition={{ duration: 0.3 }}
                       >
                         {cat.bannerImage ? (
-                          <CategoryImage src={cat.bannerImage} alt={cat.name} onLoad={handleImageLoad} />
+                          <CategoryImage src={cat.bannerImage} alt={cat.name} />
                         ) : (
                           <div className="w-full h-full" style={{ backgroundColor: 'var(--muted)' }} />
                         )}
@@ -385,7 +324,7 @@ export default function HomepageClient() {
                 ? [0, 1, 2, 3, 4, 5].map(i => <ProductSkeleton key={i} />)
                 : featuredProducts.map((product, i) => (
                     <FadeIn key={product._id} delay={i * 0.08}>
-                      <ProductCard product={product} onQuickView={setQuickView} onImageLoad={handleImageLoad} />
+                      <ProductCard product={product} onQuickView={setQuickView} />
                     </FadeIn>
                   ))
               }

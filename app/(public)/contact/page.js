@@ -152,7 +152,7 @@ export default function ContactPage() {
                   </h3>
                   <div className="flex flex-col gap-5">
                     {contactItems.map(({ Icon, text }) => (
-                      <div key={text} className="flex items-start gap-4">
+                      <div key={text} className="flex items-center gap-4">
                         <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(224, 92, 42, 0.1)' }}>
                           <Icon size={15} style={{ color: 'var(--orange)' }} />
                         </div>
