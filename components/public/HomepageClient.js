@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-import { ArrowRight, ChevronDown, ExternalLink } from 'lucide-react';
+import { ArrowRight, ChevronDown } from 'lucide-react';
 import ProductCard from './ProductCard';
 import QuickViewModal from './QuickViewModal';
 import BackToTop from './BackToTop';
@@ -68,6 +68,7 @@ function CategoryImage({ src, alt, onLoad }) {
         fill
         className="object-cover transition-transform duration-700 group-hover:scale-105"
         onLoad={() => { setLoaded(true); onLoad?.(); }}
+        onError={() => { setLoaded(true); onLoad?.(); }}
       />
     </>
   );
@@ -105,7 +106,6 @@ function BrandItem({ brand }) {
       <span className="font-display font-bold text-lg" style={{ color: 'var(--foreground)' }}>
         {brand.name}
       </span>
-      {hasLink && <ExternalLink size={13} style={{ color: 'var(--muted-foreground)' }} />}
     </div>
   );
 
@@ -209,6 +209,13 @@ export default function HomepageClient() {
       return () => clearTimeout(t);
     }
   }, [apiDone, imgTotal, imgLoaded]);
+
+  /* Fallback : forcer la fin du loader après 4 s max (images en erreur ou hors viewport) */
+  useEffect(() => {
+    if (!apiDone) return;
+    const t = setTimeout(() => setLoaderVisible(false), 4000);
+    return () => clearTimeout(t);
+  }, [apiDone]);
 
   const progress = imgTotal === 0 ? 100 : Math.round((imgLoaded / imgTotal) * 100);
   const heroImg = settings.hero_image || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80';

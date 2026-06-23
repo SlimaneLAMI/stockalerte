@@ -66,6 +66,7 @@ export default function ProductCard({ product, onQuickView, onImageLoad }) {
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             loading={onImageLoad ? 'eager' : 'lazy'}
             onLoad={() => { setImageLoaded(true); onImageLoad?.(); }}
+            onError={() => { setImageLoaded(true); onImageLoad?.(); }}
           />
         </motion.div>
 
