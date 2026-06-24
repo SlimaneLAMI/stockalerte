@@ -2,6 +2,14 @@
 import Breadcrumbs from '@/components/public/Breadcrumbs';
 import { useSettings } from '@/components/SettingsContext';
 
+function renderBold(text) {
+  return text.split(/(\*\*[^*]+\*\*)/).map((part, i) =>
+    part.startsWith('**') && part.endsWith('**')
+      ? <strong key={i} style={{ color: 'var(--foreground)' }}>{part.slice(2, -2)}</strong>
+      : part
+  );
+}
+
 export default function AProposPage() {
   const s = useSettings();
 
@@ -39,7 +47,11 @@ export default function AProposPage() {
                 {p.title && (
                   <h2 className="font-display font-bold text-xl mb-2" style={{ color: 'var(--foreground)' }}>{p.title}</h2>
                 )}
-                <p className="whitespace-pre-line" style={{ color: 'var(--muted-foreground)' }}>{p.content}</p>
+                <p style={{ color: 'var(--muted-foreground)' }}>
+                  {p.content.split('\n').map((line, li, arr) => (
+                    <span key={li}>{renderBold(line)}{li < arr.length - 1 && <br />}</span>
+                  ))}
+                </p>
               </div>
             ))}
           </div>

@@ -150,6 +150,9 @@ export default function AProposAdminPage() {
                     style={inpStyle}
                     placeholder="Le texte du paragraphe… Entrée pour aller à la ligne."
                   />
+                  <p className="text-xs mt-1" style={{ color: 'var(--muted-foreground)' }}>
+                    Entourez un mot de <code className="px-1 rounded" style={{ backgroundColor: 'var(--muted)' }}>**</code> pour le mettre en gras — ex : <code className="px-1 rounded" style={{ backgroundColor: 'var(--muted)' }}>**mot important**</code>
+                  </p>
                 </div>
               </div>
               {data.about_paragraphs.length > 1 && (
