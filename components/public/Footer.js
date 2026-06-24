@@ -121,6 +121,7 @@ export default function Footer() {
             </p>
             <nav className="flex flex-col gap-3">
               {[
+                { label: 'Accueil', href: '/' },
                 { label: 'Catalogue', href: '/catalogue' },
                 { label: 'À propos', href: '/a-propos' },
                 { label: 'Contact', href: '/contact' },
