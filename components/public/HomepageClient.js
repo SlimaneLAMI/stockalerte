@@ -262,7 +262,7 @@ export default function HomepageClient() {
               ? [0, 1, 2].map(i => <CategorySkeleton key={i} />)
               : categories.map((cat, i) => (
                   <FadeIn key={cat._id} delay={i * 0.1}>
-                    <Link href={`/catalogue/categorie/${cat.slug}`} className="group block">
+                    <Link href={`/catalogue?category=${cat._id}`} className="group block">
                       <motion.div
                         className="relative overflow-hidden rounded-sm"
                         style={{ aspectRatio: '4/3' }}
