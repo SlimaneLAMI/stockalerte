@@ -114,13 +114,15 @@ export default function CatalogueClient({ initialCategory } = {}) {
 
   /* Chargement filtres */
   useEffect(() => {
+    const ac = new AbortController();
     Promise.all([
-      fetch('/api/categories').then(r => r.json()),
-      fetch('/api/brands').then(r => r.json()),
+      fetch('/api/categories', { signal: ac.signal }).then(r => r.json()),
+      fetch('/api/brands', { signal: ac.signal }).then(r => r.json()),
     ]).then(([c, b]) => {
       setCategories(Array.isArray(c) ? c : []);
       setBrands(Array.isArray(b) ? b : []);
-    });
+    }).catch(() => {});
+    return () => ac.abort();
   }, []);
 
   /* Construit les URLSearchParams depuis les refs (toujours à jour) */

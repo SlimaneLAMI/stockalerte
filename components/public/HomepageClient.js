@@ -151,16 +151,18 @@ export default function HomepageClient() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   useEffect(() => {
+    const ac = new AbortController();
     Promise.all([
-      fetch('/api/products?featured=true&limit=6').then(r => r.json()),
-      fetch('/api/categories').then(r => r.json()),
-      fetch('/api/brands').then(r => r.json()),
+      fetch('/api/products?featured=true&limit=6', { signal: ac.signal }).then(r => r.json()),
+      fetch('/api/categories', { signal: ac.signal }).then(r => r.json()),
+      fetch('/api/brands', { signal: ac.signal }).then(r => r.json()),
     ]).then(([p, c, b]) => {
       setFeaturedProducts(Array.isArray(p?.products) ? p.products : []);
       setCategories(Array.isArray(c) ? c : []);
       setBrands(Array.isArray(b) ? b : []);
       setLoading(false);
     }).catch(() => setLoading(false));
+    return () => ac.abort();
   }, []);
 
   const heroImg = settings.hero_image || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80';
