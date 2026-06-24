@@ -24,6 +24,22 @@ function AvailabilityBadge({ status }) {
   );
 }
 
+function ConditionBadge({ condition }) {
+  const config = {
+    'Neuf':           { bg: '#eff6ff', text: '#1d4ed8' },
+    'Comme neuf':     { bg: '#f0f9ff', text: '#0369a1' },
+    'Bonne occasion': { bg: '#f5f3ff', text: '#6d28d9' },
+    'Occasion':       { bg: '#fff7ed', text: '#c2410c' },
+  };
+  const c = config[condition] || { bg: '#f8fafc', text: '#475569' };
+  return (
+    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium" style={{ backgroundColor: c.bg, color: c.text }}>
+      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: c.text }} />
+      {condition}
+    </span>
+  );
+}
+
 export default function ProductPageClient({ product, related }) {
   const s = useSettings();
   const priceLabel = s.price_mode === 'TTC' ? 'TTC' : 'HT';
@@ -124,8 +140,11 @@ export default function ProductPageClient({ product, related }) {
                 {product.name}
               </h1>
 
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex flex-wrap items-center gap-3 mb-6">
                 <AvailabilityBadge status={product.availability} />
+                {s.show_condition !== false && product.condition && (
+                  <ConditionBadge condition={product.condition} />
+                )}
                 {product.categoryId?.name && (
                   <Link
                     href={`/catalogue?category=${product.categoryId._id}`}
