@@ -8,6 +8,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { useSettings } from '@/components/SettingsContext';
 
 const nav = [
+  { label: 'Accueil', href: '/' },
   { label: 'Catalogue', href: '/catalogue' },
   { label: 'À propos', href: '/a-propos' },
   { label: 'Contact', href: '/contact' },
