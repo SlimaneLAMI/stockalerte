@@ -173,42 +173,40 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div
-          className="mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t"
+          className="mt-12 pt-6 border-t"
           style={{ borderColor: 'var(--border)' }}
         >
-          <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
-            {s.footer_text || `© ${year} ${s.company_name || 'StockAlerte'}. Tous droits réservés.`}
-          </p>
-          <div className="flex items-center gap-6">
-            {[
-              { label: 'Mentions légales', href: '/mentions-legales' },
-              { label: 'CGV', href: '/cgv' },
-              { label: 'Politique de confidentialité', href: '/politique-de-confidentialite' },
-            ].map(({ label, href }) => (
-              <Link
-                key={label}
-                href={href}
-                className="text-xs transition-colors hover:text-[var(--orange)]"
-                style={{ color: 'var(--muted-foreground)' }}
-              >
-                {label}
-              </Link>
-            ))}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
+              {s.footer_text || `© ${year} ${s.company_name || 'StockAlerte'}. Tous droits réservés.`}
+            </p>
+            <div className="flex items-center gap-6">
+              {[
+                { label: 'Mentions légales', href: '/mentions-legales' },
+                { label: 'CGV', href: '/cgv' },
+                { label: 'Politique de confidentialité', href: '/politique-de-confidentialite' },
+              ].map(({ label, href }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  className="text-xs transition-colors hover:text-[var(--orange)]"
+                  style={{ color: 'var(--muted-foreground)' }}
+                >
+                  {label}
+                </Link>
+              ))}
+              <p className="text-xs" style={{ color: 'var(--muted-foreground)', opacity: 0.5 }}>
+                developed by{' '}
+                <a
+                  href="mailto:slimanelami@proton.me"
+                  className="font-bold hover:opacity-80 transition-opacity duration-200"
+                  style={{ color: 'var(--foreground)' }}
+                >
+                  SL
+                </a>
+              </p>
+            </div>
           </div>
-        </div>
-
-        {/* Developer signature */}
-        <div className="mt-5 flex justify-center">
-          <p className="text-xs" style={{ color: 'var(--muted-foreground)', opacity: 0.5 }}>
-            developed by{' '}
-            <a
-              href="mailto:slimanelami@proton.me"
-              className="font-bold hover:opacity-80 transition-opacity duration-200"
-              style={{ color: 'var(--foreground)' }}
-            >
-              SL
-            </a>
-          </p>
         </div>
       </div>
     </footer>
