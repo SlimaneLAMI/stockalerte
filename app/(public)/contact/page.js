@@ -25,10 +25,10 @@ export default function ContactPage() {
   }
 
   const contactItems = [
-    s.company_address && { Icon: MapPin, text: s.company_address },
-    s.company_phone && { Icon: Phone, text: s.company_phone },
-    s.company_email && { Icon: Mail, text: s.company_email },
-    s.company_hours && { Icon: Clock, text: s.company_hours },
+    s.company_address && { Icon: MapPin, text: s.company_address, href: null },
+    s.company_phone && { Icon: Phone, text: s.company_phone, href: `tel:${s.company_phone.replace(/\s/g, '')}` },
+    s.company_email && { Icon: Mail, text: s.company_email, href: `mailto:${s.company_email}` },
+    s.company_hours && { Icon: Clock, text: s.company_hours, href: null },
   ].filter(Boolean);
 
   return (
@@ -151,15 +151,35 @@ export default function ContactPage() {
                     Informations
                   </h3>
                   <div className="flex flex-col gap-5">
-                    {contactItems.map(({ Icon, text }) => (
+                    {contactItems.map(({ Icon, text, href }) => (
                       <div key={text} className="flex items-center gap-4">
                         <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(224, 92, 42, 0.1)' }}>
                           <Icon size={15} style={{ color: 'var(--orange)' }} />
                         </div>
-                        <p className="text-sm whitespace-pre-line" style={{ color: 'var(--muted-foreground)' }}>{text}</p>
+                        {href ? (
+                          <a
+                            href={href}
+                            className="text-sm whitespace-pre-line transition-colors hover:text-[var(--orange)]"
+                            style={{ color: 'var(--muted-foreground)' }}
+                          >
+                            {text}
+                          </a>
+                        ) : (
+                          <p className="text-sm whitespace-pre-line" style={{ color: 'var(--muted-foreground)' }}>{text}</p>
+                        )}
                       </div>
                     ))}
                   </div>
+                  {s.company_phone && (
+                    <a
+                      href={`tel:${s.company_phone.replace(/\s/g, '')}`}
+                      className="mt-6 flex items-center justify-center gap-2 w-full py-3.5 rounded-sm text-sm font-medium text-white transition-opacity hover:opacity-90"
+                      style={{ backgroundColor: 'var(--orange)' }}
+                    >
+                      <Phone size={15} />
+                      Appeler maintenant
+                    </a>
+                  )}
                 </div>
               )}
 

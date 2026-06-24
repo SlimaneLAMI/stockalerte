@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, MessageSquare, X, ChevronRight, ZoomIn, ArrowLeft } from 'lucide-react';
+import { Download, MessageSquare, X, ChevronRight, ZoomIn, ArrowLeft, Phone } from 'lucide-react';
 import Breadcrumbs from './Breadcrumbs';
 import ProductCard from './ProductCard';
 import BackToTop from './BackToTop';
@@ -30,9 +30,16 @@ export default function ProductPageClient({ product, related }) {
   const [activeImg, setActiveImg] = useState(0);
   const [lightbox, setLightbox] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [contactStep, setContactStep] = useState('choice'); // 'choice' | 'form'
   const [contactForm, setContactForm] = useState({ name: '', company: '', email: '', phone: '', message: '', productInterest: product.name });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+
+  function openContact() {
+    setContactStep(s.company_phone ? 'choice' : 'form');
+    setSent(false);
+    setContactOpen(true);
+  }
 
   const images = product.images?.length ? product.images : [{ url: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80' }];
 
@@ -165,7 +172,7 @@ export default function ProductPageClient({ product, related }) {
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-3 mb-10">
                 <button
-                  onClick={() => setContactOpen(true)}
+                  onClick={openContact}
                   className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-sm text-sm font-medium text-white transition-opacity hover:opacity-90"
                   style={{ backgroundColor: 'var(--orange)' }}
                 >
@@ -235,18 +242,6 @@ export default function ProductPageClient({ product, related }) {
         </div>
       </div>
 
-      {/* Mobile floating CTA */}
-      <div className="fixed bottom-6 left-6 right-6 z-30 lg:hidden">
-        <button
-          onClick={() => setContactOpen(true)}
-          className="w-full flex items-center justify-center gap-2 py-4 rounded-sm text-sm font-medium text-white shadow-xl"
-          style={{ backgroundColor: 'var(--orange)' }}
-        >
-          <MessageSquare size={16} />
-          Nous contacter pour ce produit
-        </button>
-      </div>
-
       {/* Lightbox */}
       <AnimatePresence>
         {lightbox && (
@@ -301,14 +296,65 @@ export default function ProductPageClient({ product, related }) {
                       Nous vous recontactons sous 48h ouvrées.
                     </p>
                   </div>
-                ) : (
+                ) : contactStep === 'choice' ? (
                   <>
                     <h2 className="font-display font-bold text-2xl mb-2" style={{ color: 'var(--foreground)' }}>
-                      Demande de devis
+                      Nous contacter
                     </h2>
-                    <p className="text-sm mb-6" style={{ color: 'var(--muted-foreground)' }}>
-                      Pour : <strong>{product.name}</strong>
+                    <p className="text-sm mb-8" style={{ color: 'var(--muted-foreground)' }}>
+                      Pour : <strong style={{ color: 'var(--foreground)' }}>{product.name}</strong>
                     </p>
+                    <div className="flex flex-col gap-3">
+                      {s.company_phone && (
+                        <a
+                          href={`tel:${s.company_phone.replace(/\s/g, '')}`}
+                          className="flex items-center gap-4 px-6 py-5 rounded-sm border transition-colors hover:border-[var(--orange)] group"
+                          style={{ borderColor: 'var(--border)' }}
+                        >
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors group-hover:bg-orange-50" style={{ backgroundColor: 'rgba(224, 92, 42, 0.1)' }}>
+                            <Phone size={18} style={{ color: 'var(--orange)' }} />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>Appeler directement</p>
+                            <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>{s.company_phone}</p>
+                          </div>
+                        </a>
+                      )}
+                      <button
+                        onClick={() => setContactStep('form')}
+                        className="flex items-center gap-4 px-6 py-5 rounded-sm border transition-colors hover:border-[var(--orange)] group text-left"
+                        style={{ borderColor: 'var(--border)' }}
+                      >
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors group-hover:bg-orange-50" style={{ backgroundColor: 'rgba(224, 92, 42, 0.1)' }}>
+                          <MessageSquare size={18} style={{ color: 'var(--orange)' }} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>Envoyer un message</p>
+                          <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Réponse sous 48h ouvrées</p>
+                        </div>
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-3 mb-6">
+                      {s.company_phone && (
+                        <button
+                          onClick={() => setContactStep('choice')}
+                          className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--muted)] transition-colors hover:bg-[var(--border)]"
+                        >
+                          <ArrowLeft size={14} />
+                        </button>
+                      )}
+                      <div>
+                        <h2 className="font-display font-bold text-2xl" style={{ color: 'var(--foreground)' }}>
+                          Demande de devis
+                        </h2>
+                        <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+                          Pour : <strong style={{ color: 'var(--foreground)' }}>{product.name}</strong>
+                        </p>
+                      </div>
+                    </div>
                     <form onSubmit={handleContact} className="flex flex-col gap-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
