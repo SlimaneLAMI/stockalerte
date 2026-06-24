@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import SiteSettings from '@/models/SiteSettings';
 import { requireAuth } from '@/lib/requireAuth';
+import { revalidateTag } from 'next/cache';
 
 export async function GET() {
   try {
@@ -29,6 +30,7 @@ export async function POST(request) {
       },
     }));
     await SiteSettings.bulkWrite(ops);
+    revalidateTag('site-settings');
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -3,22 +3,25 @@ import Footer from '@/components/public/Footer';
 import PublicProviders from '@/components/PublicProviders';
 import { connectDB } from '@/lib/mongodb';
 import SiteSettings from '@/models/SiteSettings';
-
-export const dynamic = 'force-dynamic';
+import { unstable_cache } from 'next/cache';
 
 const BASE = process.env.NEXTAUTH_URL || 'https://stockalerte.onrender.com';
 
-async function getSettings() {
-  try {
-    await connectDB();
-    const docs = await SiteSettings.find().lean();
-    const s = {};
-    docs.forEach(d => { s[d.key] = d.value; });
-    return s;
-  } catch {
-    return {};
-  }
-}
+const getSettings = unstable_cache(
+  async () => {
+    try {
+      await connectDB();
+      const docs = await SiteSettings.find().lean();
+      const s = {};
+      docs.forEach(d => { s[d.key] = d.value; });
+      return s;
+    } catch {
+      return {};
+    }
+  },
+  ['site-settings'],
+  { revalidate: 60, tags: ['site-settings'] }
+);
 
 export default async function PublicLayout({ children }) {
   const settings = await getSettings();
