@@ -27,6 +27,7 @@ export default function ParametresPage() {
     social_whatsapp: '', social_snapchat: '', social_pinterest: '',
     show_prices: true,
     price_mode: 'HT',
+    show_condition: true,
   });
   const [saving, setSaving] = useState(false);
 
@@ -147,6 +148,16 @@ export default function ParametresPage() {
               className="accent-[var(--orange)]"
             />
             <span className="text-sm" style={{ color: 'var(--foreground)' }}>Afficher les prix sur le catalogue public</span>
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.show_condition !== false}
+              onChange={e => setSettings(p => ({ ...p, show_condition: e.target.checked }))}
+              className="accent-[var(--orange)]"
+            />
+            <span className="text-sm" style={{ color: 'var(--foreground)' }}>Afficher l'état des articles (Neuf, Comme neuf, Occasion…)</span>
           </label>
 
           <div>

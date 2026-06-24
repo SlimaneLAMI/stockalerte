@@ -71,6 +71,7 @@ export default function ProductCard({ product, onQuickView, onImageLoad }) {
   const mainImage = cloudinaryUrl(rawImage, { width: 600, height: 450 });
 
   const showPrice = s.show_prices !== false && product.priceVisible && product.price;
+  const showCondition = s.show_condition !== false;
   const hasPromo = showPrice && product.salePrice && product.salePrice < product.price;
   const discount = hasPromo ? Math.round((1 - product.salePrice / product.price) * 100) : 0;
 
@@ -164,7 +165,7 @@ export default function ProductCard({ product, onQuickView, onImageLoad }) {
         <div className="mt-auto flex items-center justify-between pt-4 border-t border-[var(--border)]">
           <div>
             <AvailabilityBadge status={product.availability} />
-            {product.condition && <ConditionBadge condition={product.condition} />}
+            {showCondition && product.condition && <ConditionBadge condition={product.condition} />}
 
             {showPrice && (
               hasPromo ? (
