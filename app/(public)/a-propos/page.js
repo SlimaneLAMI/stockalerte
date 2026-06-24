@@ -45,10 +45,10 @@ export default function AProposPage() {
           </div>
 
           {stats.length > 0 && (
-            <div className={`grid gap-8 mt-14`} style={{ gridTemplateColumns: `repeat(${Math.min(stats.length, 4)}, minmax(0, 1fr))` }}>
+            <div className="flex flex-wrap gap-8 mt-14">
               {stats.map((stat, i) => (
-                <div key={i}>
-                  <p className="font-display font-bold text-4xl" style={{ color: 'var(--orange)' }}>{stat.value}</p>
+                <div key={i} className="min-w-[80px]">
+                  <p className="font-display font-bold text-4xl whitespace-nowrap" style={{ color: 'var(--orange)' }}>{stat.value}</p>
                   <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>{stat.label}</p>
                 </div>
               ))}
