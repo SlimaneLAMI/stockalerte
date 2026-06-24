@@ -14,6 +14,11 @@ const nav = [
   { label: 'Contact', href: '/contact' },
 ];
 
+function isActive(href, pathname) {
+  if (href === '/') return pathname === '/';
+  return pathname === href || pathname.startsWith(href + '/');
+}
+
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -73,12 +78,12 @@ export default function Header() {
                 href={href}
                 className="relative font-body font-medium text-sm tracking-wide transition-colors duration-200"
                 style={{
-                  color: pathname.startsWith(href) ? 'var(--orange)' : textColor,
-                  opacity: pathname.startsWith(href) ? 1 : 0.85,
+                  color: isActive(href, pathname) ? 'var(--orange)' : textColor,
+                  opacity: isActive(href, pathname) ? 1 : 0.85,
                 }}
               >
                 {label}
-                {pathname.startsWith(href) && (
+                {isActive(href, pathname) && (
                   <motion.span
                     layoutId="nav-indicator"
                     className="absolute -bottom-1 left-0 right-0 h-[2px] rounded-full"
@@ -146,7 +151,7 @@ export default function Header() {
                     key={href}
                     href={href}
                     className="font-display font-bold text-2xl transition-colors"
-                    style={{ color: pathname.startsWith(href) ? 'var(--orange)' : 'var(--foreground)' }}
+                    style={{ color: isActive(href, pathname) ? 'var(--orange)' : 'var(--foreground)' }}
                   >
                     {label}
                   </Link>
