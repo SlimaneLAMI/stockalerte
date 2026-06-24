@@ -65,7 +65,7 @@ export default function ProductPageClient({ product, related }) {
   const breadcrumbs = [
     { label: 'Accueil', href: '/' },
     { label: 'Catalogue', href: '/catalogue' },
-    ...(product.categoryId?.name ? [{ label: product.categoryId.name, href: `/catalogue/categorie/${product.categoryId.slug}` }] : []),
+    ...(product.categoryId?.name ? [{ label: product.categoryId.name, href: `/catalogue?category=${product.categoryId._id}` }] : []),
     { label: product.name },
   ];
 
@@ -128,7 +128,7 @@ export default function ProductPageClient({ product, related }) {
                 <AvailabilityBadge status={product.availability} />
                 {product.categoryId?.name && (
                   <Link
-                    href={`/catalogue/categorie/${product.categoryId.slug}`}
+                    href={`/catalogue?category=${product.categoryId._id}`}
                     className="text-xs font-medium transition-colors hover:text-[var(--orange)]"
                     style={{ color: 'var(--muted-foreground)' }}
                   >
