@@ -173,7 +173,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div
-          className="mt-12 pt-6 border-t"
+          className="mt-12 pt-6 pb-16 sm:pb-0 border-t"
           style={{ borderColor: 'var(--border)' }}
         >
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
