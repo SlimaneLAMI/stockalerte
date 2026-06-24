@@ -20,13 +20,22 @@ function Section({ title, children }) {
 const DEFAULT = {
   about_subtitle: 'Notre histoire',
   about_title: 'À propos',
-  about_paragraphs: ['', '', ''],
+  about_paragraphs: [
+    { title: '', content: '' },
+    { title: '', content: '' },
+    { title: '', content: '' },
+  ],
   about_stats: [
     { value: '', label: '' },
     { value: '', label: '' },
     { value: '', label: '' },
   ],
 };
+
+function normalizeParagraphs(raw) {
+  if (!raw?.length) return DEFAULT.about_paragraphs;
+  return raw.map(p => typeof p === 'string' ? { title: '', content: p } : p);
+}
 
 export default function AProposAdminPage() {
   const [data, setData] = useState(DEFAULT);
@@ -37,7 +46,7 @@ export default function AProposAdminPage() {
       setData({
         about_subtitle: s.about_subtitle || DEFAULT.about_subtitle,
         about_title: s.about_title || DEFAULT.about_title,
-        about_paragraphs: s.about_paragraphs?.length ? s.about_paragraphs : DEFAULT.about_paragraphs,
+        about_paragraphs: normalizeParagraphs(s.about_paragraphs),
         about_stats: s.about_stats?.length ? s.about_stats : DEFAULT.about_stats,
       });
     });
@@ -56,16 +65,16 @@ export default function AProposAdminPage() {
     else toast.error('Erreur : ' + (res?.error || 'impossible de sauvegarder'));
   }
 
-  function setParagraph(i, val) {
+  function setParagraph(i, field, val) {
     setData(p => {
       const paragraphs = [...p.about_paragraphs];
-      paragraphs[i] = val;
+      paragraphs[i] = { ...paragraphs[i], [field]: val };
       return { ...p, about_paragraphs: paragraphs };
     });
   }
 
   function addParagraph() {
-    setData(p => ({ ...p, about_paragraphs: [...p.about_paragraphs, ''] }));
+    setData(p => ({ ...p, about_paragraphs: [...p.about_paragraphs, { title: '', content: '' }] }));
   }
 
   function removeParagraph(i) {
@@ -118,15 +127,30 @@ export default function AProposAdminPage() {
         <Section title="Contenu">
           {data.about_paragraphs.map((p, i) => (
             <div key={i} className="flex gap-2 items-start">
-              <div className="flex-1">
-                <label className={label} style={labelStyle}>Paragraphe {i + 1}</label>
-                <textarea
-                  rows={4}
-                  value={p}
-                  onChange={e => setParagraph(i, e.target.value)}
-                  className={inp + ' resize-none'}
-                  style={inpStyle}
-                />
+              <div className="flex-1 flex flex-col gap-2">
+                <div>
+                  <label className={label} style={labelStyle}>
+                    Titre du paragraphe {i + 1} <span style={{ color: 'var(--muted-foreground)', fontWeight: 400 }}>(optionnel)</span>
+                  </label>
+                  <input
+                    value={p.title || ''}
+                    onChange={e => setParagraph(i, 'title', e.target.value)}
+                    className={inp}
+                    style={inpStyle}
+                    placeholder="Ex : Notre mission"
+                  />
+                </div>
+                <div>
+                  <label className={label} style={labelStyle}>Contenu</label>
+                  <textarea
+                    rows={4}
+                    value={p.content || ''}
+                    onChange={e => setParagraph(i, 'content', e.target.value)}
+                    className={inp + ' resize-y'}
+                    style={inpStyle}
+                    placeholder="Le texte du paragraphe… Entrée pour aller à la ligne."
+                  />
+                </div>
               </div>
               {data.about_paragraphs.length > 1 && (
                 <button type="button" onClick={() => removeParagraph(i)} className="mt-6 p-2 rounded-sm transition-colors hover:bg-red-50" style={{ color: '#ef4444' }}>

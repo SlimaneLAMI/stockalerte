@@ -7,13 +7,14 @@ export default function AProposPage() {
 
   const subtitle = s.about_subtitle || 'Notre histoire';
   const title = s.about_title || ('À propos de ' + (s.company_name || 'StockAlerte'));
-  const paragraphs = s.about_paragraphs?.filter(Boolean).length
-    ? s.about_paragraphs.filter(Boolean)
-    : [
-        'Spécialiste des équipements de cuisine professionnelle, nous accompagnons restaurants, hôtels, traiteurs et collectivités dans le choix et la mise en place de leur matériel.',
-        'Notre équipe de techniciens certifiés vous guide à chaque étape : conseil, livraison, installation sur site et formation de vos équipes.',
-        'Partenaires officiels des plus grandes marques, nous sélectionnons uniquement des équipements éprouvés en milieu professionnel, conformes aux normes en vigueur.',
-      ];
+  const rawParagraphs = s.about_paragraphs?.length ? s.about_paragraphs : [
+    { title: '', content: 'Spécialiste des équipements de cuisine professionnelle, nous accompagnons restaurants, hôtels, traiteurs et collectivités dans le choix et la mise en place de leur matériel.' },
+    { title: '', content: 'Notre équipe de techniciens certifiés vous guide à chaque étape : conseil, livraison, installation sur site et formation de vos équipes.' },
+    { title: '', content: 'Partenaires officiels des plus grandes marques, nous sélectionnons uniquement des équipements éprouvés en milieu professionnel, conformes aux normes en vigueur.' },
+  ];
+  const paragraphs = rawParagraphs
+    .map(p => typeof p === 'string' ? { title: '', content: p } : p)
+    .filter(p => p.content);
 
   const stats = s.about_stats?.filter(st => st.value || st.label).length
     ? s.about_stats.filter(st => st.value || st.label)
@@ -32,9 +33,14 @@ export default function AProposPage() {
             {title}
           </h1>
 
-          <div className="space-y-6 text-base leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
+          <div className="space-y-8 text-base leading-relaxed">
             {paragraphs.map((p, i) => (
-              <p key={i}>{p}</p>
+              <div key={i}>
+                {p.title && (
+                  <h2 className="font-display font-bold text-xl mb-2" style={{ color: 'var(--foreground)' }}>{p.title}</h2>
+                )}
+                <p className="whitespace-pre-line" style={{ color: 'var(--muted-foreground)' }}>{p.content}</p>
+              </div>
             ))}
           </div>
 
