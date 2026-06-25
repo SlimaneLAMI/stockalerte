@@ -65,6 +65,7 @@ export default function HomepageAdminPage() {
   const [settings, setSettings] = useState({
     hero_title: '', hero_subtitle: '', hero_cta: '', hero_image: '',
     why_us: [{ icon: '', title: '', text: '' }],
+    cta_label: '', cta_title: '', cta_subtitle: '', cta_button: '',
   });
   const [saving, setSaving] = useState(false);
 
@@ -206,6 +207,29 @@ export default function HomepageAdminPage() {
                 </div>
               );
             })}
+          </div>
+        </section>
+        {/* CTA bannière */}
+        <section className="p-6 rounded-sm border border-[var(--border)] bg-[var(--card)]">
+          <h2 className="font-display font-bold text-base mb-1" style={{ color: 'var(--foreground)' }}>Bannière de contact</h2>
+          <p className="text-xs mb-5" style={{ color: 'var(--muted-foreground)' }}>Bloc sombre affiché en bas de la page d'accueil.</p>
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className={label} style={labelStyle}>Étiquette (petit texte au-dessus)</label>
+              <input value={settings.cta_label} onChange={e => setSettings(p => ({ ...p, cta_label: e.target.value }))} className={inp} style={inpStyle} placeholder="Projet d'équipement" />
+            </div>
+            <div>
+              <label className={label} style={labelStyle}>Titre</label>
+              <input value={settings.cta_title} onChange={e => setSettings(p => ({ ...p, cta_title: e.target.value }))} className={inp} style={inpStyle} placeholder="Vous avez un projet d'équipement ?" />
+            </div>
+            <div>
+              <label className={label} style={labelStyle}>Description</label>
+              <textarea rows={2} value={settings.cta_subtitle} onChange={e => setSettings(p => ({ ...p, cta_subtitle: e.target.value }))} className={inp + ' resize-none'} style={inpStyle} placeholder="Notre équipe vous accompagne dans le choix et la mise en place de votre cuisine professionnelle. Devis gratuit sous 48h." />
+            </div>
+            <div>
+              <label className={label} style={labelStyle}>Texte du bouton</label>
+              <input value={settings.cta_button} onChange={e => setSettings(p => ({ ...p, cta_button: e.target.value }))} className={inp} style={inpStyle} placeholder="Nous contacter" />
+            </div>
           </div>
         </section>
       </div>

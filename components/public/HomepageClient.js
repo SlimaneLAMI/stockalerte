@@ -425,20 +425,20 @@ export default function HomepageClient() {
                 style={{ backgroundColor: 'var(--orange)', transform: 'translate(30%, -30%)' }}
               />
               <p className="text-xs font-medium uppercase tracking-widest mb-4" style={{ color: 'var(--orange)' }}>
-                Projet d'équipement
+                {settings.cta_label || "Projet d'équipement"}
               </p>
               <h2 className="font-display font-bold text-3xl md:text-5xl text-white mb-6 max-w-2xl mx-auto">
-                Vous avez un projet d'équipement ?
+                {settings.cta_title || "Vous avez un projet d'équipement ?"}
               </h2>
               <p className="text-white/60 max-w-xl mx-auto mb-10">
-                Notre équipe vous accompagne dans le choix et la mise en place de votre cuisine professionnelle. Devis gratuit sous 48h.
+                {settings.cta_subtitle || "Notre équipe vous accompagne dans le choix et la mise en place de votre cuisine professionnelle. Devis gratuit sous 48h."}
               </p>
               <Link
                 href="/contact"
                 className="inline-flex items-center gap-3 px-10 py-4 rounded-sm text-sm font-medium text-white transition-all hover:opacity-90"
                 style={{ backgroundColor: 'var(--orange)' }}
               >
-                Nous contacter
+                {settings.cta_button || 'Nous contacter'}
                 <ArrowRight size={16} />
               </Link>
             </div>
