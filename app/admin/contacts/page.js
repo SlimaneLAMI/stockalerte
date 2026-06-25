@@ -1,21 +1,24 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Mail, MailOpen, Archive, Trash2, X } from 'lucide-react';
+import { Mail, MailOpen, Archive, ArchiveX, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState('actifs');
 
-  async function load() {
+  async function load(t = tab) {
     setLoading(true);
-    const data = await fetch('/api/contacts').then(r => r.json());
+    const url = t === 'archives' ? '/api/contacts?archived=true' : '/api/contacts';
+    const data = await fetch(url).then(r => r.json());
     setContacts(data.contacts || []);
+    setSelected(null);
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(tab); }, [tab]);
 
   async function markRead(id, read) {
     await fetch(`/api/contacts/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ read }) });
@@ -29,6 +32,13 @@ export default function ContactsPage() {
     toast.success('Archivé');
   }
 
+  async function unarchive(id) {
+    await fetch(`/api/contacts/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ archived: false }) });
+    setContacts(p => p.filter(c => c._id !== id));
+    setSelected(null);
+    toast.success('Désarchivé');
+  }
+
   async function handleDelete(id) {
     await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
     setContacts(p => p.filter(c => c._id !== id));
@@ -38,16 +48,38 @@ export default function ContactsPage() {
 
   function openContact(contact) {
     setSelected(contact);
-    if (!contact.read) markRead(contact._id, true);
+    if (!contact.read && tab === 'actifs') markRead(contact._id, true);
   }
+
+  const unreadCount = contacts.filter(c => !c.read).length;
 
   return (
     <div className="p-6 lg:p-10">
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="font-display font-bold text-3xl" style={{ color: 'var(--foreground)' }}>Demandes de contact</h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>
-          {contacts.filter(c => !c.read).length} non lue(s)
-        </p>
+        {tab === 'actifs' && (
+          <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>
+            {unreadCount} non lue(s)
+          </p>
+        )}
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6 border-b" style={{ borderColor: 'var(--border)' }}>
+        {[{ key: 'actifs', label: 'Actifs' }, { key: 'archives', label: 'Archives' }].map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => setTab(key)}
+            className="px-4 py-2 text-sm font-medium transition-colors"
+            style={{
+              color: tab === key ? 'var(--orange)' : 'var(--muted-foreground)',
+              borderBottom: tab === key ? '2px solid var(--orange)' : '2px solid transparent',
+              marginBottom: '-1px',
+            }}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       <div className="grid lg:grid-cols-5 gap-6">
@@ -61,7 +93,9 @@ export default function ContactsPage() {
               </div>
             ))
           ) : contacts.length === 0 ? (
-            <p className="text-sm text-center py-12" style={{ color: 'var(--muted-foreground)' }}>Aucune demande.</p>
+            <p className="text-sm text-center py-12" style={{ color: 'var(--muted-foreground)' }}>
+              {tab === 'archives' ? 'Aucun message archivé.' : 'Aucune demande.'}
+            </p>
           ) : (
             contacts.map(contact => (
               <button
@@ -147,9 +181,15 @@ export default function ContactsPage() {
                 >
                   <Mail size={14} /> Répondre par email
                 </a>
-                <button onClick={() => archive(selected._id)} className="flex items-center gap-2 px-4 py-2.5 rounded-sm text-sm border transition-colors hover:bg-[var(--muted)]" style={{ borderColor: 'var(--border)' }}>
-                  <Archive size={14} /> Archiver
-                </button>
+                {tab === 'actifs' ? (
+                  <button onClick={() => archive(selected._id)} className="flex items-center gap-2 px-4 py-2.5 rounded-sm text-sm border transition-colors hover:bg-[var(--muted)]" style={{ borderColor: 'var(--border)' }}>
+                    <Archive size={14} /> Archiver
+                  </button>
+                ) : (
+                  <button onClick={() => unarchive(selected._id)} className="flex items-center gap-2 px-4 py-2.5 rounded-sm text-sm border transition-colors hover:bg-[var(--muted)]" style={{ borderColor: 'var(--border)' }}>
+                    <ArchiveX size={14} /> Désarchiver
+                  </button>
+                )}
                 <button onClick={() => handleDelete(selected._id)} className="flex items-center justify-center w-10 h-10 rounded-sm border border-red-200 text-red-400 hover:bg-red-50 transition-colors">
                   <Trash2 size={14} />
                 </button>
