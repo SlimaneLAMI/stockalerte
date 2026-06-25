@@ -1,8 +1,5 @@
 import './globals.css';
 import { startKeepAlive } from '@/lib/keepAlive';
-import { connectDB } from '@/lib/mongodb';
-import SiteSettings from '@/models/SiteSettings';
-import { COLOR_KEYS, buildColorStyle } from '@/lib/colorDefaults';
 
 startKeepAlive();
 
@@ -44,20 +41,7 @@ export const metadata = {
   },
 };
 
-async function getColorStyle() {
-  try {
-    await connectDB();
-    const rows = await SiteSettings.find({ key: { $in: COLOR_KEYS } }).lean();
-    const colors = {};
-    rows.forEach(r => { colors[r.key] = r.value; });
-    return buildColorStyle(colors);
-  } catch {
-    return '';
-  }
-}
-
-export default async function RootLayout({ children }) {
-  const colorStyle = await getColorStyle();
+export default function RootLayout({ children }) {
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
@@ -66,7 +50,6 @@ export default async function RootLayout({ children }) {
           href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500,400&f[]=satoshi@700,500,400&display=swap"
           rel="stylesheet"
         />
-        {colorStyle && <style dangerouslySetInnerHTML={{ __html: colorStyle }} />}
       </head>
       <body suppressHydrationWarning>{children}</body>
     </html>
