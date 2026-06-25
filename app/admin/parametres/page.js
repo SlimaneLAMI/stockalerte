@@ -21,7 +21,7 @@ export default function ParametresPage() {
   const [settings, setSettings] = useState({
     company_name: '', company_address: '', company_phone: '',
     company_email: '', company_hours: '', maps_url: '',
-    footer_text: '', contact_notification_email: '',
+    footer_text: '',
     social_facebook: '', social_instagram: '', social_linkedin: '',
     social_twitter: '', social_youtube: '', social_tiktok: '',
     social_whatsapp: '', social_snapchat: '', social_pinterest: '',
@@ -187,10 +187,7 @@ export default function ParametresPage() {
             <label className={label} style={labelStyle}>Texte copyright</label>
             <input value={settings.footer_text} onChange={e => setSettings(p => ({ ...p, footer_text: e.target.value }))} className={inp} style={inpStyle} />
           </div>
-          <div>
-            <label className={label} style={labelStyle}>Email de notification pour les contacts</label>
-            <input type="email" value={settings.contact_notification_email} onChange={e => setSettings(p => ({ ...p, contact_notification_email: e.target.value }))} className={inp} style={inpStyle} />
-          </div>
+
         </Section>
       </div>
     </form>
