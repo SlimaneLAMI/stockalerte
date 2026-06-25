@@ -1,13 +1,32 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import CloudinaryUpload from '@/components/admin/CloudinaryUpload';
+import { COLOR_DEFAULTS } from '@/lib/colorDefaults';
 
 const inp = "w-full px-3 py-2.5 text-sm rounded-sm border outline-none focus:border-[var(--orange)] bg-[var(--card)]";
 const inpStyle = { borderColor: 'var(--border)', color: 'var(--foreground)' };
 const label = "block text-xs font-medium mb-1.5";
 const labelStyle = { color: 'var(--foreground)' };
+
+function ColorPicker({ label: lbl, value, onChange }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-xs font-medium" style={{ color: 'var(--foreground)' }}>{lbl}</label>
+      <div className="flex items-center gap-2">
+        <input
+          type="color"
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          className="w-9 h-9 rounded-sm border cursor-pointer p-0.5 bg-transparent"
+          style={{ borderColor: 'var(--border)' }}
+        />
+        <span className="text-xs font-mono" style={{ color: 'var(--muted-foreground)' }}>{value}</span>
+      </div>
+    </div>
+  );
+}
 
 function Section({ title, children }) {
   return (
@@ -29,6 +48,7 @@ export default function ParametresPage() {
     show_prices: true,
     price_mode: 'HT',
     show_condition: true,
+    ...COLOR_DEFAULTS,
   });
   const [saving, setSaving] = useState(false);
 
@@ -217,8 +237,66 @@ export default function ParametresPage() {
             <label className={label} style={labelStyle}>Texte copyright</label>
             <input value={settings.footer_text} onChange={e => setSettings(p => ({ ...p, footer_text: e.target.value }))} className={inp} style={inpStyle} />
           </div>
-
         </Section>
+
+        <section className="p-6 rounded-sm border border-[var(--border)] bg-[var(--card)]">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="font-display font-bold text-base" style={{ color: 'var(--foreground)' }}>Couleurs</h2>
+            <button
+              type="button"
+              onClick={() => setSettings(p => ({ ...p, ...COLOR_DEFAULTS }))}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs border transition-colors hover:bg-[var(--muted)]"
+              style={{ borderColor: 'var(--border)', color: 'var(--muted-foreground)' }}
+            >
+              <RotateCcw size={12} /> Réinitialiser
+            </button>
+          </div>
+          <div className="flex flex-col gap-6">
+
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: 'var(--muted-foreground)' }}>Couleur principale</p>
+              <div className="grid sm:grid-cols-3 gap-4">
+                {[
+                  { key: 'color_orange',       lbl: 'Accentuation' },
+                  { key: 'color_orange_light',  lbl: 'Variante claire' },
+                  { key: 'color_orange_dark',   lbl: 'Variante foncée' },
+                ].map(({ key, lbl }) => (
+                  <ColorPicker key={key} label={lbl} value={settings[key]} onChange={v => setSettings(p => ({ ...p, [key]: v }))} />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: 'var(--muted-foreground)' }}>Mode clair</p>
+              <div className="grid sm:grid-cols-3 gap-4">
+                {[
+                  { key: 'color_background',  lbl: 'Fond de page' },
+                  { key: 'color_foreground',  lbl: 'Texte principal' },
+                  { key: 'color_card',        lbl: 'Fond des cartes' },
+                  { key: 'color_muted',       lbl: 'Fond discret' },
+                  { key: 'color_muted_fg',    lbl: 'Texte discret' },
+                  { key: 'color_border',      lbl: 'Bordures' },
+                ].map(({ key, lbl }) => (
+                  <ColorPicker key={key} label={lbl} value={settings[key]} onChange={v => setSettings(p => ({ ...p, [key]: v }))} />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: 'var(--muted-foreground)' }}>Mode sombre</p>
+              <div className="grid sm:grid-cols-3 gap-4">
+                {[
+                  { key: 'color_dark_bg',    lbl: 'Fond de page' },
+                  { key: 'color_dark_card',  lbl: 'Fond des cartes' },
+                  { key: 'color_dark_muted', lbl: 'Fond discret' },
+                ].map(({ key, lbl }) => (
+                  <ColorPicker key={key} label={lbl} value={settings[key]} onChange={v => setSettings(p => ({ ...p, [key]: v }))} />
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </section>
       </div>
     </form>
   );
