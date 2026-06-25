@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Plus, Trash2, GripVertical, Loader2, ImagePlus } from 'lucide-react';
 import { toast } from 'sonner';
 import dynamic from 'next/dynamic';
+import CropModal from './CropModal';
 
 const RichTextEditor = dynamic(() => import('./RichTextEditor'), { ssr: false });
 
@@ -28,6 +29,7 @@ export default function ProductForm({ initialData, isEdit }) {
   const [saving, setSaving] = useState(false);
   const [categories, setCategories] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [cropSrc, setCropSrc] = useState(null);
 
   const [brands, setBrands] = useState([]);
   const [form, setForm] = useState({
@@ -86,20 +88,27 @@ export default function ProductForm({ initialData, isEdit }) {
   async function uploadImage(file) {
     setUploading(true);
     const fd = new FormData();
-    fd.append('file', file);
+    fd.append('file', file, 'image.jpg');
     fd.append('folder', 'StockAlerte/products');
     const res = await fetch('/api/upload', { method: 'POST', body: fd }).then(r => r.json());
     setUploading(false);
     return res;
   }
 
-  async function handleImageUpload(e) {
-    const files = [...e.target.files];
-    for (const file of files) {
-      const res = await uploadImage(file);
-      if (res.url) {
-        setForm(p => ({ ...p, images: [...p.images, { url: res.url, publicId: res.publicId }] }));
-      }
+  function handleImageUpload(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    const reader = new FileReader();
+    reader.onload = () => setCropSrc(reader.result);
+    reader.readAsDataURL(file);
+  }
+
+  async function handleCropComplete(blob) {
+    setCropSrc(null);
+    const res = await uploadImage(blob);
+    if (res.url) {
+      setForm(p => ({ ...p, images: [...p.images, { url: res.url, publicId: res.publicId }] }));
     }
   }
 
@@ -149,6 +158,15 @@ export default function ProductForm({ initialData, isEdit }) {
   const labelStyle = { color: 'var(--foreground)' };
 
   return (
+    <>
+    {cropSrc && (
+      <CropModal
+        imageSrc={cropSrc}
+        aspectRatio="1/1"
+        onComplete={handleCropComplete}
+        onCancel={() => setCropSrc(null)}
+      />
+    )}
     <form onSubmit={handleSubmit} className="p-6 lg:p-10 max-w-4xl">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-display font-bold text-3xl" style={{ color: 'var(--foreground)' }}>
@@ -338,5 +356,6 @@ export default function ProductForm({ initialData, isEdit }) {
         </section>
       </div>
     </form>
+    </>
   );
 }
