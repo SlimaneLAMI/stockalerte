@@ -255,7 +255,7 @@ export default function CatalogueClient({ initialCategory } = {}) {
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-10">
           <div className="flex gap-12">
             <div className="hidden lg:block w-56 shrink-0">
-              <div className="sticky top-36">
+              <div className="sticky top-40">
                 <FiltersPanel categories={categories} brands={brands} filters={filters}
                   onChange={setFilters}
                   onReset={() => setFilters({ categories: [], brands: [], availability: [] })}
