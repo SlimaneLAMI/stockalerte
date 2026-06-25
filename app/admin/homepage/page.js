@@ -43,7 +43,7 @@ function IconPicker({ value, onChange }) {
                   onClick={() => { onChange(key); setOpen(false); }}
                   className="flex flex-col items-center gap-1 p-2 rounded-sm transition-colors"
                   style={{
-                    backgroundColor: active ? 'rgba(224,92,42,0.1)' : 'transparent',
+                    backgroundColor: active ? 'color-mix(in srgb, var(--orange) 12%, transparent)' : 'transparent',
                     border: active ? '1px solid var(--orange)' : '1px solid transparent',
                   }}
                 >
@@ -207,7 +207,7 @@ export default function HomepageAdminPage() {
                   {(PreviewIcon || item.title) && (
                     <div className="flex items-start gap-3 pt-3 border-t" style={{ borderColor: 'var(--border)' }}>
                       {PreviewIcon && (
-                        <div className="w-10 h-10 rounded-sm flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(224,92,42,0.1)' }}>
+                        <div className="w-10 h-10 rounded-sm flex items-center justify-center shrink-0" style={{ backgroundColor: 'color-mix(in srgb, var(--orange) 12%, transparent)' }}>
                           <PreviewIcon size={20} style={{ color: 'var(--orange)' }} />
                         </div>
                       )}

@@ -200,7 +200,7 @@ export default function QuickViewModal({ product, onClose }) {
                               className="flex items-center gap-4 px-6 py-5 rounded-sm border transition-colors hover:border-[var(--orange)] group"
                               style={{ borderColor: 'var(--border)' }}
                             >
-                              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(224, 92, 42, 0.1)' }}>
+                              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'color-mix(in srgb, var(--orange) 12%, transparent)' }}>
                                 <Phone size={18} style={{ color: 'var(--orange)' }} />
                               </div>
                               <div>
@@ -214,7 +214,7 @@ export default function QuickViewModal({ product, onClose }) {
                             className="flex items-center gap-4 px-6 py-5 rounded-sm border transition-colors hover:border-[var(--orange)] group text-left"
                             style={{ borderColor: 'var(--border)' }}
                           >
-                            <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(224, 92, 42, 0.1)' }}>
+                            <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'color-mix(in srgb, var(--orange) 12%, transparent)' }}>
                               <MessageSquare size={18} style={{ color: 'var(--orange)' }} />
                             </div>
                             <div>
