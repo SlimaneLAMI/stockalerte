@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import CloudinaryUpload from '@/components/admin/CloudinaryUpload';
+import { ACCENT_PRESETS, deriveShades } from '@/lib/accentColor';
 
 const inp = "w-full px-3 py-2.5 text-sm rounded-sm border outline-none focus:border-[var(--orange)] bg-[var(--card)]";
 const inpStyle = { borderColor: 'var(--border)', color: 'var(--foreground)' };
@@ -29,6 +30,9 @@ export default function ParametresPage() {
     show_prices: true,
     price_mode: 'HT',
     show_condition: true,
+    color_orange: '#e05c2a',
+    color_orange_light: '#f47c50',
+    color_orange_dark: '#b84820',
   });
   const [saving, setSaving] = useState(false);
 
@@ -217,8 +221,61 @@ export default function ParametresPage() {
             <label className={label} style={labelStyle}>Texte copyright</label>
             <input value={settings.footer_text} onChange={e => setSettings(p => ({ ...p, footer_text: e.target.value }))} className={inp} style={inpStyle} />
           </div>
-
         </Section>
+
+        <section className="p-6 rounded-sm border border-[var(--border)] bg-[var(--card)]">
+          <h2 className="font-display font-bold text-base mb-1" style={{ color: 'var(--foreground)' }}>Couleur principale</h2>
+          <p className="text-xs mb-5" style={{ color: 'var(--muted-foreground)' }}>
+            Utilisée pour les boutons, liens, icônes et accents partout dans l'application.
+          </p>
+
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-wrap gap-3">
+              {ACCENT_PRESETS.map(preset => {
+                const active = settings.color_orange === preset.main;
+                return (
+                  <button
+                    key={preset.name}
+                    type="button"
+                    onClick={() => setSettings(p => ({ ...p, color_orange: preset.main, color_orange_light: preset.light, color_orange_dark: preset.dark }))}
+                    className="flex flex-col items-center gap-2 p-3 rounded-sm border-2 transition-all"
+                    style={{ borderColor: active ? preset.main : 'var(--border)', backgroundColor: active ? preset.main + '10' : 'transparent' }}
+                  >
+                    <span
+                      className="w-10 h-10 rounded-sm flex items-center justify-center"
+                      style={{ backgroundColor: preset.main }}
+                    >
+                      {active && <Check size={16} className="text-white" />}
+                    </span>
+                    <span className="text-xs font-medium" style={{ color: 'var(--foreground)' }}>{preset.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div>
+              <label className={label} style={labelStyle}>Couleur personnalisée</label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={settings.color_orange}
+                  onChange={e => {
+                    const { main, light, dark } = deriveShades(e.target.value);
+                    setSettings(p => ({ ...p, color_orange: main, color_orange_light: light, color_orange_dark: dark }));
+                  }}
+                  className="w-10 h-10 rounded-sm border cursor-pointer p-0.5 bg-transparent"
+                  style={{ borderColor: 'var(--border)' }}
+                />
+                <span className="text-sm font-mono" style={{ color: 'var(--muted-foreground)' }}>{settings.color_orange}</span>
+                <div className="flex gap-2 ml-2">
+                  <span className="w-6 h-6 rounded-sm" style={{ backgroundColor: settings.color_orange }} title="Principal" />
+                  <span className="w-6 h-6 rounded-sm" style={{ backgroundColor: settings.color_orange_light }} title="Clair" />
+                  <span className="w-6 h-6 rounded-sm" style={{ backgroundColor: settings.color_orange_dark }} title="Foncé" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </form>
   );

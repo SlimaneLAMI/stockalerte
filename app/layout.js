@@ -1,5 +1,8 @@
 import './globals.css';
 import { startKeepAlive } from '@/lib/keepAlive';
+import { connectDB } from '@/lib/mongodb';
+import SiteSettings from '@/models/SiteSettings';
+import { buildAccentStyle } from '@/lib/accentColor';
 
 startKeepAlive();
 
@@ -36,12 +39,30 @@ export const metadata = {
     description: 'Spécialiste des équipements de cuisine professionnels pour restaurants, hôtels et collectivités.',
     images: ['/og-default.jpg'],
   },
-  alternates: {
-    canonical: BASE,
-  },
+  alternates: { canonical: BASE },
 };
 
-export default function RootLayout({ children }) {
+async function getAccentStyle() {
+  try {
+    await connectDB();
+    const rows = await SiteSettings.find({
+      key: { $in: ['color_orange', 'color_orange_light', 'color_orange_dark'] }
+    }).lean();
+    const m = {};
+    rows.forEach(r => { m[r.key] = r.value; });
+    if (!m.color_orange) return '';
+    return buildAccentStyle(
+      m.color_orange,
+      m.color_orange_light || m.color_orange,
+      m.color_orange_dark  || m.color_orange,
+    );
+  } catch {
+    return '';
+  }
+}
+
+export default async function RootLayout({ children }) {
+  const accentStyle = await getAccentStyle();
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
@@ -50,6 +71,7 @@ export default function RootLayout({ children }) {
           href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500,400&f[]=satoshi@700,500,400&display=swap"
           rel="stylesheet"
         />
+        {accentStyle && <style dangerouslySetInnerHTML={{ __html: accentStyle }} />}
       </head>
       <body suppressHydrationWarning>{children}</body>
     </html>
