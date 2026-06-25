@@ -22,7 +22,7 @@ export default function ParametresPage() {
   const [settings, setSettings] = useState({
     company_name: '', company_address: '', company_phone: '',
     company_email: '', company_hours: '', maps_url: '',
-    logo_url: '', footer_text: '',
+    logo_url: '', logo_initials: '', footer_text: '',
     social_facebook: '', social_instagram: '', social_linkedin: '',
     social_twitter: '', social_youtube: '', social_tiktok: '',
     social_whatsapp: '', social_snapchat: '', social_pinterest: '',
@@ -66,6 +66,20 @@ export default function ParametresPage() {
           <div>
             <label className={label} style={labelStyle}>Nom de l'entreprise</label>
             <input value={settings.company_name} onChange={e => setSettings(p => ({ ...p, company_name: e.target.value }))} className={inp} style={inpStyle} />
+          </div>
+          <div>
+            <label className={label} style={labelStyle}>Initiales du logo</label>
+            <input
+              value={settings.logo_initials}
+              onChange={e => setSettings(p => ({ ...p, logo_initials: e.target.value.slice(0, 3).toUpperCase() }))}
+              className={inp}
+              style={inpStyle}
+              placeholder="ST"
+              maxLength={3}
+            />
+            <p className="text-xs mt-1.5" style={{ color: 'var(--muted-foreground)' }}>
+              1 à 3 caractères affichés dans le carré orange. Si vide, les 2 premières lettres du nom sont utilisées.
+            </p>
           </div>
           <div>
             <label className={label} style={labelStyle}>Logo (remplace le carré orange)</label>

@@ -26,6 +26,7 @@ function AdminNav({ pathname }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [siteName, setSiteName] = useState('StockAlerte');
   const [logoUrl, setLogoUrl] = useState('');
+  const [logoInitials, setLogoInitials] = useState('');
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
 
@@ -33,6 +34,7 @@ function AdminNav({ pathname }) {
     fetch('/api/settings').then(r => r.json()).then(d => {
       if (d.company_name) setSiteName(d.company_name);
       if (d.logo_url) setLogoUrl(d.logo_url);
+      if (d.logo_initials) setLogoInitials(d.logo_initials);
     }).catch(() => {});
   }, []);
 
@@ -77,7 +79,7 @@ function AdminNav({ pathname }) {
           >
             {logoUrl
               ? <img src={logoUrl} alt={siteName} className="w-full h-full object-cover" />
-              : siteName.slice(0, 2).toUpperCase()}
+              : (logoInitials || siteName.slice(0, 2).toUpperCase())}
           </div>
           <span className="font-display font-bold" style={{ color: 'var(--sidebar-foreground)' }}>
             {siteName} Admin
@@ -110,7 +112,7 @@ function AdminNav({ pathname }) {
           >
             {logoUrl
               ? <img src={logoUrl} alt={siteName} className="w-full h-full object-cover" />
-              : siteName.slice(0, 2).toUpperCase()}
+              : (logoInitials || siteName.slice(0, 2).toUpperCase())}
           </div>
           <span className="font-display font-bold text-sm" style={{ color: 'var(--sidebar-foreground)' }}>Admin</span>
         </div>

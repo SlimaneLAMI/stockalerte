@@ -26,7 +26,7 @@ export default function Header() {
   const pathname = usePathname();
   const s = useSettings();
   const companyName = s.company_name || 'StockAlerte';
-  const logoLetters = companyName.slice(0, 2).toUpperCase();
+  const logoLetters = s.logo_initials || companyName.slice(0, 2).toUpperCase();
   const logoUrl = s.logo_url;
   const isHome = pathname === '/';
   const textColor = (isHome && !scrolled) ? 'white' : 'var(--foreground)';

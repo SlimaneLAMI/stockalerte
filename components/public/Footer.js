@@ -73,7 +73,7 @@ export default function Footer() {
               >
                 {s.logo_url
                   ? <img src={s.logo_url} alt={s.company_name || 'Logo'} className="w-full h-full object-cover" />
-                  : (s.company_name ? s.company_name.slice(0, 2).toUpperCase() : 'ST')}
+                  : (s.logo_initials || (s.company_name ? s.company_name.slice(0, 2).toUpperCase() : 'ST'))}
               </div>
               <span className="font-display font-bold text-xl" style={{ color: 'var(--foreground)' }}>
                 {s.company_name || 'StockAlerte'}
