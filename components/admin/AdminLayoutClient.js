@@ -24,8 +24,17 @@ const nav = [
 
 function AdminNav({ pathname }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [siteName, setSiteName] = useState('StockAlerte');
+  const [logoUrl, setLogoUrl] = useState('');
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
+
+  useEffect(() => {
+    fetch('/api/settings').then(r => r.json()).then(d => {
+      if (d.company_name) setSiteName(d.company_name);
+      if (d.logo_url) setLogoUrl(d.logo_url);
+    }).catch(() => {});
+  }, []);
 
   const NavLinks = () => (
     <nav className="flex flex-col gap-1 flex-1">
@@ -63,13 +72,15 @@ function AdminNav({ pathname }) {
       >
         <div className="flex items-center gap-3 px-4 py-5 border-b" style={{ borderColor: 'var(--sidebar-border)' }}>
           <div
-            className="w-7 h-7 rounded-sm flex items-center justify-center font-display font-bold text-xs text-white"
-            style={{ backgroundColor: 'var(--orange)' }}
+            className="w-7 h-7 rounded-sm overflow-hidden flex items-center justify-center font-display font-bold text-xs text-white flex-shrink-0"
+            style={logoUrl ? {} : { backgroundColor: 'var(--orange)' }}
           >
-            SA
+            {logoUrl
+              ? <img src={logoUrl} alt={siteName} className="w-full h-full object-cover" />
+              : siteName.slice(0, 2).toUpperCase()}
           </div>
           <span className="font-display font-bold" style={{ color: 'var(--sidebar-foreground)' }}>
-            StockAlerte Admin
+            {siteName} Admin
           </span>
         </div>
         <div className="flex flex-col flex-1 p-3 overflow-y-auto">
@@ -94,10 +105,12 @@ function AdminNav({ pathname }) {
       >
         <div className="flex items-center gap-2">
           <div
-            className="w-7 h-7 rounded-sm flex items-center justify-center font-display font-bold text-xs text-white"
-            style={{ backgroundColor: 'var(--orange)' }}
+            className="w-7 h-7 rounded-sm overflow-hidden flex items-center justify-center font-display font-bold text-xs text-white flex-shrink-0"
+            style={logoUrl ? {} : { backgroundColor: 'var(--orange)' }}
           >
-            SA
+            {logoUrl
+              ? <img src={logoUrl} alt={siteName} className="w-full h-full object-cover" />
+              : siteName.slice(0, 2).toUpperCase()}
           </div>
           <span className="font-display font-bold text-sm" style={{ color: 'var(--sidebar-foreground)' }}>Admin</span>
         </div>

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import CloudinaryUpload from '@/components/admin/CloudinaryUpload';
 
 const inp = "w-full px-3 py-2.5 text-sm rounded-sm border outline-none focus:border-[var(--orange)] bg-[var(--card)]";
 const inpStyle = { borderColor: 'var(--border)', color: 'var(--foreground)' };
@@ -21,7 +22,7 @@ export default function ParametresPage() {
   const [settings, setSettings] = useState({
     company_name: '', company_address: '', company_phone: '',
     company_email: '', company_hours: '', maps_url: '',
-    footer_text: '',
+    logo_url: '', footer_text: '',
     social_facebook: '', social_instagram: '', social_linkedin: '',
     social_twitter: '', social_youtube: '', social_tiktok: '',
     social_whatsapp: '', social_snapchat: '', social_pinterest: '',
@@ -65,6 +66,21 @@ export default function ParametresPage() {
           <div>
             <label className={label} style={labelStyle}>Nom de l'entreprise</label>
             <input value={settings.company_name} onChange={e => setSettings(p => ({ ...p, company_name: e.target.value }))} className={inp} style={inpStyle} />
+          </div>
+          <div>
+            <label className={label} style={labelStyle}>Logo (remplace le carré orange)</label>
+            <div className="max-w-[160px]">
+              <CloudinaryUpload
+                value={settings.logo_url}
+                onChange={v => setSettings(p => ({ ...p, logo_url: v }))}
+                folder="StockAlerte/logo"
+                label="Logo"
+                aspectRatio="1/1"
+              />
+            </div>
+            <p className="text-xs mt-1.5" style={{ color: 'var(--muted-foreground)' }}>
+              Idéalement carré (ex. 64×64 px). Si vide, le carré orange avec les initiales s'affiche.
+            </p>
           </div>
           <div>
             <label className={label} style={labelStyle}>Adresse</label>

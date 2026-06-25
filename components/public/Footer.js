@@ -68,10 +68,12 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-4">
               <div
-                className="w-8 h-8 rounded-sm flex items-center justify-center font-display font-bold text-sm text-white"
-                style={{ backgroundColor: 'var(--orange)' }}
+                className="w-8 h-8 rounded-sm overflow-hidden flex items-center justify-center font-display font-bold text-sm text-white flex-shrink-0"
+                style={s.logo_url ? {} : { backgroundColor: 'var(--orange)' }}
               >
-                {s.company_name ? s.company_name.slice(0, 2).toUpperCase() : 'PC'}
+                {s.logo_url
+                  ? <img src={s.logo_url} alt={s.company_name || 'Logo'} className="w-full h-full object-cover" />
+                  : (s.company_name ? s.company_name.slice(0, 2).toUpperCase() : 'ST')}
               </div>
               <span className="font-display font-bold text-xl" style={{ color: 'var(--foreground)' }}>
                 {s.company_name || 'StockAlerte'}

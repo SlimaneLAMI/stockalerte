@@ -27,6 +27,7 @@ export default function Header() {
   const s = useSettings();
   const companyName = s.company_name || 'StockAlerte';
   const logoLetters = companyName.slice(0, 2).toUpperCase();
+  const logoUrl = s.logo_url;
   const isHome = pathname === '/';
   const textColor = (isHome && !scrolled) ? 'white' : 'var(--foreground)';
 
@@ -55,12 +56,14 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <motion.div
-              className="w-8 h-8 rounded-sm flex items-center justify-center font-display font-bold text-sm text-white"
-              style={{ backgroundColor: 'var(--orange)' }}
+              className="w-8 h-8 rounded-sm overflow-hidden flex items-center justify-center font-display font-bold text-sm text-white flex-shrink-0"
+              style={logoUrl ? {} : { backgroundColor: 'var(--orange)' }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {logoLetters}
+              {logoUrl
+                ? <img src={logoUrl} alt={companyName} className="w-full h-full object-cover" />
+                : logoLetters}
             </motion.div>
             <span
               className="font-display font-bold text-xl tracking-tight transition-colors duration-300"
