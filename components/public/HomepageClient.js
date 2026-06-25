@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-import { ArrowRight, ChevronDown } from 'lucide-react';
+import { ArrowRight, ChevronDown, MapPin, Phone, Mail, Clock } from 'lucide-react';
 import ProductCard from './ProductCard';
 import QuickViewModal from './QuickViewModal';
 import BackToTop from './BackToTop';
@@ -358,7 +358,7 @@ export default function HomepageClient() {
                     {SvgIcon ? (
                       <div
                         className="w-14 h-14 rounded-sm flex items-center justify-center mb-6"
-                        style={{ backgroundColor: 'rgba(224,92,42,0.1)' }}
+                        style={{ backgroundColor: 'color-mix(in srgb, var(--orange) 12%, transparent)' }}
                       >
                         <SvgIcon size={28} style={{ color: 'var(--orange)' }} />
                       </div>
@@ -454,11 +454,24 @@ export default function HomepageClient() {
               <h3 className="font-display font-bold text-xl mb-6" style={{ color: 'var(--foreground)' }}>
                 Nous contacter
               </h3>
-              <div className="space-y-4 text-sm" style={{ color: 'var(--muted-foreground)' }}>
-                {settings.company_address && <p>📍 {settings.company_address}</p>}
-                {settings.company_phone && <p>📞 {settings.company_phone}</p>}
-                {settings.company_email && <p>✉️ {settings.company_email}</p>}
-                {settings.company_hours && <p>🕐 {settings.company_hours}</p>}
+              <div className="flex flex-col gap-4">
+                {[
+                  settings.company_address && { Icon: MapPin, text: settings.company_address, href: null },
+                  settings.company_phone  && { Icon: Phone,  text: settings.company_phone,   href: `tel:${settings.company_phone.replace(/\s/g, '')}` },
+                  settings.company_email  && { Icon: Mail,   text: settings.company_email,    href: `mailto:${settings.company_email}` },
+                  settings.company_hours  && { Icon: Clock,  text: settings.company_hours,    href: null },
+                ].filter(Boolean).map(({ Icon, text, href }) => (
+                  <div key={text} className="flex items-center gap-4">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'color-mix(in srgb, var(--orange) 12%, transparent)' }}>
+                      <Icon size={15} style={{ color: 'var(--orange)' }} />
+                    </div>
+                    {href ? (
+                      <a href={href} className="text-sm whitespace-pre-line transition-colors hover:text-[var(--orange)]" style={{ color: 'var(--muted-foreground)' }}>{text}</a>
+                    ) : (
+                      <p className="text-sm whitespace-pre-line" style={{ color: 'var(--muted-foreground)' }}>{text}</p>
+                    )}
+                  </div>
+                ))}
               </div>
               <Link
                 href="/contact"

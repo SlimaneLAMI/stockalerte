@@ -153,7 +153,7 @@ export default function ContactPage() {
                   <div className="flex flex-col gap-5">
                     {contactItems.map(({ Icon, text, href }) => (
                       <div key={text} className="flex items-center gap-4">
-                        <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(224, 92, 42, 0.1)' }}>
+                        <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'color-mix(in srgb, var(--orange) 12%, transparent)' }}>
                           <Icon size={15} style={{ color: 'var(--orange)' }} />
                         </div>
                         {href ? (
