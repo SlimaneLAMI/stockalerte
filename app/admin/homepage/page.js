@@ -66,12 +66,17 @@ export default function HomepageAdminPage() {
     hero_title: '', hero_subtitle: '', hero_cta: '', hero_image: '',
     why_us: [{ icon: '', title: '', text: '' }],
     cta_label: '', cta_title: '', cta_subtitle: '', cta_button: '',
+    about_stats: [{ value: '', label: '' }],
   });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetch('/api/settings').then(r => r.json()).then(data => {
-      setSettings(prev => ({ ...prev, ...data }));
+      setSettings(prev => ({
+        ...prev,
+        ...data,
+        about_stats: data.about_stats?.length ? data.about_stats : [{ value: '', label: '' }],
+      }));
     });
   }, []);
 
@@ -86,6 +91,14 @@ export default function HomepageAdminPage() {
     setSaving(false);
     if (res?.success) toast.success('Page d\'accueil mise à jour');
     else toast.error('Erreur : ' + (res?.error || 'impossible de sauvegarder'));
+  }
+
+  function updateStat(i, field, val) {
+    setSettings(p => {
+      const stats = [...p.about_stats];
+      stats[i] = { ...stats[i], [field]: val };
+      return { ...p, about_stats: stats };
+    });
   }
 
   function updateWhyUs(i, field, val) {
@@ -209,6 +222,43 @@ export default function HomepageAdminPage() {
             })}
           </div>
         </section>
+        {/* Chiffres clés */}
+        <section className="p-6 rounded-sm border border-[var(--border)] bg-[var(--card)]">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h2 className="font-display font-bold text-base" style={{ color: 'var(--foreground)' }}>Chiffres clés</h2>
+              <p className="text-xs mt-0.5" style={{ color: 'var(--muted-foreground)' }}>Affichés sur la page d'accueil et la page À propos avec une animation au scroll.</p>
+            </div>
+            <button type="button" onClick={() => setSettings(p => ({ ...p, about_stats: [...p.about_stats, { value: '', label: '' }] }))}
+              className="flex items-center gap-1.5 text-sm font-medium" style={{ color: 'var(--orange)' }}>
+              <Plus size={14} /> Ajouter
+            </button>
+          </div>
+          <div className="flex flex-col gap-3">
+            {settings.about_stats.map((stat, i) => (
+              <div key={i} className="flex gap-3 items-end">
+                <div className="w-32">
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--foreground)' }}>Valeur</label>
+                  <input value={stat.value} onChange={e => updateStat(i, 'value', e.target.value)} className={inp} style={inpStyle} placeholder="500+" />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--foreground)' }}>Étiquette</label>
+                  <input value={stat.label} onChange={e => updateStat(i, 'label', e.target.value)} className={inp} style={inpStyle} placeholder="Clients satisfaits" />
+                </div>
+                {settings.about_stats.length > 1 && (
+                  <button type="button" onClick={() => setSettings(p => ({ ...p, about_stats: p.about_stats.filter((_, j) => j !== i) }))}
+                    className="p-2 rounded-sm hover:bg-red-50 mb-0.5" style={{ color: '#ef4444' }}>
+                    <Trash2 size={14} />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+          <p className="text-xs mt-3" style={{ color: 'var(--muted-foreground)' }}>
+            Astuce : "500+", "20 ans", "98%" — le chiffre s'anime automatiquement.
+          </p>
+        </section>
+
         {/* CTA bannière */}
         <section className="p-6 rounded-sm border border-[var(--border)] bg-[var(--card)]">
           <h2 className="font-display font-bold text-base mb-1" style={{ color: 'var(--foreground)' }}>Bannière de contact</h2>

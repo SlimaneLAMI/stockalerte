@@ -4,6 +4,36 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { ArrowRight, ChevronDown, MapPin, Phone, Mail, Clock } from 'lucide-react';
+
+function parseValue(str) {
+  const s = String(str || '');
+  const match = s.match(/^(\d+(?:[.,]\d+)?)(.*)/);
+  if (!match) return { num: null, suffix: s };
+  return { num: parseFloat(match[1].replace(',', '.')), suffix: match[2] };
+}
+
+function CountUp({ target, duration = 1600 }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const [display, setDisplay] = useState('0');
+  const { num, suffix } = parseValue(target);
+
+  useEffect(() => {
+    if (!inView) return;
+    if (num === null) { setDisplay(target); return; }
+    let startTs = null;
+    const step = (ts) => {
+      if (!startTs) startTs = ts;
+      const progress = Math.min((ts - startTs) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(Math.round(eased * num) + suffix);
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [inView, num, suffix, target, duration]);
+
+  return <span ref={ref}>{display}</span>;
+}
 import ProductCard from './ProductCard';
 import QuickViewModal from './QuickViewModal';
 import BackToTop from './BackToTop';
@@ -375,6 +405,31 @@ export default function HomepageClient() {
                 </FadeIn>
               );
             })}
+          </div>
+        </section>
+      )}
+
+      {/* ── CHIFFRES CLÉS ─────────────────────────────────── */}
+      {(settings.about_stats || []).filter(s => s.value || s.label).length > 0 && (
+        <section className="border-y border-[var(--border)] py-16">
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 md:divide-x divide-[var(--border)]">
+              {(settings.about_stats).filter(s => s.value || s.label).map((stat, i) => (
+                <motion.div
+                  key={i}
+                  className="flex flex-col items-center text-center px-6"
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <p className="font-display font-bold text-4xl md:text-5xl tabular-nums" style={{ color: 'var(--orange)' }}>
+                    <CountUp target={stat.value} />
+                  </p>
+                  <p className="text-sm mt-2 font-medium" style={{ color: 'var(--muted-foreground)' }}>{stat.label}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
       )}

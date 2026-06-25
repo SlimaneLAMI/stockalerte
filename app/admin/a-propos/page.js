@@ -25,11 +25,6 @@ const DEFAULT = {
     { title: '', content: '' },
     { title: '', content: '' },
   ],
-  about_stats: [
-    { value: '', label: '' },
-    { value: '', label: '' },
-    { value: '', label: '' },
-  ],
 };
 
 function normalizeParagraphs(raw) {
@@ -47,7 +42,6 @@ export default function AProposAdminPage() {
         about_subtitle: s.about_subtitle || DEFAULT.about_subtitle,
         about_title: s.about_title || DEFAULT.about_title,
         about_paragraphs: normalizeParagraphs(s.about_paragraphs),
-        about_stats: s.about_stats?.length ? s.about_stats : DEFAULT.about_stats,
       });
     });
   }, []);
@@ -79,22 +73,6 @@ export default function AProposAdminPage() {
 
   function removeParagraph(i) {
     setData(p => ({ ...p, about_paragraphs: p.about_paragraphs.filter((_, j) => j !== i) }));
-  }
-
-  function setStat(i, field, val) {
-    setData(p => {
-      const stats = [...p.about_stats];
-      stats[i] = { ...stats[i], [field]: val };
-      return { ...p, about_stats: stats };
-    });
-  }
-
-  function addStat() {
-    setData(p => ({ ...p, about_stats: [...p.about_stats, { value: '', label: '' }] }));
-  }
-
-  function removeStat(i) {
-    setData(p => ({ ...p, about_stats: p.about_stats.filter((_, j) => j !== i) }));
   }
 
   return (
@@ -172,39 +150,6 @@ export default function AProposAdminPage() {
           </button>
         </Section>
 
-        {/* Statistiques */}
-        <Section title="Chiffres clés">
-          <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
-            Ces statistiques s'affichent en bas de la page sous forme de grands chiffres.
-          </p>
-          <div className="flex flex-col gap-3">
-            {data.about_stats.map((stat, i) => (
-              <div key={i} className="flex gap-3 items-end">
-                <div className="w-28">
-                  <label className={label} style={labelStyle}>Valeur</label>
-                  <input value={stat.value} onChange={e => setStat(i, 'value', e.target.value)} className={inp} style={inpStyle} placeholder="2005" />
-                </div>
-                <div className="flex-1">
-                  <label className={label} style={labelStyle}>Étiquette</label>
-                  <input value={stat.label} onChange={e => setStat(i, 'label', e.target.value)} className={inp} style={inpStyle} placeholder="Fondation" />
-                </div>
-                {data.about_stats.length > 1 && (
-                  <button type="button" onClick={() => removeStat(i)} className="p-2 rounded-sm transition-colors hover:bg-red-50 mb-0.5" style={{ color: '#ef4444' }}>
-                    <Trash2 size={14} />
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={addStat}
-            className="flex items-center gap-2 text-sm transition-colors hover:text-[var(--orange)] self-start"
-            style={{ color: 'var(--muted-foreground)' }}
-          >
-            <Plus size={14} /> Ajouter un chiffre
-          </button>
-        </Section>
       </div>
     </form>
   );
