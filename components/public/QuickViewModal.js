@@ -106,11 +106,12 @@ export default function QuickViewModal({ product, onClose }) {
                 {product.priceVisible && product.price && (() => {
                   const hasSale = product.salePrice && product.salePrice < product.price;
                   const pct = hasSale ? Math.round((1 - product.salePrice / product.price) * 100) : 0;
+                  const priceLabel = s.price_mode === 'TTC' ? 'TTC' : 'HT';
                   return (
                     <div className="flex flex-wrap items-center gap-2 mb-4">
                       <p className="font-display font-bold text-2xl" style={{ color: 'var(--foreground)' }}>
                         {(hasSale ? product.salePrice : product.price).toLocaleString('fr-FR')} €
-                        <span className="text-sm font-normal ml-1.5" style={{ color: 'var(--muted-foreground)' }}>HT</span>
+                        <span className="text-sm font-normal ml-1.5" style={{ color: 'var(--muted-foreground)' }}>{priceLabel}</span>
                       </p>
                       {hasSale && (
                         <>
