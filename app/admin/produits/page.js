@@ -4,8 +4,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Plus, Search, Edit, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
+import { useSettings } from '@/components/SettingsContext';
 
 export default function ProduitsPage() {
+  const s = useSettings();
+  const priceLabel = s.price_mode === 'TTC' ? 'TTC' : 'HT';
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -96,7 +99,7 @@ export default function ProduitsPage() {
               </th>
               <th className="px-4 py-3 text-left font-medium" style={{ color: 'var(--foreground)' }}>Produit</th>
               <th className="px-4 py-3 text-left font-medium hidden md:table-cell" style={{ color: 'var(--foreground)' }}>Catégorie</th>
-              <th className="px-4 py-3 text-left font-medium hidden lg:table-cell" style={{ color: 'var(--foreground)' }}>Prix HT</th>
+              <th className="px-4 py-3 text-left font-medium hidden lg:table-cell" style={{ color: 'var(--foreground)' }}>Prix {priceLabel}</th>
               <th className="px-4 py-3 text-left font-medium hidden sm:table-cell" style={{ color: 'var(--foreground)' }}>Disponibilité</th>
               <th className="px-4 py-3 text-right font-medium" style={{ color: 'var(--foreground)' }}>Actions</th>
             </tr>
