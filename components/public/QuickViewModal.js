@@ -103,12 +103,28 @@ export default function QuickViewModal({ product, onClose }) {
                 <h2 className="font-display font-bold text-xl leading-snug mb-3" style={{ color: 'var(--foreground)' }}>
                   {product.name}
                 </h2>
-                {product.priceVisible && product.price && (
-                  <p className="font-display font-bold text-2xl mb-4" style={{ color: 'var(--foreground)' }}>
-                    {product.price.toLocaleString('fr-FR')} €
-                    <span className="text-sm font-normal ml-1.5" style={{ color: 'var(--muted-foreground)' }}>HT</span>
-                  </p>
-                )}
+                {product.priceVisible && product.price && (() => {
+                  const hasSale = product.salePrice && product.salePrice < product.price;
+                  const pct = hasSale ? Math.round((1 - product.salePrice / product.price) * 100) : 0;
+                  return (
+                    <div className="flex flex-wrap items-baseline gap-2 mb-4">
+                      <p className="font-display font-bold text-2xl" style={{ color: hasSale ? 'var(--orange)' : 'var(--foreground)' }}>
+                        {(hasSale ? product.salePrice : product.price).toLocaleString('fr-FR')} €
+                        <span className="text-sm font-normal ml-1.5" style={{ color: 'var(--muted-foreground)' }}>HT</span>
+                      </p>
+                      {hasSale && (
+                        <>
+                          <p className="text-base line-through" style={{ color: 'var(--muted-foreground)' }}>
+                            {product.price.toLocaleString('fr-FR')} €
+                          </p>
+                          <span className="px-1.5 py-0.5 rounded text-xs font-bold text-white" style={{ backgroundColor: 'var(--orange)' }}>
+                            -{pct}%
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  );
+                })()}
                 {product.shortDesc && (
                   <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--muted-foreground)' }}>
                     {product.shortDesc}
