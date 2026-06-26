@@ -161,8 +161,8 @@ export default function ProductPageClient({ product, related }) {
                 const discount = hasPromo ? Math.round((1 - product.salePrice / product.price) * 100) : 0;
                 return hasPromo ? (
                   <div className="mb-6">
-                    <div className="flex items-baseline gap-3 flex-wrap">
-                      <p className="font-display font-bold text-4xl" style={{ color: '#dc2626' }}>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <p className="font-display font-bold text-4xl" style={{ color: 'var(--foreground)' }}>
                         {product.salePrice.toLocaleString('fr-FR')} €
                         <span className="text-base font-normal ml-2" style={{ color: 'var(--muted-foreground)' }}>{priceLabel}</span>
                       </p>

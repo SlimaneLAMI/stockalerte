@@ -169,8 +169,8 @@ export default function ProductCard({ product, onQuickView, onImageLoad }) {
 
             {showPrice && (
               hasPromo ? (
-                <div className="mt-2 flex items-baseline gap-2">
-                  <p className="font-display font-bold text-lg" style={{ color: '#dc2626' }}>
+                <div className="mt-2 flex items-center gap-2">
+                  <p className="font-display font-bold text-lg" style={{ color: 'var(--foreground)' }}>
                     {product.salePrice.toLocaleString('fr-FR')} €
                     <span className="text-xs font-normal ml-1" style={{ color: 'var(--muted-foreground)' }}>{priceLabel}</span>
                   </p>

@@ -108,7 +108,7 @@ export default function QuickViewModal({ product, onClose }) {
                   const pct = hasSale ? Math.round((1 - product.salePrice / product.price) * 100) : 0;
                   return (
                     <div className="flex flex-wrap items-center gap-2 mb-4">
-                      <p className="font-display font-bold text-2xl" style={{ color: hasSale ? 'var(--orange)' : 'var(--foreground)' }}>
+                      <p className="font-display font-bold text-2xl" style={{ color: 'var(--foreground)' }}>
                         {(hasSale ? product.salePrice : product.price).toLocaleString('fr-FR')} €
                         <span className="text-sm font-normal ml-1.5" style={{ color: 'var(--muted-foreground)' }}>HT</span>
                       </p>
