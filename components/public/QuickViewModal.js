@@ -117,7 +117,7 @@ export default function QuickViewModal({ product, onClose }) {
                           <p className="text-base line-through" style={{ color: 'var(--muted-foreground)' }}>
                             {product.price.toLocaleString('fr-FR')} €
                           </p>
-                          <span className="px-1.5 py-0.5 rounded text-xs font-bold text-white" style={{ backgroundColor: 'var(--orange)' }}>
+                          <span className="px-1.5 py-0.5 rounded text-xs font-bold text-white bg-red-500">
                             -{pct}%
                           </span>
                         </>
