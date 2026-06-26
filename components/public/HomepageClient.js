@@ -201,7 +201,7 @@ export default function HomepageClient() {
   return (
     <>
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section ref={heroRef} className="relative h-[92vh] min-h-[600px] flex items-end overflow-hidden">
+      <section ref={heroRef} className="relative min-h-[600px] flex items-end overflow-hidden" style={{ height: '100dvh' }}>
         <motion.div className="absolute inset-0" style={{ y: heroY }}>
           <Image
             src={heroImg}
