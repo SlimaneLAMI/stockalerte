@@ -1,11 +1,23 @@
 'use client';
+import { useState } from 'react';
 import { useSettings } from '@/components/SettingsContext';
 import Breadcrumbs from '@/components/public/Breadcrumbs';
+import { RotateCcw } from 'lucide-react';
+
+const STORAGE_KEY = 'cookie-consent';
 
 export default function CookiesPage() {
   const s = useSettings();
   const company = s.company_name || 'StockAlerte';
   const email = s.company_email || 'contact@stockalerte.com';
+  const [reset, setReset] = useState(false);
+
+  function handleReset() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+    setReset(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => window.location.reload(), 300);
+  }
 
   const H2 = ({ children }) => (
     <h2 className="font-display font-bold text-xl mb-4" style={{ color: 'var(--foreground)' }}>{children}</h2>
@@ -188,6 +200,30 @@ export default function CookiesPage() {
               </a>.
             </p>
           </section>
+
+          {/* Modifier les préférences */}
+          <div
+            className="p-6 rounded-sm border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+            style={{ borderColor: 'var(--orange)', backgroundColor: 'color-mix(in srgb, var(--orange) 6%, transparent)' }}
+          >
+            <div>
+              <p className="font-medium text-sm mb-1" style={{ color: 'var(--foreground)' }}>
+                Modifier vos préférences
+              </p>
+              <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
+                Vous pouvez retirer ou modifier votre consentement à tout moment.
+              </p>
+            </div>
+            <button
+              onClick={handleReset}
+              disabled={reset}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-sm text-sm font-medium text-white transition-all hover:opacity-90 active:scale-95 disabled:opacity-60 shrink-0"
+              style={{ backgroundColor: 'var(--orange)' }}
+            >
+              <RotateCcw size={14} />
+              {reset ? 'Rechargement…' : 'Modifier mes préférences'}
+            </button>
+          </div>
 
           <p className="text-xs pt-4 border-t" style={{ borderColor: 'var(--border)' }}>
             Dernière mise à jour : juin 2026
