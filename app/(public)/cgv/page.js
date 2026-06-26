@@ -7,6 +7,7 @@ export default function CGVPage() {
   const company = s.company_name || 'StockAlerte';
   const address = s.company_address || 'Adresse non renseignée';
   const email = s.company_email || 'contact@stockalerte.com';
+  const priceMode = s.price_mode === 'TTC' ? 'toutes taxes comprises (TTC)' : 'hors taxes (HT)';
 
   return (
     <div className="pt-20">
@@ -53,7 +54,7 @@ export default function CGVPage() {
               3. Prix
             </h2>
             <p>
-              Les prix indiqués sur le site sont exprimés en dinars algériens (DZD) hors taxes (HT), sauf mention contraire.
+              Les prix indiqués sur le site sont exprimés en dinars algériens (DZD) {priceMode}, sauf mention contraire.
               Ils ne comprennent pas les frais de livraison et d'installation, qui sont précisés lors de l'établissement du devis.
             </p>
             <p className="mt-2">
