@@ -187,7 +187,8 @@ export default function Footer() {
               {[
                 { label: 'Mentions légales', href: '/mentions-legales' },
                 { label: 'CGV', href: '/cgv' },
-                { label: 'Politique de confidentialité', href: '/politique-de-confidentialite' },
+                { label: 'Confidentialité', href: '/politique-de-confidentialite' },
+                { label: 'Cookies', href: '/cookies' },
               ].map(({ label, href }) => (
                 <Link
                   key={label}
