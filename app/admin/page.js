@@ -28,11 +28,13 @@ export default function AdminDashboard() {
       fetch('/api/products?published=all&limit=1').then(r => r.json()),
       fetch('/api/categories').then(r => r.json()),
       fetch('/api/contacts').then(r => r.json()),
-    ]).then(([p, c, ct]) => {
+      fetch('/api/brands').then(r => r.json()),
+    ]).then(([p, c, ct, b]) => {
       setStats({
         products: p?.total || 0,
         categories: Array.isArray(c) ? c.length : 0,
         unread: ct?.unreadCount || 0,
+        brands: Array.isArray(b) ? b.length : 0,
       });
       setContacts(ct?.contacts?.slice(0, 5) || []);
       setLoading(false);
@@ -47,9 +49,10 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
         <StatCard icon={Package} label="Produits" value={loading ? '...' : stats.products} href="/admin/produits" accent="var(--orange)" />
         <StatCard icon={Tag} label="Catégories" value={loading ? '...' : stats.categories} href="/admin/categories" accent="#3b82f6" />
+        <StatCard icon={Building2} label="Marques" value={loading ? '...' : stats.brands} href="/admin/marques" accent="#8b5cf6" />
         <StatCard icon={Mail} label="Contacts non lus" value={loading ? '...' : stats.unread} href="/admin/contacts" accent="#10b981" />
       </div>
 
