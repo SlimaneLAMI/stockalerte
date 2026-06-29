@@ -4,15 +4,28 @@ import { getSettings } from '@/lib/getSettings';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
+// ImageResponse/Satori ne supporte pas le WebP — force JPEG via Cloudinary
+function toJpeg(url, { width, height } = {}) {
+  if (!url?.includes('res.cloudinary.com')) return url;
+  const idx = url.indexOf('/upload/');
+  if (idx === -1) return url;
+  const before = url.slice(0, idx + 8);
+  const after = url.slice(idx + 8);
+  const t = ['f_jpg', 'q_auto'];
+  if (width)  t.push(`w_${width}`);
+  if (height) t.push(`h_${height}`, 'c_fill');
+  return `${before}${t.join(',')}/` + after;
+}
+
 export default async function OGImage() {
   const s = await getSettings();
   const name = s.company_name || 'StockAlerte';
   const color = s.color_orange || '#e05c2a';
-  const logoUrl = s.logo_url;
-  const bgImage = s.hero_image;
-  const title = s.hero_title || 'Équipements de Cuisine Professionnelle';
-  const sub = s.hero_subtitle || 'Matériel professionnel pour restaurants, hôtels et collectivités';
-  const badge = s.hero_badge || 'Équipements professionnels';
+  const logoUrl = s.logo_url ? toJpeg(s.logo_url, { width: 104, height: 104 }) : null;
+  const bgUrl   = s.hero_image ? toJpeg(s.hero_image, { width: 1200, height: 630 }) : null;
+  const title   = s.hero_title || 'Équipements de Cuisine Professionnelle';
+  const sub     = s.hero_subtitle || 'Matériel professionnel pour restaurants, hôtels et collectivités';
+  const badge   = s.hero_badge || 'Équipements professionnels';
   const initials = s.logo_initials || name.slice(0, 2).toUpperCase();
 
   return new ImageResponse(
@@ -26,18 +39,24 @@ export default async function OGImage() {
         fontFamily: 'sans-serif',
       }}
     >
-      {bgImage && (
+      {bgUrl && (
         <img
-          src={bgImage}
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.3 }}
+          src={bgUrl}
+          width={1200}
+          height={630}
+          style={{ position: 'absolute', top: 0, left: 0, width: 1200, height: 630, objectFit: 'cover', opacity: 0.3 }}
         />
       )}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(to top, #1a1a1a 40%, rgba(26,26,26,0.6) 100%)' }} />
+      <div style={{
+        position: 'absolute', top: 0, left: 0, width: 1200, height: 630,
+        background: 'linear-gradient(to top, #1a1a1a 40%, rgba(26,26,26,0.5) 100%)',
+        display: 'flex',
+      }} />
 
       <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28 }}>
           {logoUrl ? (
-            <img src={logoUrl} width={52} height={52} style={{ borderRadius: 8, objectFit: 'cover' }} />
+            <img src={logoUrl} width={52} height={52} style={{ borderRadius: 8, objectFit: 'cover', width: 52, height: 52 }} />
           ) : (
             <div style={{ width: 52, height: 52, borderRadius: 8, backgroundColor: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <span style={{ color: 'white', fontSize: 22, fontWeight: 700 }}>{initials}</span>
