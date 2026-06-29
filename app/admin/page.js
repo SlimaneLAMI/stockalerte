@@ -42,7 +42,7 @@ export default function AdminDashboard() {
   return (
     <div className="p-6 lg:p-10 max-w-5xl">
       <div className="mb-10">
-        <h1 className="font-display font-bold text-3xl" style={{ color: 'var(--foreground)' }}>Tableau de bord</h1>
+        <h1 className="font-display font-bold text-2xl lg:text-3xl" style={{ color: 'var(--foreground)' }}>Tableau de bord</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>Bienvenue dans l'espace d'administration StockAlerte.</p>
       </div>
 

@@ -116,9 +116,9 @@ export default function HomepageAdminPage() {
 
   return (
     <form onSubmit={handleSave} className="p-6 lg:p-10 max-w-3xl">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display font-bold text-3xl" style={{ color: 'var(--foreground)' }}>Page d'accueil</h1>
-        <button type="submit" disabled={saving} className="flex items-center gap-2 px-5 py-2.5 rounded-sm text-sm font-medium text-white disabled:opacity-60" style={{ backgroundColor: 'var(--orange)' }}>
+      <div className="flex items-center justify-between gap-4 mb-8">
+        <h1 className="font-display font-bold text-2xl lg:text-3xl" style={{ color: 'var(--foreground)' }}>Page d'accueil</h1>
+        <button type="submit" disabled={saving} className="flex shrink-0 items-center gap-2 px-4 py-2.5 rounded-sm text-sm font-medium text-white disabled:opacity-60" style={{ backgroundColor: 'var(--orange)' }}>
           {saving && <Loader2 size={14} className="animate-spin" />}
           Enregistrer
         </button>

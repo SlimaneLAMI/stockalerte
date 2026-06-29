@@ -90,10 +90,12 @@ export default function MarquesPage() {
 
   return (
     <div className="p-6 lg:p-10">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display font-bold text-3xl" style={{ color: 'var(--foreground)' }}>Marques</h1>
-        <button onClick={() => setModal({})} className="flex items-center gap-2 px-5 py-2.5 rounded-sm text-sm font-medium text-white" style={{ backgroundColor: 'var(--orange)' }}>
-          <Plus size={15} /> Nouvelle marque
+      <div className="flex items-center justify-between gap-4 mb-8">
+        <h1 className="font-display font-bold text-2xl lg:text-3xl" style={{ color: 'var(--foreground)' }}>Marques</h1>
+        <button onClick={() => setModal({})} className="flex shrink-0 items-center gap-2 px-4 py-2.5 rounded-sm text-sm font-medium text-white" style={{ backgroundColor: 'var(--orange)' }}>
+          <Plus size={15} />
+          <span className="hidden sm:inline">Nouvelle marque</span>
+          <span className="sm:hidden">Nouvelle</span>
         </button>
       </div>
 

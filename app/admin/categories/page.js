@@ -112,14 +112,16 @@ export default function CategoriesPage() {
 
   return (
     <div className="p-6 lg:p-10">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display font-bold text-3xl" style={{ color: 'var(--foreground)' }}>Catégories</h1>
+      <div className="flex items-center justify-between gap-4 mb-8">
+        <h1 className="font-display font-bold text-2xl lg:text-3xl" style={{ color: 'var(--foreground)' }}>Catégories</h1>
         <button
           onClick={() => setModal({})}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-sm text-sm font-medium text-white"
+          className="flex shrink-0 items-center gap-2 px-4 py-2.5 rounded-sm text-sm font-medium text-white"
           style={{ backgroundColor: 'var(--orange)' }}
         >
-          <Plus size={15} /> Nouvelle catégorie
+          <Plus size={15} />
+          <span className="hidden sm:inline">Nouvelle catégorie</span>
+          <span className="sm:hidden">Nouvelle</span>
         </button>
       </div>
 
@@ -129,14 +131,15 @@ export default function CategoriesPage() {
         ) : (
           <div className="divide-y divide-[var(--border)]">
             {categories.map(cat => (
-              <div key={cat._id} className="flex items-center gap-4 px-5 py-4 hover:bg-[var(--muted)] transition-colors">
-                <span className="text-2xl">{cat.icon}</span>
-                <div className="flex-1">
-                  <p className="font-medium" style={{ color: 'var(--foreground)' }}>{cat.name}</p>
+              <div key={cat._id} className="flex items-center gap-3 px-4 py-4 hover:bg-[var(--muted)] transition-colors">
+                <span className="text-2xl shrink-0">{cat.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium truncate" style={{ color: 'var(--foreground)' }}>{cat.name}</p>
                   {cat.description && <p className="text-xs line-clamp-1 mt-0.5" style={{ color: 'var(--muted-foreground)' }}>{cat.description}</p>}
+                  <code className="sm:hidden text-xs px-1.5 py-0.5 rounded-sm mt-1 inline-block" style={{ backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)' }}>{cat.slug}</code>
                 </div>
-                <code className="text-xs px-2 py-1 rounded-sm" style={{ backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)' }}>{cat.slug}</code>
-                <div className="flex items-center gap-2">
+                <code className="hidden sm:inline text-xs px-2 py-1 rounded-sm shrink-0" style={{ backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)' }}>{cat.slug}</code>
+                <div className="flex items-center gap-1 shrink-0">
                   <button onClick={() => setModal(cat)} className="w-8 h-8 flex items-center justify-center rounded-sm hover:bg-[var(--border)]"><Edit size={14} style={{ color: 'var(--muted-foreground)' }} /></button>
                   <button onClick={() => setDeleteId(cat._id)} className="w-8 h-8 flex items-center justify-center rounded-sm hover:bg-red-50"><Trash2 size={14} className="text-red-400" /></button>
                 </div>

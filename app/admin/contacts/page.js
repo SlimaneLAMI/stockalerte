@@ -56,7 +56,7 @@ export default function ContactsPage() {
   return (
     <div className="p-6 lg:p-10">
       <div className="mb-6">
-        <h1 className="font-display font-bold text-3xl" style={{ color: 'var(--foreground)' }}>Demandes de contact</h1>
+        <h1 className="font-display font-bold text-2xl lg:text-3xl" style={{ color: 'var(--foreground)' }}>Demandes de contact</h1>
         {tab === 'actifs' && (
           <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>
             {unreadCount} non lue(s)
@@ -173,24 +173,24 @@ export default function ContactsPage() {
                 <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--foreground)' }}>{selected.message}</p>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-2">
                 <a
                   href={`mailto:${selected.email}?subject=Re: Votre demande&body=Bonjour ${selected.name},%0A%0A`}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-sm text-sm font-medium text-white"
+                  className="flex-1 min-w-0 flex items-center justify-center gap-2 py-2.5 px-3 rounded-sm text-sm font-medium text-white"
                   style={{ backgroundColor: 'var(--orange)' }}
                 >
-                  <Mail size={14} /> Répondre par email
+                  <Mail size={14} className="shrink-0" /> <span className="truncate">Répondre par email</span>
                 </a>
                 {tab === 'actifs' ? (
-                  <button onClick={() => archive(selected._id)} className="flex items-center gap-2 px-4 py-2.5 rounded-sm text-sm border transition-colors hover:bg-[var(--muted)]" style={{ borderColor: 'var(--border)' }}>
+                  <button onClick={() => archive(selected._id)} className="flex items-center gap-2 px-3 py-2.5 rounded-sm text-sm border transition-colors hover:bg-[var(--muted)]" style={{ borderColor: 'var(--border)' }}>
                     <Archive size={14} /> Archiver
                   </button>
                 ) : (
-                  <button onClick={() => unarchive(selected._id)} className="flex items-center gap-2 px-4 py-2.5 rounded-sm text-sm border transition-colors hover:bg-[var(--muted)]" style={{ borderColor: 'var(--border)' }}>
+                  <button onClick={() => unarchive(selected._id)} className="flex items-center gap-2 px-3 py-2.5 rounded-sm text-sm border transition-colors hover:bg-[var(--muted)]" style={{ borderColor: 'var(--border)' }}>
                     <ArchiveX size={14} /> Désarchiver
                   </button>
                 )}
-                <button onClick={() => handleDelete(selected._id)} className="flex items-center justify-center w-10 h-10 rounded-sm border border-red-200 text-red-400 hover:bg-red-50 transition-colors">
+                <button onClick={() => handleDelete(selected._id)} className="flex items-center justify-center w-10 h-10 rounded-sm border border-red-200 text-red-400 hover:bg-red-50 transition-colors shrink-0">
                   <Trash2 size={14} />
                 </button>
               </div>

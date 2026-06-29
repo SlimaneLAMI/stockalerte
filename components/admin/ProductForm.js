@@ -150,11 +150,11 @@ export default function ProductForm({ initialData, isEdit }) {
 
   return (
     <form onSubmit={handleSubmit} className="p-6 lg:p-10 max-w-4xl">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display font-bold text-3xl" style={{ color: 'var(--foreground)' }}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <h1 className="font-display font-bold text-2xl lg:text-3xl" style={{ color: 'var(--foreground)' }}>
           {isEdit ? 'Modifier le produit' : 'Nouveau produit'}
         </h1>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           <button type="button" onClick={() => router.back()} className="px-4 py-2.5 rounded-sm text-sm border transition-colors hover:bg-[var(--muted)]" style={{ borderColor: 'var(--border)' }}>
             Annuler
           </button>
@@ -299,7 +299,7 @@ export default function ProductForm({ initialData, isEdit }) {
           </div>
           <div className="flex flex-col gap-3">
             {form.specs.map((spec, i) => (
-              <div key={i} className="flex items-center gap-3">
+              <div key={i} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <input
                   placeholder="Caractéristique (ex: Puissance)"
                   value={spec.key}
@@ -314,7 +314,7 @@ export default function ProductForm({ initialData, isEdit }) {
                   className="flex-1 px-3 py-2 text-sm rounded-sm border outline-none focus:border-[var(--orange)] bg-[var(--card)]"
                   style={{ borderColor: 'var(--border)', color: 'var(--foreground)' }}
                 />
-                <button type="button" onClick={() => removeSpec(i)} className="text-red-400 hover:text-red-500 p-1">
+                <button type="button" onClick={() => removeSpec(i)} className="text-red-400 hover:text-red-500 p-1 self-end sm:self-auto">
                   <Trash2 size={14} />
                 </button>
               </div>
