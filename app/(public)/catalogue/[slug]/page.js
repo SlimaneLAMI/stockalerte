@@ -61,6 +61,19 @@ export default async function ProductPage({ params }) {
     ? await getRelated(product.categoryId._id, slug)
     : [];
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: BASE },
+      { '@type': 'ListItem', position: 2, name: 'Catalogue', item: `${BASE}/catalogue` },
+      ...(product.categoryId?.name
+        ? [{ '@type': 'ListItem', position: 3, name: product.categoryId.name, item: `${BASE}/catalogue/categorie/${product.categoryId.slug || ''}` }]
+        : []),
+      { '@type': 'ListItem', position: product.categoryId?.name ? 4 : 3, name: product.name, item: `${BASE}/catalogue/${slug}` },
+    ],
+  };
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -93,10 +106,8 @@ export default async function ProductPage({ params }) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <ProductPageClient product={product} related={related} />
     </>
   );
