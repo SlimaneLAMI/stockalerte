@@ -86,7 +86,7 @@ export default function ParametresPage() {
             </p>
           </div>
           <div>
-            <label className={label} style={labelStyle}>Logo (remplace le carré orange)</label>
+            <label className={label} style={labelStyle}>Logo (remplace le carré coloré)</label>
             <div className="max-w-[160px]">
               <CloudinaryUpload
                 value={settings.logo_url}
