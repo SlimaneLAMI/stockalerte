@@ -139,6 +139,16 @@ function AdminNav({ pathname }) {
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             >
               <NavLinks />
+              <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--sidebar-border)' }}>
+                <button
+                  onClick={() => signOut({ callbackUrl: '/admin/login' })}
+                  className="flex w-full items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-colors hover:bg-[var(--sidebar-accent)]"
+                  style={{ color: 'var(--muted-foreground)' }}
+                >
+                  <LogOut size={16} />
+                  Se déconnecter
+                </button>
+              </div>
             </motion.aside>
           </motion.div>
         )}

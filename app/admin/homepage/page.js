@@ -63,7 +63,7 @@ function IconPicker({ value, onChange }) {
 
 export default function HomepageAdminPage() {
   const [settings, setSettings] = useState({
-    hero_title: '', hero_subtitle: '', hero_cta: '', hero_image: '',
+    hero_title: '', hero_subtitle: '', hero_cta: '', hero_image: '', hero_badge: '',
     why_us: [{ icon: '', title: '', text: '' }],
     cta_label: '', cta_title: '', cta_subtitle: '', cta_button: '',
     about_stats: [{ value: '', label: '' }],
@@ -129,6 +129,10 @@ export default function HomepageAdminPage() {
         <section className="p-6 rounded-sm border border-[var(--border)] bg-[var(--card)]">
           <h2 className="font-display font-bold text-base mb-5" style={{ color: 'var(--foreground)' }}>Section Hero</h2>
           <div className="flex flex-col gap-4">
+            <div>
+              <label className={label} style={labelStyle}>Badge (petit texte au-dessus du titre)</label>
+              <input value={settings.hero_badge} onChange={e => setSettings(p => ({ ...p, hero_badge: e.target.value }))} className={inp} style={inpStyle} placeholder="Équipements professionnels" />
+            </div>
             <div>
               <label className={label} style={labelStyle}>Titre principal</label>
               <input value={settings.hero_title} onChange={e => setSettings(p => ({ ...p, hero_title: e.target.value }))} className={inp} style={inpStyle} />

@@ -222,12 +222,14 @@ export default function HomepageClient() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span
-              className="inline-block px-3 py-1.5 rounded-sm text-xs font-medium text-white mb-6 uppercase tracking-widest"
-              style={{ backgroundColor: 'var(--orange)' }}
-            >
-              Équipements professionnels
-            </span>
+            {(settings.hero_badge ?? 'Équipements professionnels') && (
+              <span
+                className="inline-block px-3 py-1.5 rounded-sm text-xs font-medium text-white mb-6 uppercase tracking-widest"
+                style={{ backgroundColor: 'var(--orange)' }}
+              >
+                {settings.hero_badge || 'Équipements professionnels'}
+              </span>
+            )}
             <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-white leading-[1.05] max-w-3xl mb-6">
               {settings.hero_title || "L'équipement professionnel qui fait la différence"}
             </h1>
