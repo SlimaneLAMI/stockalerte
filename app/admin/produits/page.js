@@ -15,6 +15,7 @@ export default function ProduitsPage() {
   const [sort, setSort] = useState('createdAt');
   const [selected, setSelected] = useState(new Set());
   const [deleteId, setDeleteId] = useState(null);
+  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -76,7 +77,7 @@ export default function ProduitsPage() {
         </div>
         {selected.size > 0 && (
           <button
-            onClick={handleBulkDelete}
+            onClick={() => setBulkDeleteConfirm(true)}
             className="flex items-center gap-2 px-4 py-2.5 rounded-sm text-sm font-medium text-red-600 border border-red-200 hover:bg-red-50 transition-colors"
           >
             <Trash2 size={14} />
@@ -184,6 +185,25 @@ export default function ProduitsPage() {
           </tbody>
         </table>
       </div>
+
+
+      {/* Bulk delete confirm */}
+      {bulkDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-[var(--background)] rounded-sm p-8 max-w-sm w-full shadow-2xl">
+            <p className="font-display font-bold text-lg mb-2" style={{ color: 'var(--foreground)' }}>Supprimer {selected.size} produit(s) ?</p>
+            <p className="text-sm mb-6" style={{ color: 'var(--muted-foreground)' }}>Cette action est irréversible.</p>
+            <div className="flex gap-3">
+              <button onClick={() => { handleBulkDelete(); setBulkDeleteConfirm(false); }} className="flex-1 py-2.5 rounded-sm text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition-colors">
+                Supprimer
+              </button>
+              <button onClick={() => setBulkDeleteConfirm(false)} className="flex-1 py-2.5 rounded-sm text-sm font-medium border transition-colors hover:bg-[var(--muted)]" style={{ borderColor: 'var(--border)' }}>
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete confirm */}
       {deleteId && (

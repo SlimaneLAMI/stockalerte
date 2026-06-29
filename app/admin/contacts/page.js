@@ -8,6 +8,7 @@ export default function ContactsPage() {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('actifs');
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   async function load(t = tab) {
     setLoading(true);
@@ -190,7 +191,7 @@ export default function ContactsPage() {
                     <ArchiveX size={14} /> Désarchiver
                   </button>
                 )}
-                <button onClick={() => handleDelete(selected._id)} className="flex items-center justify-center w-10 h-10 rounded-sm border border-red-200 text-red-400 hover:bg-red-50 transition-colors shrink-0">
+                <button onClick={() => setDeleteConfirm(true)} className="flex items-center justify-center w-10 h-10 rounded-sm border border-red-200 text-red-400 hover:bg-red-50 transition-colors shrink-0">
                   <Trash2 size={14} />
                 </button>
               </div>
@@ -203,5 +204,22 @@ export default function ContactsPage() {
         </div>
       </div>
     </div>
+      {/* Delete confirm */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-[var(--background)] rounded-sm p-8 max-w-sm w-full shadow-2xl">
+            <p className="font-display font-bold text-lg mb-2" style={{ color: 'var(--foreground)' }}>Supprimer ce contact ?</p>
+            <p className="text-sm mb-6" style={{ color: 'var(--muted-foreground)' }}>Cette action est irréversible.</p>
+            <div className="flex gap-3">
+              <button onClick={() => { handleDelete(selected._id); setDeleteConfirm(false); }} className="flex-1 py-2.5 rounded-sm text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition-colors">
+                Supprimer
+              </button>
+              <button onClick={() => setDeleteConfirm(false)} className="flex-1 py-2.5 rounded-sm text-sm font-medium border transition-colors hover:bg-[var(--muted)]" style={{ borderColor: 'var(--border)' }}>
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
   );
 }
