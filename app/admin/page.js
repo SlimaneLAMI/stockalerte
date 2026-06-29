@@ -7,7 +7,7 @@ function StatCard({ icon: Icon, label, value, href, accent }) {
   return (
     <Link href={href} className="group block p-6 rounded-sm border border-[var(--border)] bg-[var(--card)] hover:border-[var(--orange)] transition-colors">
       <div className="flex items-start justify-between">
-        <div className="w-10 h-10 rounded-sm flex items-center justify-center" style={{ backgroundColor: accent + '15' }}>
+        <div className="w-10 h-10 rounded-sm flex items-center justify-center" style={{ backgroundColor: `color-mix(in srgb, ${accent} 12%, transparent)` }}>
           <Icon size={18} style={{ color: accent }} />
         </div>
         <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--orange)' }} />
